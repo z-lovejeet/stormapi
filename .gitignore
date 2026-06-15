@@ -1,0 +1,61 @@
+# =====================
+# Java / Maven
+# =====================
+backend/target/
+*.class
+*.jar
+*.war
+*.ear
+*.log
+hs_err_pid*
+
+# Maven wrapper
+!backend/.mvn/wrapper/maven-wrapper.jar
+
+# =====================
+# Node / React
+# =====================
+frontend/node_modules/
+frontend/dist/
+frontend/.cache/
+*.tsbuildinfo
+
+# =====================
+# IDE
+# =====================
+.idea/
+*.iml
+*.iws
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+
+# =====================
+# OS
+# =====================
+.DS_Store
+Thumbs.db
+ehthumbs.db
+
+# =====================
+# Environment
+# =====================
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# =====================
+# Docker
+# =====================
+docker/data/
+
+# =====================
+# Misc
+# =====================
+*.bak
+*.tmp
