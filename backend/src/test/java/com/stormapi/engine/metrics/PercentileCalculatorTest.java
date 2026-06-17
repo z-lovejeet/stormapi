@@ -98,9 +98,9 @@ class PercentileCalculatorTest {
         // 60 seconds in nanos (exceeds 30s max)
         calculator.recordLatency(60_000_000_000L);
 
-        // Should be clipped to 30s (30000ms)
+        // Should be clipped to ~30s (HdrHistogram rounds to 3 significant digits)
         double max = calculator.getMaxMs();
-        assertTrue(max <= 30_000.0 && max >= 29_900.0,
+        assertTrue(max <= 30_100.0 && max >= 29_900.0,
                 "Should clip to ~30000ms, got: " + max);
     }
 
