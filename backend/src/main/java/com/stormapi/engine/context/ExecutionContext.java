@@ -4,6 +4,7 @@ import com.stormapi.engine.http.RequestResult;
 import com.stormapi.engine.http.RequestSpec;
 import com.stormapi.engine.user.ThinkTimeStrategy;
 
+import java.time.Instant;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
@@ -28,6 +29,7 @@ public class ExecutionContext {
     private final AtomicBoolean running = new AtomicBoolean(false);
     private final AtomicInteger activeUsers = new AtomicInteger(0);
     private volatile int maxRetries;
+    private volatile Instant startedAt;
 
     /**
      * Creates an execution context for a test run.
@@ -65,6 +67,7 @@ public class ExecutionContext {
      * Starts the test — all virtual users can begin their loops.
      */
     public void start() {
+        startedAt = Instant.now();
         running.set(true);
     }
 
@@ -113,6 +116,13 @@ public class ExecutionContext {
 
     public void setMaxRetries(int maxRetries) {
         this.maxRetries = maxRetries;
+    }
+
+    /**
+     * Returns the instant when the test was started.
+     */
+    public Instant getStartedAt() {
+        return startedAt;
     }
 
 }
