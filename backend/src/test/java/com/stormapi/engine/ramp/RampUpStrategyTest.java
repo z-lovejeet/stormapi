@@ -3,6 +3,7 @@ package com.stormapi.engine.ramp;
 import com.stormapi.engine.context.ExecutionContext;
 import com.stormapi.engine.http.HttpClientFactory;
 import com.stormapi.engine.http.HttpRequestExecutor;
+import com.stormapi.engine.http.RequestSpec;
 import com.stormapi.test.model.TestConfig;
 import com.stormapi.test.model.TestType;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -24,7 +26,9 @@ class RampUpStrategyTest {
 
     @BeforeEach
     void setUp() {
-        context = new ExecutionContext(null, null, result -> {});
+        RequestSpec dummySpec = new RequestSpec(
+                "http://localhost:1/noop", "GET", Map.of(), null, java.time.Duration.ofMillis(100));
+        context = new ExecutionContext(dummySpec, null, result -> {});
         context.start();
         executor = new HttpRequestExecutor(HttpClientFactory.createDefault());
         collectedThreads = Collections.synchronizedList(new ArrayList<>());
