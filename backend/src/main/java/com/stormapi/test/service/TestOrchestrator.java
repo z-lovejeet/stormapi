@@ -60,6 +60,7 @@ public class TestOrchestrator {
     private final MetricSnapshotRepository metricSnapshotRepository;
 
     private final ConcurrentHashMap<Long, RunningTestHandle> runningTests = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Long, java.util.concurrent.atomic.AtomicBoolean> cancelFlags = new ConcurrentHashMap<>();
 
     public TestOrchestrator(TestConfigRepository testConfigRepository,
                             TestResultRepository testResultRepository,
@@ -103,9 +104,12 @@ public class TestOrchestrator {
         config.setStatus(TestStatus.RUNNING);
         testConfigRepository.save(config);
 
-        // 4. Launch on virtual thread
+        // 4. Register before launching to avoid race condition with isRunning()
         final Long resultId = result.getId();
-        Thread executionThread = Thread.ofVirtual()
+        cancelFlags.put(configId, new java.util.concurrent.atomic.AtomicBoolean(false));
+        runningTests.put(configId, new RunningTestHandle(null, null, resultId));
+
+        Thread.ofVirtual()
                 .name("storm-test-" + configId)
                 .start(() -> runTest(configId, resultId));
 
@@ -128,8 +132,9 @@ public class TestOrchestrator {
         }
 
         log.info("Stopping test for config {}", configId);
-        handle.engine().stop();
-        handle.context().stop();
+        cancelFlags.computeIfAbsent(configId, k -> new java.util.concurrent.atomic.AtomicBoolean()).set(true);
+        if (handle.engine() != null) handle.engine().stop();
+        if (handle.context() != null) handle.context().stop();
     }
 
     /**
@@ -163,19 +168,23 @@ public class TestOrchestrator {
             RequestSpec spec = RequestSpec.fromTestConfig(config);
             ThinkTimeStrategy thinkTime = ThinkTimeStrategy.fromConfig(config);
 
-            context = new ExecutionContext(spec, thinkTime, null); // consumer wired below
-            metricsCollector = new MetricsCollector(context::getActiveUsers);
+            // Use a holder so MetricsCollector can reference context.getActiveUsers()
+            // before the context variable is assigned
+            final java.util.concurrent.atomic.AtomicReference<ExecutionContext> contextRef =
+                    new java.util.concurrent.atomic.AtomicReference<>();
+            metricsCollector = new MetricsCollector(() -> {
+                ExecutionContext ctx = contextRef.get();
+                return ctx != null ? ctx.getActiveUsers() : 0;
+            });
 
-            // Wire the result consumer to the metrics collector
-            ExecutionContext finalContext = new ExecutionContext(spec, thinkTime, metricsCollector::recordResult);
-            finalContext.setMaxRetries(config.getMaxRetries());
-            context = finalContext;
+            context = new ExecutionContext(spec, thinkTime, metricsCollector::recordResult);
+            context.setMaxRetries(config.getMaxRetries());
+            contextRef.set(context);
 
             engine = TestEngineFactory.create(config.getTestType());
 
-            // 3. Register running test
-            RunningTestHandle handle = new RunningTestHandle(context, engine, resultId);
-            runningTests.put(configId, handle);
+            // 3. Update handle with real references (placeholder was set in startTest)
+            runningTests.put(configId, new RunningTestHandle(context, engine, resultId));
 
             // 4. Load the TestResult for snapshot FK
             final TestResult testResult = testResultRepository.findById(resultId)
@@ -228,14 +237,20 @@ public class TestOrchestrator {
                 context.stop();
             }
 
-            // 9. Persist results
+            // 9. Check if cancellation was requested
+            java.util.concurrent.atomic.AtomicBoolean cancelFlag = cancelFlags.remove(configId);
+            if (cancelFlag != null && cancelFlag.get()) {
+                finalStatus = TestStatus.CANCELLED;
+            }
+
+            // 10. Persist results
             try {
                 persistResults(resultId, configId, metricsCollector, snapshotBuffer, finalStatus);
             } catch (Exception e) {
                 log.error("Failed to persist results for test {}: {}", configId, e.getMessage(), e);
             }
 
-            // 10. Cleanup
+            // 11. Cleanup
             runningTests.remove(configId);
             log.info("Test {} completed with status {}", configId, finalStatus);
         }
