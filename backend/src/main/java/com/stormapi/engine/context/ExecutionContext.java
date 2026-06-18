@@ -1,13 +1,16 @@
 package com.stormapi.engine.context;
 
+import com.stormapi.engine.analysis.EngineAnalysisResult;
 import com.stormapi.engine.http.RequestResult;
 import com.stormapi.engine.http.RequestSpec;
+import com.stormapi.engine.metrics.LiveMetricsSnapshot;
 import com.stormapi.engine.user.ThinkTimeStrategy;
 
 import java.time.Instant;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * Shared, thread-safe state container for a single test run.
@@ -30,6 +33,8 @@ public class ExecutionContext {
     private final AtomicInteger activeUsers = new AtomicInteger(0);
     private volatile int maxRetries;
     private volatile Instant startedAt;
+    private volatile Supplier<LiveMetricsSnapshot> snapshotSupplier;
+    private volatile EngineAnalysisResult analysisResult;
 
     /**
      * Creates an execution context for a test run.
@@ -123,6 +128,31 @@ public class ExecutionContext {
      */
     public Instant getStartedAt() {
         return startedAt;
+    }
+
+    /**
+     * Returns the snapshot supplier, used by engines that need mid-test metrics
+     * (Stress, Spike, Breakpoint, Scalability).
+     */
+    public Supplier<LiveMetricsSnapshot> getSnapshotSupplier() {
+        return snapshotSupplier;
+    }
+
+    public void setSnapshotSupplier(Supplier<LiveMetricsSnapshot> snapshotSupplier) {
+        this.snapshotSupplier = snapshotSupplier;
+    }
+
+    /**
+     * Returns the engine-specific analysis result.
+     * Set by advanced engines (Stress, Spike, Soak, Breakpoint, Scalability)
+     * before returning from doExecute().
+     */
+    public EngineAnalysisResult getAnalysisResult() {
+        return analysisResult;
+    }
+
+    public void setAnalysisResult(EngineAnalysisResult analysisResult) {
+        this.analysisResult = analysisResult;
     }
 
 }

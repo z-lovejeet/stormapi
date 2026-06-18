@@ -1,5 +1,6 @@
 package com.stormapi.test.service;
 
+import com.stormapi.engine.analysis.EngineAnalysisResult;
 import com.stormapi.engine.TestEngine;
 import com.stormapi.engine.TestEngineFactory;
 import com.stormapi.engine.context.ExecutionContext;
@@ -158,6 +159,7 @@ public class TestOrchestrator {
         TestEngine engine = null;
         List<MetricSnapshot> snapshotBuffer = new ArrayList<>();
         TestStatus finalStatus = TestStatus.COMPLETED;
+        EngineAnalysisResult analysisResult = null;
 
         try {
             // 1. Load config (fresh read — avoid stale state)
@@ -179,6 +181,7 @@ public class TestOrchestrator {
 
             context = new ExecutionContext(spec, thinkTime, metricsCollector::recordResult);
             context.setMaxRetries(config.getMaxRetries());
+            context.setSnapshotSupplier(metricsCollector::snapshot);
             contextRef.set(context);
 
             engine = TestEngineFactory.create(config.getTestType());
@@ -214,6 +217,9 @@ public class TestOrchestrator {
             context.start();
             engine.execute(context, config);
 
+            // 7. Read engine-specific analysis result (Phase 7 engines)
+            analysisResult = context.getAnalysisResult();
+
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             finalStatus = TestStatus.CANCELLED;
@@ -245,7 +251,7 @@ public class TestOrchestrator {
 
             // 10. Persist results
             try {
-                persistResults(resultId, configId, metricsCollector, snapshotBuffer, finalStatus);
+                persistResults(resultId, configId, metricsCollector, snapshotBuffer, finalStatus, analysisResult);
             } catch (Exception e) {
                 log.error("Failed to persist results for test {}: {}", configId, e.getMessage(), e);
             }
@@ -262,7 +268,8 @@ public class TestOrchestrator {
     private void persistResults(Long resultId, Long configId,
                                 MetricsCollector metricsCollector,
                                 List<MetricSnapshot> snapshotBuffer,
-                                TestStatus finalStatus) {
+                                TestStatus finalStatus,
+                                EngineAnalysisResult analysisResult) {
         // Flush remaining snapshots
         if (!snapshotBuffer.isEmpty()) {
             flushSnapshots(snapshotBuffer);
@@ -282,6 +289,14 @@ public class TestOrchestrator {
             result.setThroughputRps(elapsedSeconds > 0
                     ? finalSnapshot.totalRequests() / elapsedSeconds
                     : 0.0);
+
+            // Apply engine-specific analysis results
+            if (analysisResult != null) {
+                result.setBreakpointUsers(analysisResult.breakpointUsers());
+                result.setRecoveryTimeMs(analysisResult.recoveryTimeMs());
+                result.setDegradationSlope(analysisResult.degradationSlope());
+                result.setDegradationDetected(analysisResult.degradationDetected());
+            }
 
             testResultRepository.save(result);
         }

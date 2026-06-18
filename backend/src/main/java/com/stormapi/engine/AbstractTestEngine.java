@@ -121,9 +121,48 @@ public abstract class AbstractTestEngine implements TestEngine {
      * @param seconds total seconds to sleep
      */
     protected void sleepInterruptibly(int seconds) throws InterruptedException {
-        for (int i = 0; i < seconds; i++) {
-            if (stopped) return;
-            Thread.sleep(1000);
+        sleepInterruptibly(seconds * 1000L);
+    }
+
+    /**
+     * Sleeps for the specified duration in chunks, checking the stopped flag
+     * between each chunk for prompt cancellation response.
+     *
+     * @param millis total milliseconds to sleep
+     */
+    protected void sleepInterruptibly(long millis) throws InterruptedException {
+        long remaining = millis;
+        while (remaining > 0 && !stopped) {
+            long chunk = Math.min(remaining, 1000L);
+            Thread.sleep(chunk);
+            remaining -= chunk;
+        }
+    }
+
+    /**
+     * Removes the last {@code count} user threads by interrupting them.
+     * Used by SpikeTestEngine (drop spike users) and BreakpointTestEngine
+     * (reduce users during binary search refinement).
+     *
+     * Interrupted threads exit via the InterruptedException catch in
+     * VirtualUserSimulator.run() — the finally block decrements activeUsers.
+     *
+     * @param count number of users to remove (from the tail of the list)
+     */
+    protected void removeUsers(int count) {
+        int size = userThreads.size();
+        int toRemove = Math.min(count, size);
+
+        // Interrupt from the tail — LIFO order
+        for (int i = size - 1; i >= size - toRemove; i--) {
+            Thread thread = userThreads.get(i);
+            thread.interrupt();
+        }
+
+        // Remove interrupted threads from tracking list
+        // CopyOnWriteArrayList: removal creates a new copy — safe during iteration
+        for (int i = size - 1; i >= size - toRemove; i--) {
+            userThreads.remove(i);
         }
     }
 

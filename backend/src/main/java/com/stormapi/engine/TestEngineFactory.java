@@ -1,6 +1,11 @@
 package com.stormapi.engine;
 
+import com.stormapi.engine.breakpoint.BreakpointTestEngine;
 import com.stormapi.engine.load.LoadTestEngine;
+import com.stormapi.engine.scalability.ScalabilityTestEngine;
+import com.stormapi.engine.soak.SoakTestEngine;
+import com.stormapi.engine.spike.SpikeTestEngine;
+import com.stormapi.engine.stress.StressTestEngine;
 import com.stormapi.test.model.TestType;
 
 /**
@@ -26,10 +31,12 @@ public final class TestEngineFactory {
      */
     public static TestEngine create(TestType type) {
         return switch (type) {
-            case LOAD -> new LoadTestEngine();
-            case STRESS, SPIKE, SOAK, BREAKPOINT, SCALABILITY ->
-                    throw new UnsupportedOperationException(
-                            "Engine for " + type + " not yet implemented (Phase 7)");
+            case LOAD        -> new LoadTestEngine();
+            case STRESS      -> new StressTestEngine();
+            case SPIKE       -> new SpikeTestEngine();
+            case SOAK        -> new SoakTestEngine();
+            case BREAKPOINT  -> new BreakpointTestEngine();
+            case SCALABILITY -> new ScalabilityTestEngine();
         };
     }
 

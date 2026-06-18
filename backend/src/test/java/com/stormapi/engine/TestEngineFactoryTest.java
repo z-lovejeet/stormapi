@@ -1,6 +1,11 @@
 package com.stormapi.engine;
 
+import com.stormapi.engine.breakpoint.BreakpointTestEngine;
 import com.stormapi.engine.load.LoadTestEngine;
+import com.stormapi.engine.scalability.ScalabilityTestEngine;
+import com.stormapi.engine.soak.SoakTestEngine;
+import com.stormapi.engine.spike.SpikeTestEngine;
+import com.stormapi.engine.stress.StressTestEngine;
 import com.stormapi.test.model.TestType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,38 +25,48 @@ class TestEngineFactoryTest {
     }
 
     @Test
-    @DisplayName("create(STRESS) throws UnsupportedOperationException")
-    void create_stress_throwsUnsupported() {
-        assertThrows(UnsupportedOperationException.class,
-                () -> TestEngineFactory.create(TestType.STRESS));
+    @DisplayName("create(STRESS) returns StressTestEngine")
+    void create_stress_returnsStressTestEngine() {
+        TestEngine engine = TestEngineFactory.create(TestType.STRESS);
+        assertNotNull(engine);
+        assertInstanceOf(StressTestEngine.class, engine);
+        assertEquals(TestType.STRESS, engine.getSupportedType());
     }
 
     @Test
-    @DisplayName("create(SPIKE) throws UnsupportedOperationException")
-    void create_spike_throwsUnsupported() {
-        assertThrows(UnsupportedOperationException.class,
-                () -> TestEngineFactory.create(TestType.SPIKE));
+    @DisplayName("create(SPIKE) returns SpikeTestEngine")
+    void create_spike_returnsSpikeTestEngine() {
+        TestEngine engine = TestEngineFactory.create(TestType.SPIKE);
+        assertNotNull(engine);
+        assertInstanceOf(SpikeTestEngine.class, engine);
+        assertEquals(TestType.SPIKE, engine.getSupportedType());
     }
 
     @Test
-    @DisplayName("create(SOAK) throws UnsupportedOperationException")
-    void create_soak_throwsUnsupported() {
-        assertThrows(UnsupportedOperationException.class,
-                () -> TestEngineFactory.create(TestType.SOAK));
+    @DisplayName("create(SOAK) returns SoakTestEngine")
+    void create_soak_returnsSoakTestEngine() {
+        TestEngine engine = TestEngineFactory.create(TestType.SOAK);
+        assertNotNull(engine);
+        assertInstanceOf(SoakTestEngine.class, engine);
+        assertEquals(TestType.SOAK, engine.getSupportedType());
     }
 
     @Test
-    @DisplayName("create(BREAKPOINT) throws UnsupportedOperationException")
-    void create_breakpoint_throwsUnsupported() {
-        assertThrows(UnsupportedOperationException.class,
-                () -> TestEngineFactory.create(TestType.BREAKPOINT));
+    @DisplayName("create(BREAKPOINT) returns BreakpointTestEngine")
+    void create_breakpoint_returnsBreakpointTestEngine() {
+        TestEngine engine = TestEngineFactory.create(TestType.BREAKPOINT);
+        assertNotNull(engine);
+        assertInstanceOf(BreakpointTestEngine.class, engine);
+        assertEquals(TestType.BREAKPOINT, engine.getSupportedType());
     }
 
     @Test
-    @DisplayName("create(SCALABILITY) throws UnsupportedOperationException")
-    void create_scalability_throwsUnsupported() {
-        assertThrows(UnsupportedOperationException.class,
-                () -> TestEngineFactory.create(TestType.SCALABILITY));
+    @DisplayName("create(SCALABILITY) returns ScalabilityTestEngine")
+    void create_scalability_returnsScalabilityTestEngine() {
+        TestEngine engine = TestEngineFactory.create(TestType.SCALABILITY);
+        assertNotNull(engine);
+        assertInstanceOf(ScalabilityTestEngine.class, engine);
+        assertEquals(TestType.SCALABILITY, engine.getSupportedType());
     }
 
 }

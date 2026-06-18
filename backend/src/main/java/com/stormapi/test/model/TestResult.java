@@ -141,6 +141,15 @@ public class TestResult extends BaseEntity {
     /** Users at breaking point — populated only for BREAKPOINT test type */
     private Integer breakpointUsers;
 
+    /** Recovery time in ms — populated only for SPIKE test type. -1 = never recovered */
+    private Long recoveryTimeMs;
+
+    /** Latency drift slope (ms/sec) — populated only for SOAK test type */
+    private Double degradationSlope;
+
+    /** Whether degradation was detected — populated only for SOAK test type */
+    private Boolean degradationDetected;
+
     // ── Relationships ──
 
     /** Time-series metric snapshots (1 per second during test) */
