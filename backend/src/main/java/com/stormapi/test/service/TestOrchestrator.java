@@ -1,0 +1,351 @@
+package com.stormapi.test.service;
+
+import com.stormapi.engine.TestEngine;
+import com.stormapi.engine.TestEngineFactory;
+import com.stormapi.engine.context.ExecutionContext;
+import com.stormapi.engine.http.RequestSpec;
+import com.stormapi.engine.metrics.LiveMetricsSnapshot;
+import com.stormapi.engine.metrics.MetricsCollector;
+import com.stormapi.engine.user.ThinkTimeStrategy;
+import com.stormapi.metrics.model.MetricSnapshot;
+import com.stormapi.metrics.repository.MetricSnapshotRepository;
+import com.stormapi.test.model.TestConfig;
+import com.stormapi.test.model.TestResult;
+import com.stormapi.test.model.TestStatus;
+import com.stormapi.test.repository.TestConfigRepository;
+import com.stormapi.test.repository.TestResultRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Duration;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
+/**
+ * The lifecycle coordinator for all test executions.
+ *
+ * Manages the full lifecycle:
+ * validation → setup → execution → snapshot collection → result aggregation → persistence → cleanup
+ *
+ * This is the most important class in the application. It connects:
+ * - Domain model (TestConfig, TestResult, MetricSnapshot)
+ * - Engine layer (TestEngine, ExecutionContext, MetricsCollector)
+ * - Persistence layer (Spring Data repositories)
+ *
+ * Thread model:
+ * - {@link #startTest} runs on the Spring MVC request thread (returns immediately)
+ * - The actual test runs on a dedicated virtual thread
+ * - Each running test has its own snapshot timer thread
+ * - Virtual user threads are managed by the engine
+ *
+ * Concurrency:
+ * - {@code runningTests} is a ConcurrentHashMap — thread-safe for concurrent start/stop
+ * - Each test run is isolated — no shared mutable state between tests
+ */
+@Service
+public class TestOrchestrator {
+
+    private static final Logger log = LoggerFactory.getLogger(TestOrchestrator.class);
+    private static final int SNAPSHOT_FLUSH_INTERVAL = 60; // flush every 60 snapshots (~1 minute)
+
+    private final TestConfigRepository testConfigRepository;
+    private final TestResultRepository testResultRepository;
+    private final MetricSnapshotRepository metricSnapshotRepository;
+
+    private final ConcurrentHashMap<Long, RunningTestHandle> runningTests = new ConcurrentHashMap<>();
+
+    public TestOrchestrator(TestConfigRepository testConfigRepository,
+                            TestResultRepository testResultRepository,
+                            MetricSnapshotRepository metricSnapshotRepository) {
+        this.testConfigRepository = testConfigRepository;
+        this.testResultRepository = testResultRepository;
+        this.metricSnapshotRepository = metricSnapshotRepository;
+    }
+
+    /**
+     * Starts a test execution asynchronously.
+     *
+     * Validates the config, creates a TestResult, and launches the engine
+     * on a virtual thread. Returns the TestResult ID immediately.
+     *
+     * @param configId the test configuration ID
+     * @return the created TestResult ID
+     * @throws IllegalArgumentException if config not found or invalid
+     * @throws IllegalStateException if test is already running
+     */
+    public Long startTest(Long configId) {
+        // 1. Load and validate
+        TestConfig config = testConfigRepository.findById(configId)
+                .orElseThrow(() -> new IllegalArgumentException("TestConfig not found: " + configId));
+
+        validateConfig(config);
+
+        if (runningTests.containsKey(configId)) {
+            throw new IllegalStateException("Test is already running for config: " + configId);
+        }
+
+        // 2. Create TestResult with RUNNING status
+        TestResult result = TestResult.builder()
+                .testConfig(config)
+                .status(TestStatus.RUNNING)
+                .startedAt(Instant.now())
+                .build();
+        result = testResultRepository.save(result);
+
+        // 3. Update config status
+        config.setStatus(TestStatus.RUNNING);
+        testConfigRepository.save(config);
+
+        // 4. Launch on virtual thread
+        final Long resultId = result.getId();
+        Thread executionThread = Thread.ofVirtual()
+                .name("storm-test-" + configId)
+                .start(() -> runTest(configId, resultId));
+
+        log.info("Started test for config {} → result {}", configId, resultId);
+        return resultId;
+    }
+
+    /**
+     * Stops a running test gracefully.
+     * The engine and context are signaled to stop. The execution thread's
+     * finally block handles persistence and cleanup.
+     *
+     * @param configId the test configuration ID
+     * @throws IllegalStateException if no test is running for this config
+     */
+    public void stopTest(Long configId) {
+        RunningTestHandle handle = runningTests.get(configId);
+        if (handle == null) {
+            throw new IllegalStateException("No running test for config: " + configId);
+        }
+
+        log.info("Stopping test for config {}", configId);
+        handle.engine().stop();
+        handle.context().stop();
+    }
+
+    /**
+     * Returns true if a test is currently running for the given config.
+     */
+    public boolean isRunning(Long configId) {
+        return runningTests.containsKey(configId);
+    }
+
+    // ── Private Lifecycle Methods ──────────────────────────────────
+
+    /**
+     * The main test execution flow. Runs on a virtual thread.
+     * Handles the full lifecycle with guaranteed cleanup via try/finally.
+     */
+    private void runTest(Long configId, Long resultId) {
+        ScheduledExecutorService snapshotTimer = null;
+        TestConfig config = null;
+        MetricsCollector metricsCollector = null;
+        ExecutionContext context = null;
+        TestEngine engine = null;
+        List<MetricSnapshot> snapshotBuffer = new ArrayList<>();
+        TestStatus finalStatus = TestStatus.COMPLETED;
+
+        try {
+            // 1. Load config (fresh read — avoid stale state)
+            config = testConfigRepository.findById(configId)
+                    .orElseThrow(() -> new IllegalStateException("Config disappeared: " + configId));
+
+            // 2. Build engine components
+            RequestSpec spec = RequestSpec.fromTestConfig(config);
+            ThinkTimeStrategy thinkTime = ThinkTimeStrategy.fromConfig(config);
+
+            context = new ExecutionContext(spec, thinkTime, null); // consumer wired below
+            metricsCollector = new MetricsCollector(context::getActiveUsers);
+
+            // Wire the result consumer to the metrics collector
+            ExecutionContext finalContext = new ExecutionContext(spec, thinkTime, metricsCollector::recordResult);
+            finalContext.setMaxRetries(config.getMaxRetries());
+            context = finalContext;
+
+            engine = TestEngineFactory.create(config.getTestType());
+
+            // 3. Register running test
+            RunningTestHandle handle = new RunningTestHandle(context, engine, resultId);
+            runningTests.put(configId, handle);
+
+            // 4. Load the TestResult for snapshot FK
+            final TestResult testResult = testResultRepository.findById(resultId)
+                    .orElseThrow(() -> new IllegalStateException("TestResult disappeared: " + resultId));
+
+            // 5. Start snapshot timer (1 snapshot per second)
+            final MetricsCollector mc = metricsCollector;
+            snapshotTimer = Executors.newSingleThreadScheduledExecutor(
+                    Thread.ofVirtual().name("storm-snapshot-" + configId).factory());
+
+            snapshotTimer.scheduleAtFixedRate(() -> {
+                try {
+                    LiveMetricsSnapshot snap = mc.snapshot();
+                    MetricSnapshot entity = mapToSnapshotEntity(snap, testResult);
+                    snapshotBuffer.add(entity);
+
+                    // Periodic flush for long-running tests
+                    if (snapshotBuffer.size() % SNAPSHOT_FLUSH_INTERVAL == 0) {
+                        flushSnapshots(snapshotBuffer);
+                    }
+                } catch (Exception e) {
+                    log.warn("Failed to capture metric snapshot", e);
+                }
+            }, 1, 1, TimeUnit.SECONDS);
+
+            // 6. Start context and execute
+            context.start();
+            engine.execute(context, config);
+
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            finalStatus = TestStatus.CANCELLED;
+            log.info("Test {} was interrupted (cancelled)", configId);
+        } catch (Exception e) {
+            finalStatus = TestStatus.FAILED;
+            log.error("Test {} failed with error: {}", configId, e.getMessage(), e);
+        } finally {
+            // 7. Shutdown snapshot timer
+            if (snapshotTimer != null) {
+                snapshotTimer.shutdown();
+                try {
+                    snapshotTimer.awaitTermination(5, TimeUnit.SECONDS);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+
+            // 8. Ensure context is stopped
+            if (context != null) {
+                context.stop();
+            }
+
+            // 9. Persist results
+            try {
+                persistResults(resultId, configId, metricsCollector, snapshotBuffer, finalStatus);
+            } catch (Exception e) {
+                log.error("Failed to persist results for test {}: {}", configId, e.getMessage(), e);
+            }
+
+            // 10. Cleanup
+            runningTests.remove(configId);
+            log.info("Test {} completed with status {}", configId, finalStatus);
+        }
+    }
+
+    /**
+     * Persists final metrics to TestResult and flushes any remaining snapshots.
+     */
+    private void persistResults(Long resultId, Long configId,
+                                MetricsCollector metricsCollector,
+                                List<MetricSnapshot> snapshotBuffer,
+                                TestStatus finalStatus) {
+        // Flush remaining snapshots
+        if (!snapshotBuffer.isEmpty()) {
+            flushSnapshots(snapshotBuffer);
+        }
+
+        // Update TestResult with final metrics
+        TestResult result = testResultRepository.findById(resultId).orElse(null);
+        if (result != null && metricsCollector != null) {
+            LiveMetricsSnapshot finalSnapshot = metricsCollector.snapshot();
+            mapSnapshotToResult(finalSnapshot, result);
+            result.setStatus(finalStatus);
+            result.setCompletedAt(Instant.now());
+            result.setDurationMs(Duration.between(result.getStartedAt(), result.getCompletedAt()).toMillis());
+
+            // Compute overall throughput from total elapsed time
+            double elapsedSeconds = result.getDurationMs() / 1000.0;
+            result.setThroughputRps(elapsedSeconds > 0
+                    ? finalSnapshot.totalRequests() / elapsedSeconds
+                    : 0.0);
+
+            testResultRepository.save(result);
+        }
+
+        // Update TestConfig status
+        TestConfig config = testConfigRepository.findById(configId).orElse(null);
+        if (config != null) {
+            config.setStatus(finalStatus == TestStatus.CANCELLED ? TestStatus.CREATED : finalStatus);
+            testConfigRepository.save(config);
+        }
+    }
+
+    // ── Mapping Methods ────────────────────────────────────────────
+
+    private void mapSnapshotToResult(LiveMetricsSnapshot snapshot, TestResult result) {
+        result.setTotalRequests(snapshot.totalRequests());
+        result.setSuccessCount(snapshot.successCount());
+        result.setFailureCount(snapshot.failureCount());
+        result.setAvgResponseTimeMs(snapshot.avgResponseTimeMs());
+        result.setMinResponseTimeMs(snapshot.minResponseTimeMs());
+        result.setMaxResponseTimeMs(snapshot.maxResponseTimeMs());
+        result.setP50Ms(snapshot.p50Ms());
+        result.setP75Ms(snapshot.p75Ms());
+        result.setP90Ms(snapshot.p90Ms());
+        result.setP95Ms(snapshot.p95Ms());
+        result.setP99Ms(snapshot.p99Ms());
+        result.setErrorRate(snapshot.errorRate());
+        result.setTotalDataBytes(snapshot.totalDataBytes());
+    }
+
+    private MetricSnapshot mapToSnapshotEntity(LiveMetricsSnapshot snapshot, TestResult testResult) {
+        return MetricSnapshot.builder()
+                .testResult(testResult)
+                .timestamp(snapshot.timestamp())
+                .activeUsers(snapshot.activeUsers())
+                .requestsPerSecond(snapshot.throughputRps())
+                .avgResponseTimeMs(snapshot.avgResponseTimeMs())
+                .errorRate(snapshot.errorRate())
+                .p95Ms(snapshot.p95Ms())
+                .cumulativeRequests(snapshot.totalRequests())
+                .cumulativeErrors(snapshot.failureCount())
+                .build();
+    }
+
+    // ── Helpers ────────────────────────────────────────────────────
+
+    private void validateConfig(TestConfig config) {
+        if (config.getTargetUrl() == null || config.getTargetUrl().isBlank()) {
+            throw new IllegalArgumentException("Target URL must not be empty");
+        }
+        if (config.getVirtualUsers() <= 0) {
+            throw new IllegalArgumentException("Virtual users must be > 0");
+        }
+        if (config.getDurationSeconds() <= 0) {
+            throw new IllegalArgumentException("Duration must be > 0");
+        }
+        if (config.getTestType() == null) {
+            throw new IllegalArgumentException("Test type must not be null");
+        }
+    }
+
+    private void flushSnapshots(List<MetricSnapshot> buffer) {
+        try {
+            metricSnapshotRepository.saveAll(new ArrayList<>(buffer));
+            buffer.clear();
+        } catch (Exception e) {
+            log.warn("Failed to flush metric snapshots: {}", e.getMessage());
+        }
+    }
+
+    // ── Inner Record ───────────────────────────────────────────────
+
+    /**
+     * Tracks a running test's key components for stop/status operations.
+     */
+    private record RunningTestHandle(
+            ExecutionContext context,
+            TestEngine engine,
+            Long testResultId
+    ) {}
+
+}
