@@ -1,5 +1,9 @@
 package com.stormapi.test.service;
 
+import com.stormapi.common.exception.InvalidTestConfigException;
+import com.stormapi.common.exception.InvalidStateTransitionException;
+import com.stormapi.common.exception.ResourceNotFoundException;
+import com.stormapi.common.exception.TestAlreadyRunningException;
 import com.stormapi.engine.analysis.EngineAnalysisResult;
 import com.stormapi.engine.TestEngine;
 import com.stormapi.engine.TestEngineFactory;
@@ -85,12 +89,12 @@ public class TestOrchestrator {
     public Long startTest(Long configId) {
         // 1. Load and validate
         TestConfig config = testConfigRepository.findById(configId)
-                .orElseThrow(() -> new IllegalArgumentException("TestConfig not found: " + configId));
+                .orElseThrow(() -> new ResourceNotFoundException("TestConfig", configId));
 
         validateConfig(config);
 
         if (runningTests.containsKey(configId)) {
-            throw new IllegalStateException("Test is already running for config: " + configId);
+            throw new TestAlreadyRunningException(configId);
         }
 
         // 2. Create TestResult with RUNNING status
@@ -129,7 +133,7 @@ public class TestOrchestrator {
     public void stopTest(Long configId) {
         RunningTestHandle handle = runningTests.get(configId);
         if (handle == null) {
-            throw new IllegalStateException("No running test for config: " + configId);
+            throw new InvalidStateTransitionException("No running test for config: " + configId);
         }
 
         log.info("Stopping test for config {}", configId);
@@ -345,16 +349,16 @@ public class TestOrchestrator {
 
     private void validateConfig(TestConfig config) {
         if (config.getTargetUrl() == null || config.getTargetUrl().isBlank()) {
-            throw new IllegalArgumentException("Target URL must not be empty");
+            throw new InvalidTestConfigException("Target URL must not be empty");
         }
         if (config.getVirtualUsers() <= 0) {
-            throw new IllegalArgumentException("Virtual users must be > 0");
+            throw new InvalidTestConfigException("Virtual users must be > 0");
         }
         if (config.getDurationSeconds() <= 0) {
-            throw new IllegalArgumentException("Duration must be > 0");
+            throw new InvalidTestConfigException("Duration must be > 0");
         }
         if (config.getTestType() == null) {
-            throw new IllegalArgumentException("Test type must not be null");
+            throw new InvalidTestConfigException("Test type must not be null");
         }
     }
 

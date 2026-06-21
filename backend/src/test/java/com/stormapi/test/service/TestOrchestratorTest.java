@@ -1,5 +1,9 @@
 package com.stormapi.test.service;
 
+import com.stormapi.common.exception.InvalidStateTransitionException;
+import com.stormapi.common.exception.InvalidTestConfigException;
+import com.stormapi.common.exception.ResourceNotFoundException;
+import com.stormapi.common.exception.TestAlreadyRunningException;
 import com.stormapi.metrics.model.MetricSnapshot;
 import com.stormapi.metrics.repository.MetricSnapshotRepository;
 import com.stormapi.test.model.*;
@@ -158,11 +162,11 @@ class TestOrchestratorTest {
         config = testConfigRepository.save(config);
 
         Long configId = config.getId();
-        assertThrows(IllegalArgumentException.class, () -> orchestrator.startTest(configId));
+        assertThrows(InvalidTestConfigException.class, () -> orchestrator.startTest(configId));
     }
 
     @Test
-    @DisplayName("startTest — zero users throws IllegalArgumentException")
+    @DisplayName("startTest — zero users throws InvalidTestConfigException")
     void startTest_zeroUsers_throws() {
         TestConfig config = TestConfig.builder()
                 .name("Bad Test").targetUrl("http://localhost:9999")
@@ -171,18 +175,18 @@ class TestOrchestratorTest {
         config = testConfigRepository.save(config);
 
         Long configId = config.getId();
-        assertThrows(IllegalArgumentException.class, () -> orchestrator.startTest(configId));
+        assertThrows(InvalidTestConfigException.class, () -> orchestrator.startTest(configId));
     }
 
     @Test
-    @DisplayName("startTest — nonexistent config throws IllegalArgumentException")
+    @DisplayName("startTest — nonexistent config throws ResourceNotFoundException")
     void startTest_configNotFound_throws() {
-        assertThrows(IllegalArgumentException.class, () -> orchestrator.startTest(999999L));
+        assertThrows(ResourceNotFoundException.class, () -> orchestrator.startTest(999999L));
     }
 
     @Test
     @Timeout(15)
-    @DisplayName("startTest — duplicate start throws IllegalStateException")
+    @DisplayName("startTest — duplicate start throws TestAlreadyRunningException")
     void startTest_alreadyRunning_throws() throws InterruptedException {
         TestConfig config = createConfig(3, 10, 0);
         orchestrator.startTest(config.getId());
@@ -191,7 +195,7 @@ class TestOrchestratorTest {
         Thread.sleep(500);
 
         Long configId = config.getId();
-        assertThrows(IllegalStateException.class, () -> orchestrator.startTest(configId));
+        assertThrows(TestAlreadyRunningException.class, () -> orchestrator.startTest(configId));
 
         // Cleanup
         orchestrator.stopTest(config.getId());
@@ -201,9 +205,9 @@ class TestOrchestratorTest {
     // ── Stop Edge Cases ────────────────────────────────────────────
 
     @Test
-    @DisplayName("stopTest — no running test throws IllegalStateException")
+    @DisplayName("stopTest — no running test throws InvalidStateTransitionException")
     void stopTest_noRunningTest_throws() {
-        assertThrows(IllegalStateException.class, () -> orchestrator.stopTest(99999L));
+        assertThrows(InvalidStateTransitionException.class, () -> orchestrator.stopTest(99999L));
     }
 
     @Test

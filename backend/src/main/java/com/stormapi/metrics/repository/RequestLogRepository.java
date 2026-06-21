@@ -17,6 +17,8 @@ public interface RequestLogRepository extends JpaRepository<RequestLog, Long> {
 
     Page<RequestLog> findByTestResultIdOrderByTimestampAsc(Long resultId, Pageable pageable);
 
+    Page<RequestLog> findByTestResultIdAndSuccessOrderByTimestampAsc(Long resultId, boolean success, Pageable pageable);
+
     long countByTestResultIdAndSuccess(Long resultId, boolean success);
 
     @Modifying
