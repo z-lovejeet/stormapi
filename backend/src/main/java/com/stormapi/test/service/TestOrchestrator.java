@@ -8,6 +8,7 @@ import com.stormapi.engine.analysis.EngineAnalysisResult;
 import com.stormapi.engine.TestEngine;
 import com.stormapi.engine.TestEngineFactory;
 import com.stormapi.engine.context.ExecutionContext;
+import com.stormapi.engine.http.RequestResult;
 import com.stormapi.engine.http.RequestSpec;
 import com.stormapi.engine.metrics.LiveMetricsSnapshot;
 import com.stormapi.engine.metrics.MetricsCollector;
@@ -19,6 +20,10 @@ import com.stormapi.test.model.TestResult;
 import com.stormapi.test.model.TestStatus;
 import com.stormapi.test.repository.TestConfigRepository;
 import com.stormapi.test.repository.TestResultRepository;
+import com.stormapi.websocket.broadcast.LiveMetricsBroadcaster;
+import com.stormapi.websocket.broadcast.RequestLogBroadcaster;
+import com.stormapi.websocket.broadcast.TestEventPublisher;
+import com.stormapi.websocket.dto.TestEventType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -28,10 +33,12 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 /**
  * The lifecycle coordinator for all test executions.
@@ -63,16 +70,25 @@ public class TestOrchestrator {
     private final TestConfigRepository testConfigRepository;
     private final TestResultRepository testResultRepository;
     private final MetricSnapshotRepository metricSnapshotRepository;
+    private final LiveMetricsBroadcaster liveMetricsBroadcaster;
+    private final RequestLogBroadcaster requestLogBroadcaster;
+    private final TestEventPublisher testEventPublisher;
 
     private final ConcurrentHashMap<Long, RunningTestHandle> runningTests = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<Long, java.util.concurrent.atomic.AtomicBoolean> cancelFlags = new ConcurrentHashMap<>();
 
     public TestOrchestrator(TestConfigRepository testConfigRepository,
                             TestResultRepository testResultRepository,
-                            MetricSnapshotRepository metricSnapshotRepository) {
+                            MetricSnapshotRepository metricSnapshotRepository,
+                            LiveMetricsBroadcaster liveMetricsBroadcaster,
+                            RequestLogBroadcaster requestLogBroadcaster,
+                            TestEventPublisher testEventPublisher) {
         this.testConfigRepository = testConfigRepository;
         this.testResultRepository = testResultRepository;
         this.metricSnapshotRepository = metricSnapshotRepository;
+        this.liveMetricsBroadcaster = liveMetricsBroadcaster;
+        this.requestLogBroadcaster = requestLogBroadcaster;
+        this.testEventPublisher = testEventPublisher;
     }
 
     /**
@@ -114,6 +130,13 @@ public class TestOrchestrator {
         cancelFlags.put(configId, new java.util.concurrent.atomic.AtomicBoolean(false));
         runningTests.put(configId, new RunningTestHandle(null, null, resultId));
 
+        // 5. Publish TEST_STARTED event via WebSocket
+        testEventPublisher.publishEvent(configId, TestEventType.TEST_STARTED,
+                "Test started",
+                Map.of("resultId", resultId,
+                        "testType", config.getTestType().name(),
+                        "virtualUsers", config.getVirtualUsers()));
+
         Thread.ofVirtual()
                 .name("storm-test-" + configId)
                 .start(() -> runTest(configId, resultId));
@@ -140,6 +163,10 @@ public class TestOrchestrator {
         cancelFlags.computeIfAbsent(configId, k -> new java.util.concurrent.atomic.AtomicBoolean()).set(true);
         if (handle.engine() != null) handle.engine().stop();
         if (handle.context() != null) handle.context().stop();
+
+        // Publish TEST_STOPPED event via WebSocket
+        testEventPublisher.publishEvent(configId, TestEventType.TEST_STOPPED,
+                "Test stopped by user", Map.of());
     }
 
     /**
@@ -183,7 +210,21 @@ public class TestOrchestrator {
                 return ctx != null ? ctx.getActiveUsers() : 0;
             });
 
-            context = new ExecutionContext(spec, thinkTime, metricsCollector::recordResult);
+            // Composite consumer: feeds both MetricsCollector and RequestLogBroadcaster
+            final MetricsCollector mc = metricsCollector;
+            requestLogBroadcaster.startCapturing(configId);
+            Consumer<RequestResult> logConsumer = requestLogBroadcaster.createConsumer(
+                    configId, spec.url(), spec.method());
+            Consumer<RequestResult> compositeConsumer = result -> {
+                mc.recordResult(result);
+                try {
+                    logConsumer.accept(result);
+                } catch (Exception ex) {
+                    // Never let log capture failures affect metrics
+                }
+            };
+
+            context = new ExecutionContext(spec, thinkTime, compositeConsumer);
             context.setMaxRetries(config.getMaxRetries());
             context.setSnapshotSupplier(metricsCollector::snapshot);
             contextRef.set(context);
@@ -193,20 +234,36 @@ public class TestOrchestrator {
             // 3. Update handle with real references (placeholder was set in startTest)
             runningTests.put(configId, new RunningTestHandle(context, engine, resultId));
 
+            // 4. Start WebSocket metrics broadcasting
+            liveMetricsBroadcaster.startBroadcasting(configId);
+
             // 4. Load the TestResult for snapshot FK
             final TestResult testResult = testResultRepository.findById(resultId)
                     .orElseThrow(() -> new IllegalStateException("TestResult disappeared: " + resultId));
 
             // 5. Start snapshot timer (1 snapshot per second)
-            final MetricsCollector mc = metricsCollector;
             snapshotTimer = Executors.newSingleThreadScheduledExecutor(
                     Thread.ofVirtual().name("storm-snapshot-" + configId).factory());
 
+            final Long wsConfigId = configId;
             snapshotTimer.scheduleAtFixedRate(() -> {
                 try {
                     LiveMetricsSnapshot snap = mc.snapshot();
                     MetricSnapshot entity = mapToSnapshotEntity(snap, testResult);
                     snapshotBuffer.add(entity);
+
+                    // Broadcast metrics and logs via WebSocket
+                    liveMetricsBroadcaster.broadcast(wsConfigId, snap);
+                    requestLogBroadcaster.flush(wsConfigId);
+
+                    // Emit TEST_PROGRESS every 10 seconds
+                    if (snapshotBuffer.size() % 10 == 0) {
+                        testEventPublisher.publishEvent(wsConfigId, TestEventType.TEST_PROGRESS,
+                                "Test in progress",
+                                Map.of("elapsedSeconds", snapshotBuffer.size(),
+                                        "totalRequests", snap.totalRequests(),
+                                        "activeUsers", snap.activeUsers()));
+                    }
 
                     // Periodic flush for long-running tests
                     if (snapshotBuffer.size() % SNAPSHOT_FLUSH_INTERVAL == 0) {
@@ -253,14 +310,36 @@ public class TestOrchestrator {
                 finalStatus = TestStatus.CANCELLED;
             }
 
-            // 10. Persist results
+            // 10. Stop WebSocket broadcasters
+            LiveMetricsSnapshot finalSnapshot = (metricsCollector != null)
+                    ? metricsCollector.snapshot() : null;
+            liveMetricsBroadcaster.stopBroadcasting(configId, finalSnapshot);
+            requestLogBroadcaster.stopCapturing(configId);
+
+            // 11. Publish final lifecycle event
+            TestEventType finalEventType = switch (finalStatus) {
+                case COMPLETED -> TestEventType.TEST_COMPLETED;
+                case FAILED -> TestEventType.TEST_FAILED;
+                case CANCELLED -> TestEventType.TEST_CANCELLED;
+                default -> TestEventType.TEST_COMPLETED;
+            };
+            Map<String, Object> finalMetadata = new java.util.HashMap<>();
+            finalMetadata.put("resultId", resultId);
+            if (finalSnapshot != null) {
+                finalMetadata.put("totalRequests", finalSnapshot.totalRequests());
+                finalMetadata.put("avgResponseTimeMs", finalSnapshot.avgResponseTimeMs());
+            }
+            testEventPublisher.publishEvent(configId, finalEventType,
+                    "Test " + finalStatus.name().toLowerCase(), finalMetadata);
+
+            // 12. Persist results
             try {
                 persistResults(resultId, configId, metricsCollector, snapshotBuffer, finalStatus, analysisResult);
             } catch (Exception e) {
                 log.error("Failed to persist results for test {}: {}", configId, e.getMessage(), e);
             }
 
-            // 11. Cleanup
+            // 13. Cleanup
             runningTests.remove(configId);
             log.info("Test {} completed with status {}", configId, finalStatus);
         }
