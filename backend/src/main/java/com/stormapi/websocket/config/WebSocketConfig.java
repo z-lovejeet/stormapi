@@ -1,8 +1,11 @@
 package com.stormapi.websocket.config;
 
 import com.stormapi.websocket.handler.WebSocketErrorHandler;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
+import org.springframework.scheduling.TaskScheduler;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
@@ -17,6 +20,7 @@ import org.springframework.web.socket.config.annotation.WebSocketTransportRegist
  * - SockJS endpoint at "/ws" with fallback transports
  *
  * Heartbeat: 10-second server/client interval to detect stale connections.
+ * Requires a TaskScheduler for heartbeat management.
  */
 @Configuration
 @EnableWebSocketMessageBroker
@@ -28,10 +32,20 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         this.errorHandler = errorHandler;
     }
 
+    @Bean
+    public TaskScheduler webSocketHeartbeatScheduler() {
+        ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
+        scheduler.setPoolSize(1);
+        scheduler.setThreadNamePrefix("ws-heartbeat-");
+        scheduler.setDaemon(true);
+        return scheduler;
+    }
+
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
         config.enableSimpleBroker("/topic")
-                .setHeartbeatValue(new long[]{10000, 10000});
+                .setHeartbeatValue(new long[]{10000, 10000})
+                .setTaskScheduler(webSocketHeartbeatScheduler());
         config.setApplicationDestinationPrefixes("/app");
     }
 
@@ -53,3 +67,4 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     }
 
 }
+
