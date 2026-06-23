@@ -36,7 +36,7 @@ class WebSocketConcurrencyTest {
                     try {
                         for (int j = 0; j < 10; j++) {
                             broadcaster.captureResult(1L,
-                                    new RequestResult(200, 50.0, 1024, true, null, Instant.now()),
+                                    new RequestResult(200, 50_000_000L, 1024L, true, null, Instant.now()),
                                     "http://example.com", "GET");
                         }
                     } finally {

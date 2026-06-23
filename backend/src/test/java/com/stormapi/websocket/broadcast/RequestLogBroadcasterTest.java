@@ -26,9 +26,9 @@ class RequestLogBroadcasterTest {
         broadcaster = new RequestLogBroadcaster(messagingTemplate);
     }
 
-    private RequestResult createResult(int statusCode, double responseTimeMs) {
+    private RequestResult createResult(int statusCode, long responseTimeNanos) {
         return new RequestResult(
-                statusCode, responseTimeMs, 1024, true,
+                statusCode, responseTimeNanos, 1024L, true,
                 null, Instant.now()
         );
     }
@@ -38,8 +38,8 @@ class RequestLogBroadcasterTest {
     void captureAndFlush_broadcasts() {
         broadcaster.startCapturing(42L);
 
-        broadcaster.captureResult(42L, createResult(200, 50.0), "http://example.com", "GET");
-        broadcaster.captureResult(42L, createResult(200, 60.0), "http://example.com", "GET");
+        broadcaster.captureResult(42L, createResult(200, 50_000_000L), "http://example.com", "GET");
+        broadcaster.captureResult(42L, createResult(200, 60_000_000L), "http://example.com", "GET");
         broadcaster.flush(42L);
 
         ArgumentCaptor<RequestLogMessage> msgCaptor = ArgumentCaptor.forClass(RequestLogMessage.class);
@@ -62,7 +62,7 @@ class RequestLogBroadcasterTest {
     @Test
     @DisplayName("captureResult — not active is no-op")
     void captureResult_notActive_noOp() {
-        broadcaster.captureResult(42L, createResult(200, 50.0), "http://example.com", "GET");
+        broadcaster.captureResult(42L, createResult(200, 50_000_000L), "http://example.com", "GET");
         broadcaster.flush(42L);
 
         verifyNoInteractions(messagingTemplate);
@@ -75,7 +75,7 @@ class RequestLogBroadcasterTest {
 
         // Fill beyond MAX_BUFFER_SIZE
         for (int i = 0; i < RequestLogBroadcaster.MAX_BUFFER_SIZE + 20; i++) {
-            broadcaster.captureResult(42L, createResult(200, i), "http://example.com", "GET");
+            broadcaster.captureResult(42L, createResult(200, (long) i * 1_000_000), "http://example.com", "GET");
         }
 
         broadcaster.flush(42L);
@@ -93,7 +93,7 @@ class RequestLogBroadcasterTest {
         broadcaster.startCapturing(42L);
 
         Consumer<RequestResult> consumer = broadcaster.createConsumer(42L, "http://example.com", "POST");
-        consumer.accept(createResult(201, 30.0));
+        consumer.accept(createResult(201, 30_000_000L));
         broadcaster.flush(42L);
 
         verify(messagingTemplate).convertAndSend(eq("/topic/logs/42"), any(RequestLogMessage.class));
@@ -103,7 +103,7 @@ class RequestLogBroadcasterTest {
     @DisplayName("stopCapturing — drains remaining and broadcasts")
     void stopCapturing_drains() {
         broadcaster.startCapturing(42L);
-        broadcaster.captureResult(42L, createResult(200, 50.0), "http://example.com", "GET");
+        broadcaster.captureResult(42L, createResult(200, 50_000_000L), "http://example.com", "GET");
         broadcaster.stopCapturing(42L);
 
         verify(messagingTemplate).convertAndSend(eq("/topic/logs/42"), any(RequestLogMessage.class));
@@ -124,7 +124,7 @@ class RequestLogBroadcasterTest {
     @DisplayName("flush — exception does not propagate")
     void flush_exceptionSafe() {
         broadcaster.startCapturing(42L);
-        broadcaster.captureResult(42L, createResult(200, 50.0), "http://example.com", "GET");
+        broadcaster.captureResult(42L, createResult(200, 50_000_000L), "http://example.com", "GET");
         doThrow(new RuntimeException("Send failed"))
                 .when(messagingTemplate).convertAndSend(anyString(), any(RequestLogMessage.class));
 
