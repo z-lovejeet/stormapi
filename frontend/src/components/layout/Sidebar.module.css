@@ -1,0 +1,115 @@
+.sidebar {
+  width: var(--storm-sidebar-width);
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--storm-bg-secondary);
+  border-right: 1px solid var(--storm-border-primary);
+  padding: var(--storm-space-4) 0;
+  z-index: 100;
+  transition: width var(--storm-duration-normal) var(--storm-ease-default);
+  overflow: hidden;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: var(--storm-space-3);
+  padding: var(--storm-space-2) var(--storm-space-6);
+  margin-bottom: var(--storm-space-6);
+  text-decoration: none;
+}
+
+.logoIcon {
+  font-size: 1.75rem;
+  flex-shrink: 0;
+}
+
+.logoText {
+  font-size: var(--storm-text-xl);
+  font-weight: var(--storm-weight-bold);
+  background: linear-gradient(135deg, var(--storm-accent-primary), #8b5cf6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  white-space: nowrap;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--storm-space-1);
+  padding: 0 var(--storm-space-3);
+  flex: 1;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: var(--storm-space-3);
+  padding: var(--storm-space-3) var(--storm-space-3);
+  border-radius: var(--storm-radius-md);
+  color: var(--storm-text-secondary);
+  text-decoration: none;
+  font-size: var(--storm-text-sm);
+  font-weight: var(--storm-weight-medium);
+  transition:
+    background-color var(--storm-duration-fast) var(--storm-ease-default),
+    color var(--storm-duration-fast) var(--storm-ease-default);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.navItem:hover {
+  background: var(--storm-bg-tertiary);
+  color: var(--storm-text-primary);
+}
+
+.navItemActive {
+  background: var(--storm-accent-primary-subtle);
+  color: var(--storm-accent-primary);
+}
+
+.navItemActive:hover {
+  background: var(--storm-accent-primary-subtle);
+  color: var(--storm-accent-primary);
+}
+
+.navIcon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+}
+
+.footer {
+  padding: var(--storm-space-4) var(--storm-space-6);
+  border-top: 1px solid var(--storm-border-primary);
+}
+
+.version {
+  font-size: var(--storm-text-xs);
+  color: var(--storm-text-tertiary);
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: var(--storm-sidebar-collapsed);
+  }
+
+  .logoText,
+  .navItem span {
+    display: none;
+  }
+
+  .navItem {
+    justify-content: center;
+    padding: var(--storm-space-3);
+  }
+
+  .footer {
+    display: none;
+  }
+}

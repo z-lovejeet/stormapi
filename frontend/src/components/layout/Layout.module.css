@@ -1,0 +1,25 @@
+.layout {
+  display: grid;
+  grid-template-columns: var(--storm-sidebar-width) 1fr;
+  min-height: 100vh;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+.content {
+  flex: 1;
+  padding: var(--storm-space-6);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+@media (max-width: 768px) {
+  .layout {
+    grid-template-columns: var(--storm-sidebar-collapsed) 1fr;
+  }
+}
