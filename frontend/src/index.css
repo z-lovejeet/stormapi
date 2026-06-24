@@ -1,3 +1,9 @@
+/* ══════════════════════════════════════════════════════════
+   StormAPI Design System
+   CSS Custom Properties, Reset, Typography, Theming
+   ══════════════════════════════════════════════════════════ */
+
+/* ── Reset ──────────────────────────────────────────────── */
 *,
 *::before,
 *::after {
@@ -6,127 +12,269 @@
   padding: 0;
 }
 
+/* ── Light Mode Tokens (default) ───────────────────────── */
 :root {
-  --bg-primary: #0f1117;
-  --bg-secondary: #1a1d26;
-  --bg-tertiary: #242731;
-  --border: #2e3140;
-  --text-primary: #f0f0f5;
-  --text-secondary: #8b8fa3;
-  --accent-blue: #3b82f6;
-  --accent-green: #22c55e;
-  --accent-red: #ef4444;
+  /* Background */
+  --storm-bg-primary: #f8f9fb;
+  --storm-bg-secondary: #ffffff;
+  --storm-bg-tertiary: #f1f3f5;
+  --storm-bg-elevated: #ffffff;
 
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  color: var(--text-primary);
-  background-color: var(--bg-primary);
-  line-height: 1.6;
+  /* Text */
+  --storm-text-primary: #111827;
+  --storm-text-secondary: #6b7280;
+  --storm-text-tertiary: #9ca3af;
+  --storm-text-inverse: #f9fafb;
+
+  /* Border */
+  --storm-border-primary: #e5e7eb;
+  --storm-border-secondary: #f3f4f6;
+  --storm-border-focus: #3b82f6;
+
+  /* Accent */
+  --storm-accent-primary: #3b82f6;
+  --storm-accent-primary-hover: #2563eb;
+  --storm-accent-primary-subtle: rgba(59, 130, 246, 0.1);
+
+  /* Semantic */
+  --storm-success: #16a34a;
+  --storm-success-subtle: rgba(22, 163, 74, 0.1);
+  --storm-warning: #d97706;
+  --storm-warning-subtle: rgba(217, 119, 6, 0.1);
+  --storm-error: #dc2626;
+  --storm-error-subtle: rgba(220, 38, 38, 0.1);
+  --storm-info: #2563eb;
+  --storm-info-subtle: rgba(37, 99, 235, 0.1);
+
+  /* HTTP Method Colors (theme-invariant) */
+  --storm-method-get: #16a34a;
+  --storm-method-post: #2563eb;
+  --storm-method-put: #d97706;
+  --storm-method-delete: #dc2626;
+  --storm-method-patch: #7c3aed;
+  --storm-method-head: #6b7280;
+  --storm-method-options: #6b7280;
+
+  /* Chart Palette */
+  --storm-chart-1: #3b82f6;
+  --storm-chart-2: #8b5cf6;
+  --storm-chart-3: #06b6d4;
+  --storm-chart-4: #f59e0b;
+  --storm-chart-5: #ef4444;
+  --storm-chart-6: #10b981;
+
+  /* Overlay */
+  --storm-overlay: rgba(0, 0, 0, 0.4);
+
+  /* Typography */
+  --storm-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --storm-font-mono: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+  --storm-text-xs: 0.75rem;
+  --storm-text-sm: 0.875rem;
+  --storm-text-base: 1rem;
+  --storm-text-lg: 1.125rem;
+  --storm-text-xl: 1.25rem;
+  --storm-text-2xl: 1.5rem;
+  --storm-text-3xl: 2rem;
+  --storm-weight-regular: 400;
+  --storm-weight-medium: 500;
+  --storm-weight-semibold: 600;
+  --storm-weight-bold: 700;
+  --storm-leading-tight: 1.25;
+  --storm-leading-normal: 1.5;
+  --storm-leading-relaxed: 1.75;
+
+  /* Spacing (4px base) */
+  --storm-space-1: 0.25rem;
+  --storm-space-2: 0.5rem;
+  --storm-space-3: 0.75rem;
+  --storm-space-4: 1rem;
+  --storm-space-5: 1.25rem;
+  --storm-space-6: 1.5rem;
+  --storm-space-8: 2rem;
+  --storm-space-10: 2.5rem;
+  --storm-space-12: 3rem;
+  --storm-space-16: 4rem;
+
+  /* Border Radius */
+  --storm-radius-sm: 4px;
+  --storm-radius-md: 8px;
+  --storm-radius-lg: 12px;
+  --storm-radius-xl: 16px;
+  --storm-radius-full: 9999px;
+
+  /* Shadows */
+  --storm-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --storm-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  --storm-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+  --storm-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+  --storm-shadow-glow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+
+  /* Animation */
+  --storm-duration-fast: 100ms;
+  --storm-duration-normal: 200ms;
+  --storm-duration-slow: 300ms;
+  --storm-ease-default: cubic-bezier(0.4, 0, 0.2, 1);
+  --storm-ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --storm-ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Layout */
+  --storm-sidebar-width: 260px;
+  --storm-sidebar-collapsed: 64px;
+  --storm-header-height: 60px;
+}
+
+/* ── Dark Mode Tokens ──────────────────────────────────── */
+[data-theme="dark"] {
+  /* Background */
+  --storm-bg-primary: #0f1117;
+  --storm-bg-secondary: #1a1d26;
+  --storm-bg-tertiary: #242731;
+  --storm-bg-elevated: #1e2130;
+
+  /* Text */
+  --storm-text-primary: #f0f0f5;
+  --storm-text-secondary: #8b8fa3;
+  --storm-text-tertiary: #5a5e72;
+  --storm-text-inverse: #111827;
+
+  /* Border */
+  --storm-border-primary: #2e3140;
+  --storm-border-secondary: #232636;
+  --storm-border-focus: #3b82f6;
+
+  /* Accent */
+  --storm-accent-primary: #4f8ff7;
+  --storm-accent-primary-hover: #6ba3fa;
+  --storm-accent-primary-subtle: rgba(79, 143, 247, 0.12);
+
+  /* Semantic */
+  --storm-success: #22c55e;
+  --storm-success-subtle: rgba(34, 197, 94, 0.12);
+  --storm-warning: #f59e0b;
+  --storm-warning-subtle: rgba(245, 158, 11, 0.12);
+  --storm-error: #ef4444;
+  --storm-error-subtle: rgba(239, 68, 68, 0.12);
+  --storm-info: #3b82f6;
+  --storm-info-subtle: rgba(59, 130, 246, 0.12);
+
+  /* Overlay */
+  --storm-overlay: rgba(0, 0, 0, 0.6);
+
+  /* Shadows (darker for dark mode) */
+  --storm-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --storm-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+  --storm-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.3);
+  --storm-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 8px 10px -6px rgba(0, 0, 0, 0.4);
+}
+
+/* ── Reduced Motion ────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --storm-duration-fast: 0ms;
+    --storm-duration-normal: 0ms;
+    --storm-duration-slow: 0ms;
+  }
+}
+
+/* ── Global Styles ─────────────────────────────────────── */
+html {
+  font-family: var(--storm-font-sans);
+  font-size: 16px;
+  line-height: var(--storm-leading-normal);
+  color: var(--storm-text-primary);
+  background-color: var(--storm-bg-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition:
+    background-color var(--storm-duration-normal) var(--storm-ease-default),
+    color var(--storm-duration-normal) var(--storm-ease-default);
 }
 
 body {
   min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  overflow: hidden;
 }
 
-.app {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+#root {
   min-height: 100vh;
-  width: 100%;
-  padding: 2rem;
 }
 
-.card {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 3rem;
-  max-width: 480px;
-  width: 100%;
-  text-align: center;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+/* ── Focus Ring ────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--storm-border-focus);
+  outline-offset: 2px;
 }
 
-.logo {
-  font-size: 4rem;
-  margin-bottom: 0.5rem;
+:focus:not(:focus-visible) {
+  outline: none;
 }
 
-h1 {
-  font-size: 2rem;
-  font-weight: 700;
-  background: linear-gradient(135deg, var(--accent-blue), #8b5cf6);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  margin-bottom: 0.25rem;
+/* ── Skip Link ─────────────────────────────────────────── */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  padding: var(--storm-space-2) var(--storm-space-4);
+  background: var(--storm-accent-primary);
+  color: #fff;
+  font-size: var(--storm-text-sm);
+  font-weight: var(--storm-weight-medium);
+  z-index: 10000;
+  border-radius: 0 0 var(--storm-radius-md) 0;
+  transition: top var(--storm-duration-fast) var(--storm-ease-default);
 }
 
-.subtitle {
-  color: var(--text-secondary);
-  font-size: 0.95rem;
-  margin-bottom: 2rem;
+.skip-link:focus {
+  top: 0;
 }
 
-.status-section {
-  background: var(--bg-tertiary);
-  border-radius: 12px;
-  padding: 1.5rem;
-  text-align: left;
+/* ── Scrollbar ─────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
 }
 
-.status-section h2 {
-  font-size: 0.85rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--text-secondary);
-  margin-bottom: 1rem;
+::-webkit-scrollbar-track {
+  background: transparent;
 }
 
-.status-item {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.5rem 0;
-  font-size: 0.95rem;
+::-webkit-scrollbar-thumb {
+  background: var(--storm-border-primary);
+  border-radius: var(--storm-radius-full);
 }
 
-.status-item + .status-item {
-  border-top: 1px solid var(--border);
+::-webkit-scrollbar-thumb:hover {
+  background: var(--storm-text-tertiary);
 }
 
-.dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  flex-shrink: 0;
+/* ── Typography Utilities ──────────────────────────────── */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: var(--storm-weight-semibold);
+  line-height: var(--storm-leading-tight);
+  color: var(--storm-text-primary);
 }
 
-.dot.green {
-  background: var(--accent-green);
-  box-shadow: 0 0 8px rgba(34, 197, 94, 0.4);
+a {
+  color: var(--storm-accent-primary);
+  text-decoration: none;
+  transition: color var(--storm-duration-fast) var(--storm-ease-default);
 }
 
-.dot.red {
-  background: var(--accent-red);
-  box-shadow: 0 0 8px rgba(239, 68, 68, 0.4);
+a:hover {
+  color: var(--storm-accent-primary-hover);
 }
 
-.loading {
-  color: var(--text-secondary);
-  font-size: 0.9rem;
+code {
+  font-family: var(--storm-font-mono);
+  font-size: 0.9em;
+  padding: 0.15em 0.4em;
+  background: var(--storm-bg-tertiary);
+  border-radius: var(--storm-radius-sm);
 }
 
-.error {
-  color: var(--accent-red);
-}
-
-.phase-tag {
-  margin-top: 2rem;
-  font-size: 0.8rem;
-  color: var(--accent-green);
-  font-weight: 500;
+/* ── Selection ─────────────────────────────────────────── */
+::selection {
+  background: var(--storm-accent-primary);
+  color: #fff;
 }
