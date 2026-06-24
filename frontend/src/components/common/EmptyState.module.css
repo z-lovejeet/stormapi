@@ -1,0 +1,34 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--storm-space-12) var(--storm-space-6);
+  text-align: center;
+}
+
+.iconWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: var(--storm-radius-xl);
+  background: var(--storm-bg-tertiary);
+  color: var(--storm-text-tertiary);
+  margin-bottom: var(--storm-space-4);
+}
+
+.title {
+  font-size: var(--storm-text-lg);
+  font-weight: var(--storm-weight-semibold);
+  color: var(--storm-text-primary);
+  margin-bottom: var(--storm-space-2);
+}
+
+.description {
+  font-size: var(--storm-text-sm);
+  color: var(--storm-text-secondary);
+  max-width: 320px;
+  margin-bottom: var(--storm-space-6);
+}
