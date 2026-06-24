@@ -1,4 +1,3 @@
-import { Settings } from 'lucide-react';
 import { useTheme } from '../hooks/useTheme';
 import { Button } from '../components/common/Button';
 import { Sun, Moon } from 'lucide-react';

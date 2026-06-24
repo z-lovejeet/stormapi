@@ -1,6 +1,5 @@
 import { forwardRef, type ButtonHTMLAttributes } from 'react';
 import type { LucideIcon } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { LoadingSpinner } from './LoadingSpinner';
 import styles from './Button.module.css';
 
@@ -29,12 +28,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
   const iconSize = size === 'sm' ? 14 : size === 'lg' ? 18 : 16;
 
   return (
-    <motion.button
+    <button
       ref={ref}
       className={`${styles.button} ${styles[variant]} ${styles[size]} ${iconOnly ? styles.iconOnly : ''} ${className}`}
       disabled={disabled || loading}
-      whileTap={disabled || loading ? undefined : { scale: 0.97 }}
-      transition={{ duration: 0.1 }}
       {...rest}
     >
       {loading ? (
@@ -45,6 +42,6 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
           {!iconOnly && children}
         </>
       )}
-    </motion.button>
+    </button>
   );
 });
