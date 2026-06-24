@@ -20,3 +20,17 @@ export interface ApiError {
   errorCode: string;
   fieldErrors?: Record<string, string>;
 }
+
+/**
+ * Spring Page wrapper for paginated endpoints.
+ */
+export interface PaginatedResponse<T> {
+  content: T[];
+  page: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+  first: boolean;
+  last: boolean;
+}
+

@@ -34,3 +34,38 @@ export interface RequestLog {
   createdAt: string;
   updatedAt: string;
 }
+
+// ── Response DTOs ─────────────────────────────────────────
+
+/**
+ * Metric snapshot response — matches backend MetricSnapshotResponse.
+ */
+export interface MetricSnapshotResponse {
+  id: number;
+  testResultId: number;
+  timestamp: string;
+  activeUsers: number;
+  requestsPerSecond: number;
+  avgResponseTimeMs: number;
+  errorRate: number;
+  p95Ms: number;
+  cumulativeRequests: number;
+  cumulativeErrors: number;
+}
+
+/**
+ * Request log response — matches backend RequestLogResponse.
+ */
+export interface RequestLogResponse {
+  id: number;
+  testResultId: number;
+  timestamp: string;
+  url: string;
+  method: string;
+  statusCode: number;
+  responseTimeMs: number;
+  responseSize: number;
+  errorMessage?: string;
+  success: boolean;
+}
+
