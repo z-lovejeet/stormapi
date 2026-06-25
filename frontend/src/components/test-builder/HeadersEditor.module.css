@@ -1,0 +1,21 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--storm-space-2);
+}
+
+.row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--storm-space-2);
+}
+
+.row > :first-child,
+.row > :nth-child(2) {
+  flex: 1;
+}
+
+.addButton {
+  align-self: flex-start;
+  margin-top: var(--storm-space-1);
+}
