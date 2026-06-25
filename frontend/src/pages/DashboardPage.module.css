@@ -1,0 +1,126 @@
+.page {
+  max-width: 1280px;
+  animation: fadeIn 0.3s ease;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--storm-space-6);
+}
+
+.header h1 {
+  font-size: var(--storm-text-2xl);
+  font-weight: var(--storm-weight-bold);
+  color: var(--storm-text-primary);
+  margin: 0;
+}
+
+/* ── KPI Grid ──────────────────────────────── */
+
+.kpiGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--storm-space-4);
+  margin-bottom: var(--storm-space-6);
+}
+
+@media (max-width: 1024px) {
+  .kpiGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .kpiGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Quick Actions ─────────────────────────── */
+
+.quickActions {
+  display: flex;
+  gap: var(--storm-space-3);
+  margin-bottom: var(--storm-space-8);
+}
+
+@media (max-width: 640px) {
+  .quickActions {
+    flex-direction: column;
+  }
+}
+
+/* ── Section ───────────────────────────────── */
+
+.section {
+  margin-bottom: var(--storm-space-6);
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--storm-space-4);
+}
+
+.sectionHeader h2 {
+  font-size: var(--storm-text-lg);
+  font-weight: var(--storm-weight-semibold);
+  color: var(--storm-text-primary);
+  margin: 0;
+}
+
+/* ── Error Banner ──────────────────────────── */
+
+.errorBanner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--storm-space-4) var(--storm-space-5);
+  background: var(--storm-error-subtle);
+  border: 1px solid var(--storm-error);
+  border-radius: var(--storm-radius-lg);
+  margin-bottom: var(--storm-space-6);
+}
+
+.errorBanner p {
+  color: var(--storm-error);
+  font-size: var(--storm-text-sm);
+  font-weight: var(--storm-weight-medium);
+  margin: 0;
+}
+
+/* ── Actions Cell ──────────────────────────── */
+
+.actionsCell {
+  display: flex;
+  gap: var(--storm-space-1);
+}
+
+/* ── URL Cell ──────────────────────────────── */
+
+.urlCell {
+  max-width: 280px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--storm-font-mono);
+  font-size: var(--storm-text-xs);
+  color: var(--storm-text-secondary);
+}
+
+/* ── Loading ───────────────────────────────── */
+
+.loadingWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
