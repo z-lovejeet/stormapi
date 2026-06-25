@@ -1,0 +1,37 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--storm-space-6);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 200px;
+  gap: var(--storm-space-4);
+}
+
+.bodyTextarea {
+  width: 100%;
+  min-height: 120px;
+  padding: var(--storm-space-3);
+  font-family: var(--storm-font-mono);
+  font-size: var(--storm-text-sm);
+  color: var(--storm-text-primary);
+  background: var(--storm-bg-tertiary);
+  border: 1px solid var(--storm-border-primary);
+  border-radius: var(--storm-radius-md);
+  resize: vertical;
+  outline: none;
+  transition: border-color var(--storm-duration-fast);
+}
+
+.bodyTextarea:focus {
+  border-color: var(--storm-border-focus);
+  box-shadow: var(--storm-shadow-glow);
+}
+
+@media (max-width: 640px) {
+  .row {
+    grid-template-columns: 1fr;
+  }
+}
