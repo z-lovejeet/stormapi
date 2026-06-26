@@ -1,0 +1,22 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--storm-space-4);
+}
+
+.heading {
+  font-size: var(--storm-text-lg);
+  font-weight: var(--storm-weight-semibold);
+  color: var(--storm-text-primary);
+  margin-bottom: var(--storm-space-2);
+}
+
+.fields {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--storm-space-4);
+}
+
+@media (max-width: 640px) {
+  .fields { grid-template-columns: 1fr; }
+}
