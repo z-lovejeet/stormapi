@@ -1,0 +1,42 @@
+.container {
+  background: var(--storm-bg-secondary);
+  border: 1px solid var(--storm-border-primary);
+  border-radius: var(--storm-radius-lg);
+  padding: var(--storm-space-5);
+  height: 280px;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--storm-space-3);
+}
+
+.title {
+  font-size: var(--storm-text-sm);
+  font-weight: var(--storm-weight-semibold);
+  color: var(--storm-text-primary);
+}
+
+.currentValue {
+  font-size: var(--storm-text-sm);
+  font-weight: var(--storm-weight-bold);
+  font-variant-numeric: tabular-nums;
+}
+
+.chartWrapper {
+  flex: 1;
+  min-height: 0;
+}
+
+.emptyState {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--storm-text-tertiary);
+  font-size: var(--storm-text-sm);
+}
