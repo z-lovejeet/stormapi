@@ -1,0 +1,57 @@
+.banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--storm-space-4);
+  padding: var(--storm-space-5) var(--storm-space-6);
+  border-radius: var(--storm-radius-lg);
+  border: 1px solid;
+}
+
+.completed {
+  background: var(--storm-success-subtle);
+  border-color: var(--storm-success);
+}
+
+.failed {
+  background: var(--storm-error-subtle);
+  border-color: var(--storm-error);
+}
+
+.cancelled {
+  background: var(--storm-warning-subtle);
+  border-color: var(--storm-warning);
+}
+
+.content {
+  display: flex;
+  align-items: center;
+  gap: var(--storm-space-3);
+}
+
+.icon {
+  flex-shrink: 0;
+}
+
+.message {
+  display: flex;
+  flex-direction: column;
+  gap: var(--storm-space-1);
+}
+
+.title {
+  font-size: var(--storm-text-lg);
+  font-weight: var(--storm-weight-bold);
+  color: var(--storm-text-primary);
+}
+
+.subtitle {
+  font-size: var(--storm-text-sm);
+  color: var(--storm-text-secondary);
+}
+
+.actions {
+  display: flex;
+  gap: var(--storm-space-3);
+  flex-shrink: 0;
+}
