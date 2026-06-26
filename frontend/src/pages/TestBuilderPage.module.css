@@ -1,0 +1,35 @@
+.page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: var(--storm-space-8) var(--storm-space-4);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--storm-space-8);
+}
+
+.header h1 {
+  font-size: var(--storm-text-2xl);
+  font-weight: var(--storm-weight-bold);
+  color: var(--storm-text-primary);
+}
+
+.stepContent {
+  min-height: 300px;
+}
+
+.navigation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: var(--storm-space-8);
+  padding-top: var(--storm-space-6);
+  border-top: 1px solid var(--storm-border-secondary);
+}
+
+.navRight {
+  margin-left: auto;
+}
