@@ -1,0 +1,97 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--storm-space-5);
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: var(--storm-space-6) 0;
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--storm-space-3);
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: var(--storm-space-3);
+}
+
+.testName {
+  font-size: var(--storm-text-xl);
+  font-weight: var(--storm-weight-bold);
+  color: var(--storm-text-primary);
+}
+
+.headerBadges {
+  display: flex;
+  align-items: center;
+  gap: var(--storm-space-2);
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: var(--storm-space-4);
+}
+
+/* KPI Grid */
+.kpiGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--storm-space-4);
+}
+
+@media (max-width: 768px) {
+  .kpiGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Charts Grid */
+.chartsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--storm-space-4);
+}
+
+@media (max-width: 768px) {
+  .chartsGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Controls */
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--storm-space-3);
+}
+
+.controlsLeft {
+  display: flex;
+  align-items: center;
+  gap: var(--storm-space-3);
+}
+
+/* Loading / Error states */
+.centerState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--storm-space-4);
+  min-height: 400px;
+  color: var(--storm-text-secondary);
+}
+
+.errorText {
+  color: var(--storm-error);
+  font-size: var(--storm-text-sm);
+}
