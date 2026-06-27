@@ -18,7 +18,7 @@ const STATUS_CONFIG: Record<CompletionStatus, {
   color: string;
   title: string;
   subtitle: string;
-  className: string;
+  className: string | undefined;
 }> = {
   completed: {
     icon: CheckCircle,

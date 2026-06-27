@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import type { LiveMetricsMessage, TestEventMessage } from '../../types/websocket';
 import type { TestConfigResponse, TestStatus, TestType, HttpMethod } from '../../types/test';
@@ -129,8 +129,8 @@ describe('useLiveMonitor', () => {
     });
 
     expect(result.current.chartData.responseTime).toHaveLength(1);
-    expect(result.current.chartData.responseTime[0].value).toBe(123.5);
-    expect(result.current.chartData.throughput[0].value).toBe(42.3);
+    expect(result.current.chartData.responseTime[0]?.value).toBe(123.5);
+    expect(result.current.chartData.throughput[0]?.value).toBe(42.3);
   });
 
   it('enforces 60-point sliding window', async () => {
@@ -146,7 +146,7 @@ describe('useLiveMonitor', () => {
 
     expect(result.current.chartData.responseTime.length).toBeLessThanOrEqual(60);
     // First point should be index 5 (shifted off 0-4)
-    expect(result.current.chartData.responseTime[0].value).toBe(5);
+    expect(result.current.chartData.responseTime[0]?.value).toBe(5);
   });
 
   it('detects completion event', async () => {

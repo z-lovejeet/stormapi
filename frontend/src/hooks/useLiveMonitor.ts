@@ -177,7 +177,7 @@ export function useLiveMonitor(testId: number): UseLiveMonitorReturn {
       };
       setCompletionState({
         completed: true,
-        status: statusMap[event.eventType],
+        status: statusMap[event.eventType] ?? 'completed',
         resultId: event.metadata?.resultId as number | undefined,
       });
 
