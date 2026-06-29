@@ -80,6 +80,35 @@ public class MetricsController {
         return ResponseEntity.ok(ApiResponse.success(page, httpRequest.getRequestURI()));
     }
 
+    @GetMapping("/{resultId}/status-codes")
+    @Operation(summary = "Get HTTP status code distribution for a test result")
+    public ResponseEntity<ApiResponse<java.util.Map<Integer, Long>>> getStatusCodeDistribution(
+            @PathVariable Long resultId,
+            HttpServletRequest httpRequest) {
+
+        verifyResultExists(resultId);
+        List<Object[]> rows = requestLogRepository.countByStatusCode(resultId);
+        java.util.Map<Integer, Long> distribution = new java.util.LinkedHashMap<>();
+        for (Object[] row : rows) {
+            distribution.put((Integer) row[0], (Long) row[1]);
+        }
+        return ResponseEntity.ok(ApiResponse.success(distribution, httpRequest.getRequestURI()));
+    }
+
+    @GetMapping("/{resultId}/histogram")
+    @Operation(summary = "Get response time histogram for a test result")
+    public ResponseEntity<ApiResponse<List<com.stormapi.metrics.dto.HistogramBucket>>> getHistogram(
+            @PathVariable Long resultId,
+            HttpServletRequest httpRequest) {
+
+        verifyResultExists(resultId);
+        List<Object[]> rows = requestLogRepository.getResponseTimeHistogram(resultId);
+        List<com.stormapi.metrics.dto.HistogramBucket> buckets = rows.stream()
+                .map(r -> new com.stormapi.metrics.dto.HistogramBucket((String) r[0], (Long) r[1]))
+                .toList();
+        return ResponseEntity.ok(ApiResponse.success(buckets, httpRequest.getRequestURI()));
+    }
+
     private void verifyResultExists(Long resultId) {
         if (!testResultRepository.existsById(resultId)) {
             throw new ResourceNotFoundException("TestResult", resultId);
