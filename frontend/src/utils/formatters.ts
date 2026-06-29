@@ -78,3 +78,30 @@ export function formatDuration(seconds: number): string {
   if (h > 0) return `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
   return `${m}:${String(s).padStart(2, '0')}`;
 }
+
+/**
+ * Format a percentage delta with sign: "+12.5%" or "-3.2%".
+ */
+export function formatDelta(value: number): string {
+  if (value === 0) return '0%';
+  const sign = value > 0 ? '+' : '';
+  return `${sign}${value.toFixed(1)}%`;
+}
+
+/**
+ * Format success rate from counts: "98.2%".
+ */
+export function formatSuccessRate(success: number, total: number): string {
+  if (total === 0) return '0%';
+  return `${((success / total) * 100).toFixed(1)}%`;
+}
+
+/**
+ * Format a number compactly: 1500 → "1.5K", 2300000 → "2.3M".
+ */
+export function formatCompactNumber(n: number): string {
+  if (n < 0) return '0';
+  if (n < 1000) return String(n);
+  if (n < 1_000_000) return `${(n / 1000).toFixed(1)}K`;
+  return `${(n / 1_000_000).toFixed(1)}M`;
+}
