@@ -6,6 +6,9 @@ import {
   formatNumber,
   formatPercent,
   formatDuration,
+  formatDelta,
+  formatSuccessRate,
+  formatCompactNumber,
 } from '../../utils/formatters';
 
 describe('formatMs', () => {
@@ -44,4 +47,23 @@ describe('formatDuration', () => {
   it('formats seconds', () => expect(formatDuration(45)).toBe('0:45'));
   it('formats minutes', () => expect(formatDuration(125)).toBe('2:05'));
   it('formats hours', () => expect(formatDuration(3665)).toBe('1:01:05'));
+});
+
+describe('formatDelta', () => {
+  it('formats positive delta', () => expect(formatDelta(12.5)).toBe('+12.5%'));
+  it('formats negative delta', () => expect(formatDelta(-3.2)).toBe('-3.2%'));
+  it('formats zero delta', () => expect(formatDelta(0)).toBe('0%'));
+});
+
+describe('formatSuccessRate', () => {
+  it('calculates rate', () => expect(formatSuccessRate(982, 1000)).toBe('98.2%'));
+  it('handles zero total', () => expect(formatSuccessRate(0, 0)).toBe('0%'));
+  it('formats 100%', () => expect(formatSuccessRate(500, 500)).toBe('100.0%'));
+});
+
+describe('formatCompactNumber', () => {
+  it('formats small numbers', () => expect(formatCompactNumber(42)).toBe('42'));
+  it('formats thousands', () => expect(formatCompactNumber(1500)).toBe('1.5K'));
+  it('formats millions', () => expect(formatCompactNumber(2300000)).toBe('2.3M'));
+  it('handles negative', () => expect(formatCompactNumber(-1)).toBe('0'));
 });
