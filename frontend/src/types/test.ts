@@ -86,6 +86,9 @@ export interface TestResult {
   completedAt?: string;
   durationMs: number;
   breakpointUsers?: number;
+  recoveryTimeMs?: number;
+  degradationSlope?: number;
+  degradationDetected?: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -184,4 +187,8 @@ export interface TestResultResponse {
   completedAt?: string;
   durationMs: number;
   breakpointUsers?: number;
+  recoveryTimeMs?: number;
+  degradationSlope?: number;
+  degradationDetected?: boolean;
+  createdAt: string;
 }

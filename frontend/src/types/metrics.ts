@@ -41,8 +41,6 @@ export interface RequestLog {
  * Metric snapshot response — matches backend MetricSnapshotResponse.
  */
 export interface MetricSnapshotResponse {
-  id: number;
-  testResultId: number;
   timestamp: string;
   activeUsers: number;
   requestsPerSecond: number;
@@ -58,7 +56,6 @@ export interface MetricSnapshotResponse {
  */
 export interface RequestLogResponse {
   id: number;
-  testResultId: number;
   timestamp: string;
   url: string;
   method: string;
