@@ -1,0 +1,70 @@
+.container {
+  background: var(--storm-bg-secondary);
+  border-radius: var(--storm-radius-lg);
+  padding: 1.5rem;
+  border: 1px solid var(--storm-border-primary);
+}
+
+.header {
+  margin-bottom: 0.75rem;
+}
+
+.title {
+  font-weight: 600;
+  color: var(--storm-text-primary);
+  font-size: var(--storm-text-sm);
+}
+
+.chartWrapper {
+  height: 250px;
+  position: relative;
+}
+
+.legend {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 0.75rem;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: var(--storm-text-xs);
+  color: var(--storm-text-secondary);
+}
+
+.legendDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.centerLabel {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.centerValue {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--storm-text-primary);
+}
+
+.centerSubtitle {
+  font-size: var(--storm-text-xs);
+  color: var(--storm-text-tertiary);
+}
+
+.emptyState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 250px;
+  color: var(--storm-text-tertiary);
+  font-size: var(--storm-text-sm);
+}
