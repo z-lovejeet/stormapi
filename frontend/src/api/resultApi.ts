@@ -2,6 +2,7 @@ import { apiClient } from './client';
 import type { PaginatedResponse } from '../types/api';
 import type { TestResultResponse } from '../types/test';
 import type { MetricSnapshotResponse, RequestLogResponse } from '../types/metrics';
+import type { ComparisonResponse, HistogramBucket } from '../types/result';
 
 /**
  * Result + metrics API module.
@@ -30,11 +31,37 @@ export async function getSnapshots(resultId: number): Promise<MetricSnapshotResp
 
 export async function getRequestLogs(
   resultId: number,
-  params?: { page?: number; size?: number },
+  params?: { page?: number; size?: number; success?: boolean },
 ): Promise<PaginatedResponse<RequestLogResponse>> {
   const { data } = await apiClient.get<PaginatedResponse<RequestLogResponse>>(
     `/metrics/${resultId}/request-logs`,
     { params },
   );
+  return data;
+}
+
+export async function getStatusCodeDistribution(
+  resultId: number,
+): Promise<Record<number, number>> {
+  const { data } = await apiClient.get<Record<number, number>>(
+    `/metrics/${resultId}/status-codes`,
+  );
+  return data;
+}
+
+export async function getHistogram(resultId: number): Promise<HistogramBucket[]> {
+  const { data } = await apiClient.get<HistogramBucket[]>(
+    `/metrics/${resultId}/histogram`,
+  );
+  return data;
+}
+
+export async function compareResults(
+  resultIdA: number,
+  resultIdB: number,
+): Promise<ComparisonResponse> {
+  const { data } = await apiClient.get<ComparisonResponse>('/results/compare', {
+    params: { resultIdA, resultIdB },
+  });
   return data;
 }
