@@ -1,0 +1,109 @@
+.container {
+  background: var(--storm-bg-secondary);
+  border-radius: var(--storm-radius-lg);
+  padding: 1.5rem;
+  border: 1px solid var(--storm-border-primary);
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.title {
+  font-weight: 600;
+  font-size: 1.125rem;
+  color: var(--storm-text-primary);
+}
+
+.closeBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--storm-text-tertiary);
+  padding: 0.25rem;
+}
+
+.closeBtn:hover {
+  color: var(--storm-text-primary);
+}
+
+.deltaRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 0.5rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--storm-border-secondary);
+  align-items: center;
+  font-size: var(--storm-text-sm);
+}
+
+.deltaLabel {
+  color: var(--storm-text-secondary);
+  font-weight: 500;
+}
+
+.deltaValue {
+  color: var(--storm-text-primary);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.deltaIndicator {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-weight: 600;
+  justify-content: flex-end;
+}
+
+.improved {
+  color: #22c55e;
+}
+
+.degraded {
+  color: #ef4444;
+}
+
+.neutral {
+  color: var(--storm-text-tertiary);
+}
+
+.columnHeader {
+  font-size: var(--storm-text-xs);
+  color: var(--storm-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--storm-border-primary);
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  padding: 3rem;
+}
+
+.error {
+  text-align: center;
+  padding: 2rem;
+  color: var(--storm-danger);
+}
+
+@media (max-width: 640px) {
+  .deltaRow {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.25rem;
+  }
+
+  .columnHeader:nth-child(2),
+  .columnHeader:nth-child(3),
+  .deltaValue:first-of-type {
+    display: none;
+  }
+}
