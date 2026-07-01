@@ -1,0 +1,62 @@
+.container {
+  background: var(--storm-bg-secondary);
+  border-radius: var(--storm-radius-lg);
+  padding: 1.5rem;
+  border: 1px solid var(--storm-border-primary);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.title {
+  font-weight: 600;
+  color: var(--storm-text-primary);
+  font-size: var(--storm-text-sm);
+}
+
+.metricTabs {
+  display: flex;
+  gap: 0.25rem;
+  flex-wrap: wrap;
+}
+
+.metricTab {
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--storm-radius-md);
+  background: transparent;
+  border: 1px solid var(--storm-border-primary);
+  cursor: pointer;
+  font-size: var(--storm-text-xs);
+  color: var(--storm-text-secondary);
+  transition: all 0.2s;
+}
+
+.metricTab:hover {
+  border-color: var(--storm-border-secondary);
+  color: var(--storm-text-primary);
+}
+
+.metricTabActive {
+  background: var(--storm-accent);
+  color: white;
+  border-color: var(--storm-accent);
+}
+
+.chartWrapper {
+  height: 300px;
+}
+
+.emptyState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+  color: var(--storm-text-tertiary);
+  font-size: var(--storm-text-sm);
+}
