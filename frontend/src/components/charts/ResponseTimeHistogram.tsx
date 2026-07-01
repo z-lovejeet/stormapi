@@ -67,7 +67,8 @@ export const ResponseTimeHistogram = memo(function ResponseTimeHistogram({
                 borderRadius: 'var(--storm-radius-md)',
                 fontSize: 'var(--storm-text-xs)',
               }}
-              formatter={(value: number) => [`${value} requests`, 'Count']}
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              formatter={(value: any) => [`${Number(value)} requests`, 'Count']}
             />
             <Bar dataKey="count" radius={[4, 4, 0, 0]} isAnimationActive={false}>
               {data.map((_, i) => (

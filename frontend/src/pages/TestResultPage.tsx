@@ -73,7 +73,7 @@ export function TestResultPage() {
           </button>
           <h1>Test Results</h1>
           <StatusBadge status={result.status} />
-          {testConfig && <TestTypeBadge type={testConfig.type} />}
+          {testConfig && <TestTypeBadge type={testConfig.testType} />}
         </div>
       </div>
 

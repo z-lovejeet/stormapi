@@ -67,7 +67,8 @@ export const StatusCodeChart = memo(function StatusCodeChart({
               ))}
             </Pie>
             <Tooltip
-              formatter={(value: number, name: string) => [value.toLocaleString(), `HTTP ${name}`]}
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              formatter={(value: any, name: any) => [Number(value).toLocaleString(), `HTTP ${name}`]}
               contentStyle={{
                 background: 'var(--storm-bg-elevated)',
                 border: '1px solid var(--storm-border-primary)',

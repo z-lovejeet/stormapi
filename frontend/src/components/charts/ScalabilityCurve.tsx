@@ -82,9 +82,10 @@ export const ScalabilityCurve = memo(function ScalabilityCurve({
                 borderRadius: 'var(--storm-radius-md)',
                 fontSize: 'var(--storm-text-xs)',
               }}
-              formatter={(value: number, name: string) => {
-                if (name === 'requestsPerSecond') return [formatRps(value), 'Throughput'];
-                return [formatMs(value), 'Latency'];
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              formatter={(value: any, name: any) => {
+                if (name === 'requestsPerSecond') return [formatRps(Number(value)), 'Throughput'];
+                return [formatMs(Number(value)), 'Latency'];
               }}
             />
             <Line

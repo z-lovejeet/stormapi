@@ -78,7 +78,8 @@ export const PercentileBarChart = memo(function PercentileBarChart(
               tickFormatter={(v: number) => `${v}ms`}
             />
             <Tooltip
-              formatter={(value: number) => [`${value}ms`, 'Latency']}
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              formatter={(value: any) => [`${Number(value)}ms`, 'Latency']}
               contentStyle={{
                 background: 'var(--storm-bg-elevated)',
                 border: '1px solid var(--storm-border-primary)',
@@ -93,7 +94,7 @@ export const PercentileBarChart = memo(function PercentileBarChart(
               <LabelList
                 dataKey="value"
                 position="top"
-                formatter={(v: number) => `${v}ms`}
+                formatter={(v: any) => `${Number(v)}ms`}
                 style={{ fontSize: 10, fill: 'var(--storm-text-secondary)' }}
               />
             </Bar>

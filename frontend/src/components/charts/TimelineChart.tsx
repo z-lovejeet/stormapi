@@ -43,7 +43,7 @@ export const TimelineChart = memo(function TimelineChart({
   const [selectedMetric, setSelectedMetric] = useState(metric);
   const gradientId = useId();
 
-  const config = METRIC_CONFIG[selectedMetric] ?? METRIC_CONFIG.avgResponseTimeMs;
+  const config = METRIC_CONFIG[selectedMetric] ?? METRIC_CONFIG.avgResponseTimeMs!;
 
   if (snapshots.length === 0) {
     return (
@@ -66,7 +66,7 @@ export const TimelineChart = memo(function TimelineChart({
   };
 
   return (
-    <div className={styles.container} role="img" aria-label={`Timeline chart — ${config.label}`}>
+    <div className={styles.container} role="img" aria-label={`Timeline chart — ${config!.label}`}>
       <div className={styles.header}>
         <span className={styles.title}>Timeline</span>
         <div className={styles.metricTabs}>
@@ -76,7 +76,7 @@ export const TimelineChart = memo(function TimelineChart({
               className={`${styles.metricTab} ${selectedMetric === key ? styles.metricTabActive : ''}`}
               onClick={() => setSelectedMetric(key)}
             >
-              {METRIC_CONFIG[key].label}
+              {METRIC_CONFIG[key]!.label}
             </button>
           ))}
         </div>
@@ -86,8 +86,8 @@ export const TimelineChart = memo(function TimelineChart({
           <AreaChart data={snapshots} margin={{ top: 4, right: 8, left: -10, bottom: 0 }}>
             <defs>
               <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor={config.color} stopOpacity={0.2} />
-                <stop offset="100%" stopColor={config.color} stopOpacity={0.02} />
+                <stop offset="0%" stopColor={config!.color} stopOpacity={0.2} />
+                <stop offset="100%" stopColor={config!.color} stopOpacity={0.02} />
               </linearGradient>
             </defs>
             <CartesianGrid
@@ -108,14 +108,20 @@ export const TimelineChart = memo(function TimelineChart({
               tickLine={false}
               axisLine={false}
               tickFormatter={(v: number) =>
-                config.unit ? `${v}${config.unit}` : String(v)
+                config!.unit ? `${v}${config!.unit}` : String(v)
               }
             />
             <Tooltip
-              labelFormatter={formatTimestamp}
-              formatter={(value: number) => [
-                config.unit ? `${value}${config.unit}` : value,
-                config.label,
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              labelFormatter={(label: any) => {
+                try {
+                  return new Date(String(label)).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                } catch { return String(label); }
+              }}
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              formatter={(value: any) => [
+                config!.unit ? `${Number(value)}${config!.unit}` : Number(value),
+                config!.label,
               ]}
               contentStyle={{
                 background: 'var(--storm-bg-elevated)',
@@ -127,11 +133,11 @@ export const TimelineChart = memo(function TimelineChart({
             <Area
               type="monotone"
               dataKey={selectedMetric}
-              stroke={config.color}
+              stroke={config!.color}
               strokeWidth={2}
               fill={`url(#${gradientId})`}
               dot={false}
-              activeDot={{ r: 4, fill: config.color }}
+              activeDot={{ r: 4, fill: config!.color }}
               isAnimationActive={false}
             />
           </AreaChart>

@@ -202,8 +202,8 @@ export function HistoryPage() {
         >
           <div onClick={(e) => e.stopPropagation()}>
             <ComparisonView
-              resultIdA={compareSelection[0]}
-              resultIdB={compareSelection[1]}
+              resultIdA={compareSelection[0]!}
+              resultIdB={compareSelection[1]!}
               onClose={() => setShowComparison(false)}
             />
           </div>
