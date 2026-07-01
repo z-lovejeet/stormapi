@@ -3,6 +3,7 @@ import { render, screen } from '@testing-library/react';
 import { ResultSummaryCards } from '../../components/results/ResultSummaryCards';
 import { MetricsDetailTable } from '../../components/results/MetricsDetailTable';
 import type { TestResultResponse } from '../../types/test';
+import { TestStatus } from '../../types/test';
 
 // Mock ResizeObserver
 class ResizeObserver {
@@ -15,7 +16,7 @@ globalThis.ResizeObserver = ResizeObserver;
 const mockResult: TestResultResponse = {
   id: 1,
   testConfigId: 1,
-  status: 'COMPLETED',
+  status: TestStatus.COMPLETED,
   totalRequests: 1000,
   successCount: 950,
   failureCount: 50,
