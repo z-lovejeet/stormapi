@@ -1,0 +1,21 @@
+.container {
+  background: var(--storm-bg-secondary);
+  border-radius: var(--storm-radius-lg);
+  padding: 1.5rem;
+  border: 1px solid var(--storm-border-primary);
+}
+.header { margin-bottom: 1rem; }
+.title {
+  font-weight: 600;
+  font-size: var(--storm-text-sm);
+  color: var(--storm-text-primary);
+}
+.chartWrapper { height: 250px; }
+.emptyState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 250px;
+  color: var(--storm-text-tertiary);
+  font-size: var(--storm-text-sm);
+}
