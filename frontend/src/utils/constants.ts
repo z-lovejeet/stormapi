@@ -12,6 +12,10 @@ export const ROUTES = {
   TEST_RESULT: (id: number | string) => `/tests/${id}/result`,
   HISTORY: '/history',
   COLLECTIONS: '/collections',
+  COLLECTION_DETAIL: (id: number | string) => `/collections/${id}`,
+  SCENARIOS: '/scenarios',
+  SCENARIO_BUILDER: '/scenarios/new',
+  SCENARIO_EDIT: (id: number | string) => `/scenarios/${id}/edit`,
   SETTINGS: '/settings',
 } as const;
 
