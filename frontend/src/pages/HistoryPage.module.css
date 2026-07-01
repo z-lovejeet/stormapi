@@ -1,0 +1,243 @@
+.page {
+  max-width: 1280px;
+  animation: fadeIn 0.3s ease;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--storm-space-6);
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.header h1 {
+  font-size: var(--storm-text-2xl);
+  font-weight: var(--storm-weight-bold);
+  color: var(--storm-text-primary);
+  margin: 0;
+}
+
+/* ── Filters ─────────────────────────────── */
+
+.filters {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: var(--storm-space-4);
+  flex-wrap: wrap;
+}
+
+.filterSelect {
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--storm-radius-md);
+  border: 1px solid var(--storm-border-primary);
+  background: var(--storm-bg-secondary);
+  color: var(--storm-text-primary);
+  font-size: var(--storm-text-sm);
+  cursor: pointer;
+  outline: none;
+}
+
+.filterSelect:focus {
+  border-color: var(--storm-accent);
+}
+
+.searchInput {
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--storm-radius-md);
+  border: 1px solid var(--storm-border-primary);
+  background: var(--storm-bg-secondary);
+  color: var(--storm-text-primary);
+  font-size: var(--storm-text-sm);
+  min-width: 200px;
+  outline: none;
+}
+
+.searchInput:focus {
+  border-color: var(--storm-accent);
+}
+
+/* ── Compare Bar ─────────────────────────── */
+
+.compareBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  margin-bottom: var(--storm-space-4);
+  border-radius: var(--storm-radius-md);
+  background: rgba(99, 102, 241, 0.1);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  font-size: var(--storm-text-sm);
+  color: var(--storm-text-primary);
+}
+
+.compareActions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.compareBtn {
+  padding: 0.4rem 0.75rem;
+  border-radius: var(--storm-radius-md);
+  border: none;
+  cursor: pointer;
+  font-size: var(--storm-text-xs);
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.compareBtnPrimary {
+  background: var(--storm-accent);
+  color: white;
+}
+
+.compareBtnPrimary:hover { opacity: 0.9; }
+
+.compareBtnSecondary {
+  background: transparent;
+  border: 1px solid var(--storm-border-primary);
+  color: var(--storm-text-secondary);
+}
+
+.compareBtnSecondary:hover {
+  background: var(--storm-bg-secondary);
+}
+
+/* ── Table ───────────────────────────────── */
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--storm-bg-secondary);
+  border-radius: var(--storm-radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--storm-border-primary);
+}
+
+.table th {
+  text-align: left;
+  padding: 0.75rem 1rem;
+  font-size: var(--storm-text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--storm-text-tertiary);
+  border-bottom: 1px solid var(--storm-border-primary);
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.table th:hover {
+  color: var(--storm-text-primary);
+}
+
+.sortIcon {
+  margin-left: 0.25rem;
+  opacity: 0.5;
+}
+
+.sortActive {
+  opacity: 1;
+  color: var(--storm-accent);
+}
+
+.table td {
+  padding: 0.75rem 1rem;
+  font-size: var(--storm-text-sm);
+  color: var(--storm-text-primary);
+  border-bottom: 1px solid var(--storm-border-secondary);
+  white-space: nowrap;
+}
+
+.table tr:last-child td { border-bottom: none; }
+
+.table tr:hover td {
+  background: var(--storm-bg-elevated);
+}
+
+.clickableRow {
+  cursor: pointer;
+}
+
+.compareCheckbox {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--storm-accent);
+  cursor: pointer;
+}
+
+/* ── Pagination ──────────────────────────── */
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: var(--storm-space-4);
+  font-size: var(--storm-text-sm);
+  color: var(--storm-text-tertiary);
+}
+
+.paginationBtns {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.pageBtn {
+  padding: 0.4rem 0.75rem;
+  border-radius: var(--storm-radius-md);
+  border: 1px solid var(--storm-border-primary);
+  background: var(--storm-bg-secondary);
+  color: var(--storm-text-secondary);
+  cursor: pointer;
+  font-size: var(--storm-text-xs);
+  transition: all 0.2s;
+}
+
+.pageBtn:hover:not(:disabled) {
+  background: var(--storm-bg-elevated);
+  color: var(--storm-text-primary);
+}
+
+.pageBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ── Loading / Error ─────────────────────── */
+
+.loadingWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  min-height: 400px;
+  color: var(--storm-text-tertiary);
+}
+
+.comparisonOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  padding: 2rem;
+}
+
+@media (max-width: 768px) {
+  .filters { flex-direction: column; align-items: stretch; }
+  .searchInput { min-width: unset; }
+  .table { font-size: var(--storm-text-xs); }
+  .table th, .table td { padding: 0.5rem; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
