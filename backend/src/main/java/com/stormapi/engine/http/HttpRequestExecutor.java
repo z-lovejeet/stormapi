@@ -100,6 +100,87 @@ public class HttpRequestExecutor {
     }
 
     /**
+     * Executes an HTTP request synchronously and returns the result
+     * <b>including the response body</b>.
+     *
+     * <p>Used by the scenario execution engine where the response body
+     * is needed for variable extraction. The standard {@link #execute}
+     * method discards the body to minimize memory usage during load tests.</p>
+     *
+     * @param spec the request specification
+     * @return detailed result including response body text
+     */
+    public DetailedRequestResult executeWithBody(RequestSpec spec) {
+        long startNanos = System.nanoTime();
+        Instant timestamp = Instant.now();
+
+        try {
+            HttpRequest request = buildRequest(spec);
+            HttpResponse<String> response = httpClient.send(request,
+                    HttpResponse.BodyHandlers.ofString());
+
+            long elapsedNanos = System.nanoTime() - startNanos;
+            String body = response.body();
+            long bodySize = (body != null) ? body.length() : 0;
+            boolean isSuccess = response.statusCode() >= 200 && response.statusCode() <= 299;
+
+            return new DetailedRequestResult(
+                    response.statusCode(), elapsedNanos, bodySize,
+                    isSuccess, null, timestamp, body);
+
+        } catch (HttpTimeoutException e) {
+            long elapsedNanos = System.nanoTime() - startNanos;
+            return new DetailedRequestResult(0, elapsedNanos, 0, false,
+                    "Request timed out after " + spec.timeout(), timestamp, null);
+
+        } catch (ConnectException e) {
+            long elapsedNanos = System.nanoTime() - startNanos;
+            return new DetailedRequestResult(0, elapsedNanos, 0, false,
+                    "Connection refused: " + spec.url(), timestamp, null);
+
+        } catch (UnresolvedAddressException e) {
+            long elapsedNanos = System.nanoTime() - startNanos;
+            return new DetailedRequestResult(0, elapsedNanos, 0, false,
+                    "DNS resolution failed: " + spec.url(), timestamp, null);
+
+        } catch (SSLException e) {
+            long elapsedNanos = System.nanoTime() - startNanos;
+            return new DetailedRequestResult(0, elapsedNanos, 0, false,
+                    "SSL/TLS error: " + e.getMessage(), timestamp, null);
+
+        } catch (InterruptedException e) {
+            long elapsedNanos = System.nanoTime() - startNanos;
+            Thread.currentThread().interrupt();
+            return new DetailedRequestResult(0, elapsedNanos, 0, false,
+                    "Execution interrupted", timestamp, null);
+
+        } catch (IOException e) {
+            long elapsedNanos = System.nanoTime() - startNanos;
+            return new DetailedRequestResult(0, elapsedNanos, 0, false,
+                    "I/O error: " + e.getMessage(), timestamp, null);
+        }
+    }
+
+    /**
+     * Extended result that includes the response body text.
+     * Used by scenario execution for variable extraction.
+     */
+    public record DetailedRequestResult(
+            int statusCode,
+            long responseTimeNanos,
+            long responseBodySize,
+            boolean success,
+            String errorMessage,
+            Instant timestamp,
+            String responseBody
+    ) {
+        /** Convenience: converts nanoTime to milliseconds. */
+        public double responseTimeMs() {
+            return responseTimeNanos / 1_000_000.0;
+        }
+    }
+
+    /**
      * Builds a java.net.http.HttpRequest from a RequestSpec.
      */
     private HttpRequest buildRequest(RequestSpec spec) {
