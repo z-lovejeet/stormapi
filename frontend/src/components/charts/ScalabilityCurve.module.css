@@ -1,0 +1,39 @@
+.container {
+  background: var(--storm-bg-secondary);
+  border-radius: var(--storm-radius-lg);
+  padding: 1.5rem;
+  border: 1px solid var(--storm-border-primary);
+}
+.header { margin-bottom: 1rem; }
+.title {
+  font-weight: 600;
+  font-size: var(--storm-text-sm);
+  color: var(--storm-text-primary);
+}
+.chartWrapper { height: 300px; }
+.legend {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 0.75rem;
+}
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: var(--storm-text-xs);
+  color: var(--storm-text-secondary);
+}
+.legendDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+.emptyState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+  color: var(--storm-text-tertiary);
+  font-size: var(--storm-text-sm);
+}
