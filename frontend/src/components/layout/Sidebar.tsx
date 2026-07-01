@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Plus, History, FolderOpen, Settings } from 'lucide-react';
+import { LayoutDashboard, Plus, History, FolderOpen, Workflow, Settings } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { ROUTES } from '../../utils/constants';
 import styles from './Sidebar.module.css';
@@ -9,6 +9,7 @@ const navItems = [
   { to: ROUTES.TEST_BUILDER, icon: Plus, label: 'New Test' },
   { to: ROUTES.HISTORY, icon: History, label: 'History' },
   { to: ROUTES.COLLECTIONS, icon: FolderOpen, label: 'Collections' },
+  { to: ROUTES.SCENARIOS, icon: Workflow, label: 'Scenarios' },
   { to: ROUTES.SETTINGS, icon: Settings, label: 'Settings' },
 ] as const;
 

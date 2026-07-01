@@ -6,6 +6,9 @@ import { LiveMonitorPage } from './pages/LiveMonitorPage';
 import { TestResultPage } from './pages/TestResultPage';
 import { HistoryPage } from './pages/HistoryPage';
 import { CollectionsPage } from './pages/CollectionsPage';
+import { CollectionDetailPage } from './pages/CollectionDetailPage';
+import { ScenariosPage } from './pages/ScenariosPage';
+import { ScenarioBuilderPage } from './pages/ScenarioBuilderPage';
 import { SettingsPage } from './pages/SettingsPage';
 
 function App() {
@@ -23,6 +26,10 @@ function App() {
           <Route path="tests/:id/result" element={<TestResultPage />} />
           <Route path="history" element={<HistoryPage />} />
           <Route path="collections" element={<CollectionsPage />} />
+          <Route path="collections/:id" element={<CollectionDetailPage />} />
+          <Route path="scenarios" element={<ScenariosPage />} />
+          <Route path="scenarios/new" element={<ScenarioBuilderPage />} />
+          <Route path="scenarios/:id/edit" element={<ScenarioBuilderPage />} />
           <Route path="settings" element={<SettingsPage />} />
         </Route>
       </Routes>
