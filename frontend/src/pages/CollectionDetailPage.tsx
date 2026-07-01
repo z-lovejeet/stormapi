@@ -12,10 +12,10 @@ import { LoadingSpinner } from '../components/common/LoadingSpinner';
 import { EmptyState } from '../components/common/EmptyState';
 import { ROUTES } from '../utils/constants';
 import type { ApiCollection, ApiEndpoint, KeyValuePair } from '../types/collection';
-import type { HttpMethod } from '../types/test';
+import { HttpMethod } from '../types/test';
 import styles from './CollectionDetailPage.module.css';
 
-const HTTP_METHODS: HttpMethod[] = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'];
+const HTTP_METHODS = Object.values(HttpMethod);
 
 interface EndpointForm {
   name: string;
@@ -29,7 +29,7 @@ interface EndpointForm {
 const EMPTY_FORM: EndpointForm = {
   name: '',
   url: '',
-  method: 'GET',
+  method: HttpMethod.GET,
   headers: [],
   body: '',
   description: '',

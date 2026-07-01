@@ -1,5 +1,6 @@
 import React from 'react';
 import { Edit2, Trash2 } from 'lucide-react';
+import { HttpMethod } from '../../types/test';
 import type { ApiEndpoint } from '../../types/collection';
 import styles from './EndpointRow.module.css';
 
@@ -9,12 +10,12 @@ interface EndpointRowProps {
   onDelete: (endpointId: number) => void;
 }
 
-const METHOD_CLASS: Record<string, string> = {
-  GET: styles.methodGet,
-  POST: styles.methodPost,
-  PUT: styles.methodPut,
-  DELETE: styles.methodDelete,
-  PATCH: styles.methodPatch,
+const METHOD_CLASS: Partial<Record<HttpMethod, string>> = {
+  [HttpMethod.GET]: styles.methodGet,
+  [HttpMethod.POST]: styles.methodPost,
+  [HttpMethod.PUT]: styles.methodPut,
+  [HttpMethod.DELETE]: styles.methodDelete,
+  [HttpMethod.PATCH]: styles.methodPatch,
 };
 
 export const EndpointRow = React.memo(function EndpointRow({

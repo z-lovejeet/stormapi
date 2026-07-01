@@ -15,12 +15,11 @@ import {
   getScenario,
   updateScenario,
   addStep,
-  updateStep,
   deleteStep as deleteStepApi,
   executeScenario,
 } from '../api/scenarioApi';
 import { ROUTES } from '../utils/constants';
-import type { HttpMethod } from '../types/test';
+import { HttpMethod } from '../types/test';
 import type { KeyValuePair } from '../types/collection';
 import type {
   ExtractionRule,
@@ -31,16 +30,14 @@ import type {
 import styles from './ScenarioBuilderPage.module.css';
 import { useEffect } from 'react';
 
-const HTTP_METHODS: HttpMethod[] = [
-  'GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS',
-];
+const HTTP_METHODS = Object.values(HttpMethod);
 
-const METHOD_CLASS: Record<string, string> = {
-  GET: styles.methodGet,
-  POST: styles.methodPost,
-  PUT: styles.methodPut,
-  DELETE: styles.methodDelete,
-  PATCH: styles.methodPatch,
+const METHOD_CLASS: Partial<Record<HttpMethod, string>> = {
+  [HttpMethod.GET]: styles.methodGet,
+  [HttpMethod.POST]: styles.methodPost,
+  [HttpMethod.PUT]: styles.methodPut,
+  [HttpMethod.DELETE]: styles.methodDelete,
+  [HttpMethod.PATCH]: styles.methodPatch,
 };
 
 interface LocalStep {
@@ -56,7 +53,7 @@ interface LocalStep {
 const EMPTY_STEP: LocalStep = {
   name: '',
   url: '',
-  method: 'GET',
+  method: HttpMethod.GET,
   headers: [],
   body: '',
   extractionRules: [],
@@ -125,8 +122,10 @@ export function ScenarioBuilderPage() {
   // ── Header management within a step ─────────────────────
 
   const addStepHeader = (stepIndex: number) => {
+    const step = steps[stepIndex];
+    if (!step) return;
     updateLocalStep(stepIndex, {
-      headers: [...steps[stepIndex].headers, { key: '', value: '' }],
+      headers: [...step.headers, { key: '', value: '' }],
     });
   };
 
@@ -136,24 +135,30 @@ export function ScenarioBuilderPage() {
     field: 'key' | 'value',
     val: string,
   ) => {
-    const newHeaders = steps[stepIndex].headers.map((h, i) =>
+    const step = steps[stepIndex];
+    if (!step) return;
+    const newHeaders = step.headers.map((h, i) =>
       i === headerIndex ? { ...h, [field]: val } : h,
     );
     updateLocalStep(stepIndex, { headers: newHeaders });
   };
 
   const removeStepHeader = (stepIndex: number, headerIndex: number) => {
+    const step = steps[stepIndex];
+    if (!step) return;
     updateLocalStep(stepIndex, {
-      headers: steps[stepIndex].headers.filter((_, i) => i !== headerIndex),
+      headers: step.headers.filter((_, i) => i !== headerIndex),
     });
   };
 
   // ── Extraction rules management ─────────────────────────
 
   const addExtractionRule = (stepIndex: number) => {
+    const step = steps[stepIndex];
+    if (!step) return;
     updateLocalStep(stepIndex, {
       extractionRules: [
-        ...steps[stepIndex].extractionRules,
+        ...step.extractionRules,
         { variableName: '', jsonPath: '' },
       ],
     });
@@ -165,15 +170,19 @@ export function ScenarioBuilderPage() {
     field: 'variableName' | 'jsonPath',
     val: string,
   ) => {
-    const newRules = steps[stepIndex].extractionRules.map((r, i) =>
+    const step = steps[stepIndex];
+    if (!step) return;
+    const newRules = step.extractionRules.map((r, i) =>
       i === ruleIndex ? { ...r, [field]: val } : r,
     );
     updateLocalStep(stepIndex, { extractionRules: newRules });
   };
 
   const removeExtractionRule = (stepIndex: number, ruleIndex: number) => {
+    const step = steps[stepIndex];
+    if (!step) return;
     updateLocalStep(stepIndex, {
-      extractionRules: steps[stepIndex].extractionRules.filter(
+      extractionRules: step.extractionRules.filter(
         (_, i) => i !== ruleIndex,
       ),
     });
@@ -192,6 +201,7 @@ export function ScenarioBuilderPage() {
 
     for (let i = 0; i < steps.length; i++) {
       const step = steps[i];
+      if (!step) continue;
       // Find consumed variables ({{varName}} in url, body, header values)
       const allText = [
         step.url,
@@ -202,7 +212,7 @@ export function ScenarioBuilderPage() {
       const regex = /\{\{(\w+)}}/g;
       let match;
       while ((match = regex.exec(allText)) !== null) {
-        consumed.push(match[1]);
+        if (match[1]) consumed.push(match[1]);
       }
 
       // Produced variables
@@ -251,6 +261,8 @@ export function ScenarioBuilderPage() {
         sid = created.id;
         setScenarioId(sid);
       }
+
+      if (!sid) return null;
 
       // Add all steps
       for (const step of steps) {
