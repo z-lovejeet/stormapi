@@ -1,5 +1,7 @@
 package com.stormapi.scenario.dto;
 
+import com.stormapi.engine.assertion.AssertionResult;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -16,7 +18,8 @@ public record StepExecutionResult(
         String responseBodyPreview,
         boolean success,
         String errorMessage,
-        Map<String, String> extractedVariables
+        Map<String, String> extractedVariables,
+        List<AssertionResult> assertionResults
 ) {
 
     /** Maximum characters to retain from response body for preview. */
@@ -34,7 +37,25 @@ public record StepExecutionResult(
                 stepOrder, stepName, url, method,
                 statusCode, responseTimeMs,
                 truncate(responseBody),
-                true, null, extractedVariables
+                true, null, extractedVariables, List.of()
+        );
+    }
+
+    /**
+     * Factory for a successful step execution with assertion results.
+     */
+    public static StepExecutionResult successWithAssertions(int stepOrder, String stepName,
+                                               String url, String method,
+                                               int statusCode, double responseTimeMs,
+                                               String responseBody,
+                                               Map<String, String> extractedVariables,
+                                               List<AssertionResult> assertionResults) {
+        return new StepExecutionResult(
+                stepOrder, stepName, url, method,
+                statusCode, responseTimeMs,
+                truncate(responseBody),
+                true, null, extractedVariables,
+                assertionResults != null ? assertionResults : List.of()
         );
     }
 
@@ -49,7 +70,7 @@ public record StepExecutionResult(
                 stepOrder, stepName, url, method,
                 statusCode, responseTimeMs,
                 truncate(responseBody),
-                false, errorMessage, Map.of()
+                false, errorMessage, Map.of(), List.of()
         );
     }
 
