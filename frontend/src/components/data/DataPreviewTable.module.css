@@ -1,0 +1,76 @@
+.container {
+  border: 1px solid var(--storm-border-primary);
+  border-radius: var(--storm-radius-lg);
+  overflow: hidden;
+  background: var(--storm-bg-secondary);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--storm-border-primary);
+}
+
+.title {
+  font-size: var(--storm-text-sm);
+  font-weight: 600;
+  color: var(--storm-text-primary);
+}
+
+.count {
+  font-size: var(--storm-text-xs);
+  color: var(--storm-text-tertiary);
+}
+
+.tableWrapper {
+  overflow-x: auto;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--storm-text-xs);
+}
+
+.table th {
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  font-weight: 600;
+  color: var(--storm-text-secondary);
+  background: var(--storm-bg-primary);
+  border-bottom: 1px solid var(--storm-border-primary);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.table td {
+  padding: 0.5rem 0.75rem;
+  color: var(--storm-text-primary);
+  border-bottom: 1px solid var(--storm-border-primary);
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.table tr:hover td {
+  background: var(--storm-bg-elevated);
+}
+
+.rowIndex {
+  color: var(--storm-text-tertiary);
+  font-family: 'JetBrains Mono', monospace;
+  width: 40px;
+}
+
+.empty {
+  padding: 2rem;
+  text-align: center;
+  color: var(--storm-text-tertiary);
+  font-size: var(--storm-text-sm);
+}
