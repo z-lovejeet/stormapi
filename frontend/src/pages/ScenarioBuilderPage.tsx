@@ -1,4 +1,5 @@
 import { useState, useCallback, useMemo, useEffect } from 'react';
+import AssertionResultBadge from '../components/assertions/AssertionResultBadge';
 import { useParams, Link, useLocation } from 'react-router-dom';
 import {
   ArrowLeft,
@@ -493,6 +494,9 @@ export function ScenarioBuilderPage() {
                     >
                       {result.success ? 'PASS' : 'FAIL'}
                     </span>
+                  )}
+                  {result && result.assertionResults && result.assertionResults.length > 0 && (
+                    <AssertionResultBadge results={result.assertionResults} />
                   )}
                   {result && (
                     <span
