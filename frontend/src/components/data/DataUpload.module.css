@@ -1,0 +1,128 @@
+.container {
+  border: 1px solid var(--storm-border-primary);
+  border-radius: var(--storm-radius-lg);
+  padding: 1.5rem;
+  background: var(--storm-bg-secondary);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.title {
+  font-size: var(--storm-text-sm);
+  font-weight: 600;
+  color: var(--storm-text-primary);
+}
+
+.formatToggle {
+  display: flex;
+  gap: 0.25rem;
+  margin-left: auto;
+}
+
+.formatBtn {
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--storm-radius-md);
+  border: 1px solid var(--storm-border-primary);
+  background: transparent;
+  color: var(--storm-text-secondary);
+  cursor: pointer;
+  font-size: var(--storm-text-xs);
+  transition: all 0.2s;
+}
+
+.formatBtnActive {
+  background: var(--storm-accent);
+  color: white;
+  border-color: var(--storm-accent);
+}
+
+.dropzone {
+  border: 2px dashed var(--storm-border-secondary);
+  border-radius: var(--storm-radius-md);
+  padding: 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.dropzone:hover,
+.dropzoneActive {
+  border-color: var(--storm-accent);
+  background: rgba(99, 102, 241, 0.05);
+}
+
+.dropzoneIcon {
+  color: var(--storm-text-tertiary);
+  margin-bottom: 0.5rem;
+}
+
+.dropzoneText {
+  font-size: var(--storm-text-sm);
+  color: var(--storm-text-secondary);
+}
+
+.dropzoneHint {
+  font-size: var(--storm-text-xs);
+  color: var(--storm-text-tertiary);
+  margin-top: 0.25rem;
+}
+
+.fileInfo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  background: var(--storm-bg-primary);
+  border-radius: var(--storm-radius-md);
+  border: 1px solid var(--storm-border-primary);
+  margin-top: 0.75rem;
+}
+
+.fileName {
+  font-size: var(--storm-text-sm);
+  color: var(--storm-text-primary);
+  font-weight: 500;
+}
+
+.fileSize {
+  font-size: var(--storm-text-xs);
+  color: var(--storm-text-tertiary);
+}
+
+.clearBtn {
+  padding: 0.25rem;
+  border: none;
+  background: transparent;
+  color: var(--storm-text-tertiary);
+  cursor: pointer;
+  border-radius: var(--storm-radius-md);
+  transition: color 0.2s;
+}
+
+.clearBtn:hover {
+  color: var(--storm-danger);
+}
+
+.textarea {
+  width: 100%;
+  min-height: 150px;
+  padding: 0.75rem;
+  border: 1px solid var(--storm-border-primary);
+  border-radius: var(--storm-radius-md);
+  background: var(--storm-bg-primary);
+  color: var(--storm-text-primary);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: var(--storm-text-xs);
+  resize: vertical;
+  margin-top: 0.75rem;
+}
+
+.textarea:focus {
+  outline: none;
+  border-color: var(--storm-accent);
+}
