@@ -1,0 +1,68 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--storm-radius-md);
+  font-size: var(--storm-text-xs);
+  font-weight: 600;
+}
+
+.passed {
+  background: rgba(34, 197, 94, 0.1);
+  color: #22c55e;
+  border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+.failed {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.mixed {
+  background: rgba(245, 158, 11, 0.1);
+  color: #f59e0b;
+  border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.tooltip {
+  position: relative;
+  cursor: help;
+}
+
+.tooltipContent {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--storm-bg-elevated);
+  border: 1px solid var(--storm-border-primary);
+  border-radius: var(--storm-radius-md);
+  padding: 0.5rem 0.75rem;
+  white-space: nowrap;
+  z-index: 100;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.tooltip:hover .tooltipContent {
+  display: block;
+}
+
+.tooltipRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: var(--storm-text-xs);
+  color: var(--storm-text-secondary);
+  padding: 0.15rem 0;
+}
+
+.tooltipPass {
+  color: #22c55e;
+}
+
+.tooltipFail {
+  color: #ef4444;
+}
