@@ -10,6 +10,7 @@ import java.net.http.HttpResponse;
 import java.net.http.HttpTimeoutException;
 import java.nio.channels.UnresolvedAddressException;
 import java.time.Instant;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
@@ -124,46 +125,54 @@ public class HttpRequestExecutor {
             long bodySize = (body != null) ? body.length() : 0;
             boolean isSuccess = response.statusCode() >= 200 && response.statusCode() <= 299;
 
+            // Capture response headers for assertion evaluation
+            Map<String, String> headers = new LinkedHashMap<>();
+            response.headers().map().forEach((name, values) -> {
+                if (!values.isEmpty()) {
+                    headers.put(name, values.getFirst());
+                }
+            });
+
             return new DetailedRequestResult(
                     response.statusCode(), elapsedNanos, bodySize,
-                    isSuccess, null, timestamp, body);
+                    isSuccess, null, timestamp, body, headers);
 
         } catch (HttpTimeoutException e) {
             long elapsedNanos = System.nanoTime() - startNanos;
             return new DetailedRequestResult(0, elapsedNanos, 0, false,
-                    "Request timed out after " + spec.timeout(), timestamp, null);
+                    "Request timed out after " + spec.timeout(), timestamp, null, null);
 
         } catch (ConnectException e) {
             long elapsedNanos = System.nanoTime() - startNanos;
             return new DetailedRequestResult(0, elapsedNanos, 0, false,
-                    "Connection refused: " + spec.url(), timestamp, null);
+                    "Connection refused: " + spec.url(), timestamp, null, null);
 
         } catch (UnresolvedAddressException e) {
             long elapsedNanos = System.nanoTime() - startNanos;
             return new DetailedRequestResult(0, elapsedNanos, 0, false,
-                    "DNS resolution failed: " + spec.url(), timestamp, null);
+                    "DNS resolution failed: " + spec.url(), timestamp, null, null);
 
         } catch (SSLException e) {
             long elapsedNanos = System.nanoTime() - startNanos;
             return new DetailedRequestResult(0, elapsedNanos, 0, false,
-                    "SSL/TLS error: " + e.getMessage(), timestamp, null);
+                    "SSL/TLS error: " + e.getMessage(), timestamp, null, null);
 
         } catch (InterruptedException e) {
             long elapsedNanos = System.nanoTime() - startNanos;
             Thread.currentThread().interrupt();
             return new DetailedRequestResult(0, elapsedNanos, 0, false,
-                    "Execution interrupted", timestamp, null);
+                    "Execution interrupted", timestamp, null, null);
 
         } catch (IOException e) {
             long elapsedNanos = System.nanoTime() - startNanos;
             return new DetailedRequestResult(0, elapsedNanos, 0, false,
-                    "I/O error: " + e.getMessage(), timestamp, null);
+                    "I/O error: " + e.getMessage(), timestamp, null, null);
         }
     }
 
     /**
-     * Extended result that includes the response body text.
-     * Used by scenario execution for variable extraction.
+     * Extended result that includes the response body text and headers.
+     * Used by scenario execution for variable extraction and assertion evaluation.
      */
     public record DetailedRequestResult(
             int statusCode,
@@ -172,7 +181,8 @@ public class HttpRequestExecutor {
             boolean success,
             String errorMessage,
             Instant timestamp,
-            String responseBody
+            String responseBody,
+            Map<String, String> responseHeaders
     ) {
         /** Convenience: converts nanoTime to milliseconds. */
         public double responseTimeMs() {
