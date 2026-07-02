@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Play, CheckCircle, XCircle, Loader } from 'lucide-react';
-import { scenarioApi } from '../api/scenarioApi';
+import { listScenarios } from '../api/scenarioApi';
 import { dataApi } from '../api/dataApi';
 import DataUpload from '../components/data/DataUpload';
 import DataPreviewTable from '../components/data/DataPreviewTable';
@@ -31,7 +31,7 @@ const DataDrivenPage: React.FC = () => {
 
   // ── Load scenarios ────────────────────────────
   useEffect(() => {
-    scenarioApi.getAll().then(setScenarios).catch(console.error);
+    listScenarios().then(setScenarios).catch(console.error);
   }, []);
 
   // ── Parse preview data ────────────────────────
@@ -53,12 +53,14 @@ const DataDrivenPage: React.FC = () => {
         // Simple CSV preview parse
         const lines = dataContent.split('\n').filter((l) => l.trim());
         if (lines.length < 2) return [];
-        const headers = lines[0].split(',').map((h) => h.trim());
-        return lines.slice(1).map((line) => {
+        const firstLine = lines[0];
+        if (!firstLine) return [];
+        const headers = firstLine.split(',').map((h) => h.trim());
+          return lines.slice(1).map((line) => {
           const values = line.split(',');
           const row: Record<string, string> = {};
           headers.forEach((h, i) => {
-            row[h] = (values[i] || '').trim();
+            row[h] = (values[i] ?? '').trim();
           });
           return row;
         });

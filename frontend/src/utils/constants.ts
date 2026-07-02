@@ -17,6 +17,7 @@ export const ROUTES = {
   SCENARIO_BUILDER: '/scenarios/new',
   SCENARIO_EDIT: (id: number | string) => `/scenarios/${id}/edit`,
   SETTINGS: '/settings',
+  DATA_DRIVEN: '/data-driven',
 } as const;
 
 /** Default test configuration values */

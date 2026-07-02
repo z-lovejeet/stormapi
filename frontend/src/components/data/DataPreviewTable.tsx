@@ -11,7 +11,7 @@ interface DataPreviewTableProps {
  */
 const DataPreviewTable: React.FC<DataPreviewTableProps> = ({ rows }) => {
   const columns = useMemo(() => {
-    if (rows.length === 0) return [];
+    if (rows.length === 0 || !rows[0]) return [];
     return Object.keys(rows[0]);
   }, [rows]);
 

@@ -10,6 +10,7 @@ import { CollectionDetailPage } from './pages/CollectionDetailPage';
 import { ScenariosPage } from './pages/ScenariosPage';
 import { ScenarioBuilderPage } from './pages/ScenarioBuilderPage';
 import { SettingsPage } from './pages/SettingsPage';
+import DataDrivenPage from './pages/DataDrivenPage';
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
           <Route path="scenarios/new" element={<ScenarioBuilderPage />} />
           <Route path="scenarios/:id/edit" element={<ScenarioBuilderPage />} />
           <Route path="settings" element={<SettingsPage />} />
+          <Route path="data-driven" element={<DataDrivenPage />} />
         </Route>
       </Routes>
     </>

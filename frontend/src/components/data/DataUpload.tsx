@@ -48,7 +48,8 @@ const DataUpload: React.FC<DataUploadProps> = ({
       e.preventDefault();
       setIsDragActive(false);
       if (e.dataTransfer.files.length > 0) {
-        handleFile(e.dataTransfer.files[0]);
+        const file = e.dataTransfer.files[0];
+        if (file) handleFile(file);
       }
     },
     [handleFile],
