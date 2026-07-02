@@ -1,6 +1,10 @@
 package com.stormapi.scenario.execution;
 
 import com.stormapi.collection.dto.KeyValuePairDto;
+import com.stormapi.engine.assertion.Assertion;
+import com.stormapi.engine.assertion.AssertionContext;
+import com.stormapi.engine.assertion.AssertionEvaluator;
+import com.stormapi.engine.assertion.AssertionResult;
 import com.stormapi.engine.http.HttpClientFactory;
 import com.stormapi.engine.http.HttpRequestExecutor;
 import com.stormapi.engine.http.HttpRequestExecutor.DetailedRequestResult;
@@ -43,16 +47,20 @@ public class ScenarioExecutor {
 
     private final VariableExtractor variableExtractor;
     private final TemplateResolver templateResolver;
+    private final AssertionEvaluator assertionEvaluator;
 
-    public ScenarioExecutor() {
+    public ScenarioExecutor(AssertionEvaluator assertionEvaluator) {
         this.variableExtractor = new VariableExtractor();
         this.templateResolver = new TemplateResolver();
+        this.assertionEvaluator = assertionEvaluator;
     }
 
     // visible for testing
-    ScenarioExecutor(VariableExtractor variableExtractor, TemplateResolver templateResolver) {
+    ScenarioExecutor(VariableExtractor variableExtractor, TemplateResolver templateResolver,
+                     AssertionEvaluator assertionEvaluator) {
         this.variableExtractor = variableExtractor;
         this.templateResolver = templateResolver;
+        this.assertionEvaluator = assertionEvaluator;
     }
 
     /**
@@ -63,6 +71,13 @@ public class ScenarioExecutor {
      * @return execution response with results for each step
      */
     public ScenarioExecutionResponse execute(TestScenario scenario) {
+        return execute(scenario, List.of());
+    }
+
+    /**
+     * Executes all steps with assertions evaluated per step.
+     */
+    public ScenarioExecutionResponse execute(TestScenario scenario, List<Assertion> assertions) {
         long startTimeMs = System.currentTimeMillis();
 
         var httpClient = HttpClientFactory.createDefault();
@@ -78,7 +93,7 @@ public class ScenarioExecutor {
         log.info("Executing scenario '{}' with {} steps", scenario.getName(), steps.size());
 
         for (ScenarioStep step : steps) {
-            StepExecutionResult result = executeStep(step, variableStore, executor);
+            StepExecutionResult result = executeStep(step, variableStore, executor, assertions);
             stepResults.add(result);
 
             if (!result.success() && scenario.isFailFast()) {
@@ -97,7 +112,8 @@ public class ScenarioExecutor {
      */
     private StepExecutionResult executeStep(ScenarioStep step,
                                              Map<String, String> variableStore,
-                                             HttpRequestExecutor executor) {
+                                             HttpRequestExecutor executor,
+                                             List<Assertion> assertions) {
         log.debug("Executing step {} '{}'", step.getStepOrder(), step.getName());
 
         // 1. Resolve templates
@@ -144,13 +160,25 @@ public class ScenarioExecutor {
                     step.getStepOrder(), extracted.size(), extracted.keySet());
         }
 
-        // 5. Build result
+        // 5. Evaluate assertions
+        List<AssertionResult> assertionResults = List.of();
+        if (assertions != null && !assertions.isEmpty()) {
+            AssertionContext assertionContext = new AssertionContext(
+                    httpResult.statusCode(),
+                    httpResult.responseTimeMs(),
+                    httpResult.responseBody(),
+                    httpResult.responseHeaders()
+            );
+            assertionResults = assertionEvaluator.evaluate(assertions, assertionContext);
+        }
+
+        // 6. Build result
         if (httpResult.success()) {
-            return StepExecutionResult.success(
+            return StepExecutionResult.successWithAssertions(
                     step.getStepOrder(), step.getName(),
                     resolvedUrl, step.getMethod().name(),
                     httpResult.statusCode(), httpResult.responseTimeMs(),
-                    httpResult.responseBody(), extracted);
+                    httpResult.responseBody(), extracted, assertionResults);
         } else {
             String errorMsg = httpResult.errorMessage() != null
                     ? httpResult.errorMessage()
