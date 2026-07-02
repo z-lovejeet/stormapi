@@ -1,5 +1,6 @@
 import { HttpMethod } from './test';
 import { KeyValuePair } from './collection';
+import { AssertionResult } from './data';
 
 // ── Extraction Rules ────────────────────────────────────────
 
@@ -50,6 +51,7 @@ export interface StepExecutionResult {
   success: boolean;
   errorMessage?: string;
   extractedVariables: Record<string, string>;
+  assertionResults: AssertionResult[];
 }
 
 /** Complete result of executing a test scenario. */
