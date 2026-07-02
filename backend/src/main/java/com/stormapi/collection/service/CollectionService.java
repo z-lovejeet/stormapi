@@ -90,6 +90,58 @@ public class CollectionService {
         endpointRepository.delete(endpoint);
     }
 
+    /**
+     * Reorder endpoints within a collection. Updates sortOrder to match
+     * the order of IDs in the request.
+     */
+    public List<ApiEndpoint> reorderEndpoints(Long collectionId, List<Long> endpointIds) {
+        // Verify collection exists
+        if (!collectionRepository.existsById(collectionId)) {
+            throw new ResourceNotFoundException("ApiCollection", collectionId);
+        }
+        List<ApiEndpoint> endpoints = endpointRepository.findByCollectionIdOrderBySortOrderAsc(collectionId);
+
+        // Validate all IDs belong to this collection
+        var existingIds = endpoints.stream().map(ApiEndpoint::getId).collect(java.util.stream.Collectors.toSet());
+        for (Long eid : endpointIds) {
+            if (!existingIds.contains(eid)) {
+                throw new ResourceNotFoundException("ApiEndpoint " + eid
+                        + " does not belong to collection " + collectionId);
+            }
+        }
+
+        // Build lookup and update sort order
+        var endpointMap = endpoints.stream()
+                .collect(java.util.stream.Collectors.toMap(ApiEndpoint::getId, e -> e));
+        List<ApiEndpoint> reordered = new java.util.ArrayList<>();
+        for (int i = 0; i < endpointIds.size(); i++) {
+            ApiEndpoint ep = endpointMap.get(endpointIds.get(i));
+            if (ep != null) {
+                ep.setSortOrder(i);
+                reordered.add(ep);
+            }
+        }
+        return endpointRepository.saveAll(reordered);
+    }
+
+    /**
+     * Duplicate an endpoint within the same collection.
+     */
+    public ApiEndpoint duplicateEndpoint(Long collectionId, Long endpointId) {
+        ApiEndpoint source = getEndpoint(collectionId, endpointId);
+        ApiEndpoint copy = ApiEndpoint.builder()
+                .collection(source.getCollection())
+                .name(source.getName() + " (Copy)")
+                .url(source.getUrl())
+                .method(source.getMethod())
+                .headers(new java.util.ArrayList<>(source.getHeaders()))
+                .body(source.getBody())
+                .description(source.getDescription())
+                .sortOrder(source.getSortOrder() + 1)
+                .build();
+        return endpointRepository.save(copy);
+    }
+
     private ApiEndpoint getEndpoint(Long collectionId, Long endpointId) {
         // Verify collection exists
         if (!collectionRepository.existsById(collectionId)) {

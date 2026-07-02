@@ -140,4 +140,32 @@ public class CollectionController {
                 .body(ApiResponse.success(httpRequest.getRequestURI()));
     }
 
+    @PutMapping("/{collectionId}/endpoints/reorder")
+    @Operation(summary = "Reorder endpoints within a collection")
+    public ResponseEntity<ApiResponse<List<EndpointResponse>>> reorderEndpoints(
+            @PathVariable Long collectionId,
+            @Valid @RequestBody com.stormapi.collection.dto.ReorderEndpointsRequest request,
+            HttpServletRequest httpRequest) {
+
+        List<com.stormapi.collection.model.ApiEndpoint> reordered =
+                collectionService.reorderEndpoints(collectionId, request.endpointIds());
+        List<EndpointResponse> responses = reordered.stream()
+                .map(CollectionMapper::toEndpointResponse)
+                .toList();
+        return ResponseEntity.ok(ApiResponse.success(responses, httpRequest.getRequestURI()));
+    }
+
+    @PostMapping("/{collectionId}/endpoints/{endpointId}/duplicate")
+    @Operation(summary = "Duplicate an endpoint within the same collection")
+    public ResponseEntity<ApiResponse<EndpointResponse>> duplicateEndpoint(
+            @PathVariable Long collectionId,
+            @PathVariable Long endpointId,
+            HttpServletRequest httpRequest) {
+
+        ApiEndpoint copy = collectionService.duplicateEndpoint(collectionId, endpointId);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.success(
+                        CollectionMapper.toEndpointResponse(copy), httpRequest.getRequestURI()));
+    }
+
 }
