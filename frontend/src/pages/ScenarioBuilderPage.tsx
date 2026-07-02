@@ -1,5 +1,5 @@
-import { useState, useCallback, useMemo } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useState, useCallback, useMemo, useEffect } from 'react';
+import { useParams, Link, useLocation } from 'react-router-dom';
 import {
   ArrowLeft,
   Plus,
@@ -9,6 +9,8 @@ import {
   Play,
   Save,
   X,
+  FolderOpen,
+  FileText,
 } from 'lucide-react';
 import {
   createScenario,
@@ -18,9 +20,10 @@ import {
   deleteStep as deleteStepApi,
   executeScenario,
 } from '../api/scenarioApi';
+import { listCollections, getCollection as getCollectionApi } from '../api/collectionApi';
 import { ROUTES } from '../utils/constants';
 import { HttpMethod } from '../types/test';
-import type { KeyValuePair } from '../types/collection';
+import type { KeyValuePair, ApiCollection, ApiEndpoint } from '../types/collection';
 import type {
   ExtractionRule,
   ScenarioStep,
@@ -28,7 +31,6 @@ import type {
   ScenarioExecutionResponse,
 } from '../types/scenario';
 import styles from './ScenarioBuilderPage.module.css';
-import { useEffect } from 'react';
 
 const HTTP_METHODS = Object.values(HttpMethod);
 
@@ -61,6 +63,7 @@ const EMPTY_STEP: LocalStep = {
 
 export function ScenarioBuilderPage() {
   const { id } = useParams<{ id: string }>();
+  const location = useLocation();
   const isEditing = !!id;
 
   const [scenarioId, setScenarioId] = useState<number | null>(
@@ -73,6 +76,13 @@ export function ScenarioBuilderPage() {
   const [expandedStep, setExpandedStep] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
   const [running, setRunning] = useState(false);
+  // Collection picker state
+  const [addStepDialogOpen, setAddStepDialogOpen] = useState(false);
+  const [collectionPickerOpen, setCollectionPickerOpen] = useState(false);
+  const [collections, setCollections] = useState<ApiCollection[]>([]);
+  const [selectedCollection, setSelectedCollection] = useState<ApiCollection | null>(null);
+  const [loadingCollections, setLoadingCollections] = useState(false);
+
   const [executionResult, setExecutionResult] =
     useState<ScenarioExecutionResponse | null>(null);
 
@@ -97,6 +107,69 @@ export function ScenarioBuilderPage() {
       );
     });
   }, [isEditing, id]);
+
+  // Auto-import endpoint from location state (from "Use in Scenario" button)
+  useEffect(() => {
+    const state = location.state as { importEndpoint?: { name: string; url: string; method: HttpMethod; headers: KeyValuePair[]; body: string } } | null;
+    if (state?.importEndpoint) {
+      const ep = state.importEndpoint;
+      setSteps((prev) => [
+        ...prev,
+        {
+          name: ep.name,
+          url: ep.url,
+          method: ep.method,
+          headers: ep.headers,
+          body: ep.body,
+          extractionRules: [],
+        },
+      ]);
+      // Clear location state to prevent re-import on re-render
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
+
+  // ── Collection picker helpers ───────────────────────────
+
+  const openCollectionPicker = async () => {
+    setAddStepDialogOpen(false);
+    setCollectionPickerOpen(true);
+    setSelectedCollection(null);
+    setLoadingCollections(true);
+    try {
+      const cols = await listCollections();
+      setCollections(cols);
+    } finally {
+      setLoadingCollections(false);
+    }
+  };
+
+  const selectCollection = async (col: ApiCollection) => {
+    setLoadingCollections(true);
+    try {
+      const full = await getCollectionApi(col.id);
+      setSelectedCollection(full);
+    } finally {
+      setLoadingCollections(false);
+    }
+  };
+
+  const importEndpointAsStep = (ep: ApiEndpoint) => {
+    setSteps((prev) => [
+      ...prev,
+      {
+        name: ep.name,
+        url: ep.url,
+        method: ep.method,
+        headers: ep.headers ?? [],
+        body: ep.body ?? '',
+        extractionRules: [],
+      },
+    ]);
+    setCollectionPickerOpen(false);
+    setSelectedCollection(null);
+    setExpandedStep(steps.length);
+  };
 
   // ── Step management ─────────────────────────────────────
 
@@ -657,9 +730,9 @@ export function ScenarioBuilderPage() {
             );
           })}
 
-          {/* Add Step Button */}
+          {/* Add Step Area */}
           <div className={styles.addStepArea}>
-            <button className={styles.addStepBtn} onClick={addBlankStep}>
+            <button className={styles.addStepBtn} onClick={() => setAddStepDialogOpen(true)}>
               <Plus size={14} />
               Add Step
             </button>
@@ -712,6 +785,113 @@ export function ScenarioBuilderPage() {
           )}
         </div>
       </div>
+
+      {/* ── Add Step Choice Dialog ───────────────────── */}
+      {addStepDialogOpen && (
+        <div className={styles.modalOverlay} onClick={() => setAddStepDialogOpen(false)}>
+          <div className={styles.pickerModal} onClick={(e) => e.stopPropagation()}>
+            <h3 className={styles.pickerTitle}>Add a Step</h3>
+            <div className={styles.pickerOptions}>
+              <button
+                className={styles.pickerOption}
+                onClick={() => {
+                  setAddStepDialogOpen(false);
+                  addBlankStep();
+                }}
+              >
+                <FileText size={24} />
+                <span className={styles.pickerOptionLabel}>Blank Step</span>
+                <span className={styles.pickerOptionDesc}>Start from scratch</span>
+              </button>
+              <button
+                className={styles.pickerOption}
+                onClick={openCollectionPicker}
+              >
+                <FolderOpen size={24} />
+                <span className={styles.pickerOptionLabel}>From Collection</span>
+                <span className={styles.pickerOptionDesc}>Import an existing endpoint</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Collection Picker Modal ──────────────────── */}
+      {collectionPickerOpen && (
+        <div className={styles.modalOverlay} onClick={() => { setCollectionPickerOpen(false); setSelectedCollection(null); }}>
+          <div className={styles.pickerModalLarge} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.pickerHeader}>
+              {selectedCollection ? (
+                <button
+                  className={styles.pickerBackBtn}
+                  onClick={() => setSelectedCollection(null)}
+                >
+                  <ArrowLeft size={14} /> Back
+                </button>
+              ) : null}
+              <h3 className={styles.pickerTitle}>
+                {selectedCollection ? selectedCollection.name : 'Select a Collection'}
+              </h3>
+              <button
+                className={styles.pickerCloseBtn}
+                onClick={() => { setCollectionPickerOpen(false); setSelectedCollection(null); }}
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            {loadingCollections ? (
+              <div className={styles.pickerLoading}>Loading…</div>
+            ) : selectedCollection ? (
+              /* Show endpoints of selected collection */
+              <div className={styles.pickerList}>
+                {(selectedCollection.endpoints ?? []).length === 0 ? (
+                  <div className={styles.pickerEmpty}>No endpoints in this collection.</div>
+                ) : (
+                  (selectedCollection.endpoints ?? []).map((ep) => (
+                    <button
+                      key={ep.id}
+                      className={styles.pickerEndpointItem}
+                      onClick={() => importEndpointAsStep(ep)}
+                    >
+                      <span className={`${styles.pickerMethodBadge} ${METHOD_CLASS[ep.method] ?? ''}`}>
+                        {ep.method}
+                      </span>
+                      <div className={styles.pickerEndpointInfo}>
+                        <span className={styles.pickerEndpointName}>{ep.name}</span>
+                        <span className={styles.pickerEndpointUrl}>{ep.url}</span>
+                      </div>
+                    </button>
+                  ))
+                )}
+              </div>
+            ) : (
+              /* Show collection list */
+              <div className={styles.pickerList}>
+                {collections.length === 0 ? (
+                  <div className={styles.pickerEmpty}>No collections found. Create one first.</div>
+                ) : (
+                  collections.map((col) => (
+                    <button
+                      key={col.id}
+                      className={styles.pickerCollectionItem}
+                      onClick={() => selectCollection(col)}
+                    >
+                      <FolderOpen size={16} />
+                      <div className={styles.pickerCollectionInfo}>
+                        <span className={styles.pickerCollectionName}>{col.name}</span>
+                        {col.description && (
+                          <span className={styles.pickerCollectionDesc}>{col.description}</span>
+                        )}
+                      </div>
+                    </button>
+                  ))
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

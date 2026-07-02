@@ -6,11 +6,32 @@
   background: var(--storm-bg-secondary);
   border: 1px solid var(--storm-border-primary);
   border-radius: var(--storm-radius-md);
-  transition: border-color 0.15s;
+  transition: border-color 0.15s, opacity 0.15s;
 }
 
 .row:hover {
   border-color: var(--storm-border-secondary);
+}
+
+.row[draggable="true"] {
+  cursor: grab;
+}
+
+.row[draggable="true"]:active {
+  cursor: grabbing;
+  opacity: 0.6;
+}
+
+.dragHandle {
+  color: var(--storm-text-tertiary);
+  cursor: grab;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.dragHandle:active {
+  cursor: grabbing;
 }
 
 .methodBadge {
@@ -82,4 +103,9 @@
 .actionBtnDanger:hover {
   color: var(--storm-danger);
   background: rgba(239, 68, 68, 0.1);
+}
+
+.actionBtnScenario:hover {
+  color: var(--storm-accent);
+  background: rgba(99, 102, 241, 0.1);
 }

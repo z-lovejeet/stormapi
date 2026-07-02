@@ -1,11 +1,12 @@
-import { useState, useEffect, useCallback } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Plus, Layers, X } from 'lucide-react';
 import {
   getCollection,
   addEndpoint,
   updateEndpoint,
   deleteEndpoint,
+  reorderEndpoints,
 } from '../api/collectionApi';
 import { EndpointRow } from '../components/collections/EndpointRow';
 import { LoadingSpinner } from '../components/common/LoadingSpinner';
@@ -38,6 +39,7 @@ const EMPTY_FORM: EndpointForm = {
 export function CollectionDetailPage() {
   const { id } = useParams<{ id: string }>();
   const collectionId = Number(id);
+  const navigate = useNavigate();
 
   const [collection, setCollection] = useState<ApiCollection | null>(null);
   const [loading, setLoading] = useState(true);
@@ -46,6 +48,9 @@ export function CollectionDetailPage() {
   const [form, setForm] = useState<EndpointForm>(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<number | null>(null);
+
+  // Drag-and-drop state
+  const dragIndexRef = useRef<number | null>(null);
 
   const fetchCollection = useCallback(async () => {
     setLoading(true);
@@ -148,6 +153,51 @@ export function CollectionDetailPage() {
     await fetchCollection();
   };
 
+  // ── Drag-and-drop reordering ────────────────────────────
+
+  const handleDragStart = (_e: React.DragEvent, index: number) => {
+    dragIndexRef.current = index;
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault(); // Allow drop
+  };
+
+  const handleDrop = async (_e: React.DragEvent, dropIndex: number) => {
+    const dragIndex = dragIndexRef.current;
+    if (dragIndex == null || dragIndex === dropIndex || !collection) return;
+    dragIndexRef.current = null;
+
+    const endpoints = [...(collection.endpoints ?? [])];
+    const [moved] = endpoints.splice(dragIndex, 1);
+    if (!moved) return;
+    endpoints.splice(dropIndex, 0, moved);
+
+    // Optimistic update
+    setCollection({ ...collection, endpoints });
+
+    // Persist to backend
+    const orderedIds = endpoints.map((ep) => ep.id);
+    await reorderEndpoints(collectionId, orderedIds);
+  };
+
+  // ── Use in Scenario ─────────────────────────────────────
+
+  const handleUseInScenario = (endpoint: ApiEndpoint) => {
+    // Navigate to ScenarioBuilderPage with endpoint data in state
+    navigate(ROUTES.SCENARIO_BUILDER, {
+      state: {
+        importEndpoint: {
+          name: endpoint.name,
+          url: endpoint.url,
+          method: endpoint.method,
+          headers: endpoint.headers ?? [],
+          body: endpoint.body ?? '',
+        },
+      },
+    });
+  };
+
   // ── Render ──────────────────────────────────────────────
 
   if (loading) return <LoadingSpinner />;
@@ -191,12 +241,18 @@ export function CollectionDetailPage() {
         />
       ) : (
         <div className={styles.endpointList}>
-          {endpoints.map((ep) => (
+          {endpoints.map((ep, index) => (
             <EndpointRow
               key={ep.id}
               endpoint={ep}
+              index={index}
               onEdit={openEditModal}
               onDelete={setDeleteTarget}
+              onUseInScenario={handleUseInScenario}
+              draggable
+              onDragStart={handleDragStart}
+              onDragOver={handleDragOver}
+              onDrop={handleDrop}
             />
           ))}
         </div>

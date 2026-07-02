@@ -503,3 +503,249 @@
   composes: btnSecondary;
   gap: 0.5rem;
 }
+
+/* ── Modal Overlay ────────────────────────────────────── */
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  backdrop-filter: blur(2px);
+}
+
+/* ── Add Step Choice Picker ───────────────────────────── */
+
+.pickerModal {
+  background: var(--storm-bg-secondary);
+  border: 1px solid var(--storm-border-primary);
+  border-radius: var(--storm-radius-lg);
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 360px;
+}
+
+.pickerTitle {
+  font-size: var(--storm-text-sm);
+  font-weight: 600;
+  color: var(--storm-text-primary);
+  margin: 0 0 1rem;
+}
+
+.pickerOptions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.pickerOption {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1.25rem 1rem;
+  background: var(--storm-bg-elevated);
+  border: 1px solid var(--storm-border-primary);
+  border-radius: var(--storm-radius-md);
+  cursor: pointer;
+  color: var(--storm-text-secondary);
+  transition: all 0.15s;
+}
+
+.pickerOption:hover {
+  border-color: var(--storm-accent);
+  color: var(--storm-accent);
+  background: rgba(99, 102, 241, 0.05);
+}
+
+.pickerOptionLabel {
+  font-size: var(--storm-text-sm);
+  font-weight: 600;
+  color: var(--storm-text-primary);
+}
+
+.pickerOptionDesc {
+  font-size: var(--storm-text-xs);
+  color: var(--storm-text-tertiary);
+  text-align: center;
+}
+
+/* ── Collection Picker Modal ──────────────────────────── */
+
+.pickerModalLarge {
+  background: var(--storm-bg-secondary);
+  border: 1px solid var(--storm-border-primary);
+  border-radius: var(--storm-radius-lg);
+  width: 100%;
+  max-width: 520px;
+  max-height: 70vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.pickerHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--storm-border-primary);
+}
+
+.pickerHeader .pickerTitle {
+  flex: 1;
+  margin: 0;
+}
+
+.pickerBackBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: transparent;
+  border: none;
+  color: var(--storm-text-secondary);
+  cursor: pointer;
+  font-size: var(--storm-text-xs);
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--storm-radius-md);
+}
+
+.pickerBackBtn:hover {
+  background: var(--storm-bg-elevated);
+  color: var(--storm-text-primary);
+}
+
+.pickerCloseBtn {
+  background: transparent;
+  border: none;
+  color: var(--storm-text-tertiary);
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: var(--storm-radius-md);
+  display: flex;
+  align-items: center;
+}
+
+.pickerCloseBtn:hover {
+  color: var(--storm-text-primary);
+  background: var(--storm-bg-elevated);
+}
+
+.pickerList {
+  overflow-y: auto;
+  padding: 0.5rem;
+  flex: 1;
+}
+
+.pickerLoading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  color: var(--storm-text-tertiary);
+  font-size: var(--storm-text-sm);
+}
+
+.pickerEmpty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  color: var(--storm-text-tertiary);
+  font-size: var(--storm-text-sm);
+}
+
+.pickerCollectionItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--storm-radius-md);
+  cursor: pointer;
+  text-align: left;
+  color: var(--storm-text-secondary);
+  transition: all 0.15s;
+}
+
+.pickerCollectionItem:hover {
+  background: var(--storm-bg-elevated);
+  border-color: var(--storm-border-primary);
+}
+
+.pickerCollectionInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  min-width: 0;
+}
+
+.pickerCollectionName {
+  font-size: var(--storm-text-sm);
+  font-weight: 500;
+  color: var(--storm-text-primary);
+}
+
+.pickerCollectionDesc {
+  font-size: var(--storm-text-xs);
+  color: var(--storm-text-tertiary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pickerEndpointItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.625rem 0.75rem;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--storm-radius-md);
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s;
+}
+
+.pickerEndpointItem:hover {
+  background: var(--storm-bg-elevated);
+  border-color: var(--storm-accent);
+}
+
+.pickerMethodBadge {
+  padding: 0.15rem 0.4rem;
+  border-radius: var(--storm-radius-md);
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  min-width: 2.75rem;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.pickerEndpointInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  min-width: 0;
+}
+
+.pickerEndpointName {
+  font-size: var(--storm-text-sm);
+  font-weight: 500;
+  color: var(--storm-text-primary);
+}
+
+.pickerEndpointUrl {
+  font-size: var(--storm-text-xs);
+  color: var(--storm-text-tertiary);
+  font-family: 'JetBrains Mono', monospace;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

@@ -68,3 +68,24 @@ export async function deleteEndpoint(
 ): Promise<void> {
   await apiClient.delete(`/collections/${collectionId}/endpoints/${endpointId}`);
 }
+
+export async function reorderEndpoints(
+  collectionId: number,
+  endpointIds: number[],
+): Promise<ApiEndpoint[]> {
+  const { data } = await apiClient.put<ApiEndpoint[]>(
+    `/collections/${collectionId}/endpoints/reorder`,
+    { endpointIds },
+  );
+  return data;
+}
+
+export async function duplicateEndpoint(
+  collectionId: number,
+  endpointId: number,
+): Promise<ApiEndpoint> {
+  const { data } = await apiClient.post<ApiEndpoint>(
+    `/collections/${collectionId}/endpoints/${endpointId}/duplicate`,
+  );
+  return data;
+}
