@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title th:text="'StormAPI Report — ' + ${testName}">StormAPI Report</title>
+    <style>
+        /* ── Reset & Base ── */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #0f1117; color: #e4e4e7; line-height: 1.6;
+            padding: 2rem; max-width: 960px; margin: 0 auto;
+        }
+
+        /* ── Header ── */
+        .report-header {
+            text-align: center; margin-bottom: 2.5rem;
+            border-bottom: 1px solid #27272a; padding-bottom: 1.5rem;
+        }
+        .report-header h1 { font-size: 1.75rem; font-weight: 700; color: #f4f4f5; margin-bottom: 0.25rem; }
+        .report-header .subtitle { font-size: 0.875rem; color: #a1a1aa; }
+        .report-header .badge {
+            display: inline-block; padding: 0.25rem 0.75rem; border-radius: 9999px;
+            font-size: 0.75rem; font-weight: 600; margin-top: 0.75rem;
+        }
+        .badge-pass { background: rgba(34, 197, 94, 0.15); color: #22c55e; border: 1px solid rgba(34, 197, 94, 0.3); }
+        .badge-fail { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
+
+        /* ── Section ── */
+        .section { margin-bottom: 2rem; }
+        .section-title {
+            font-size: 1.125rem; font-weight: 600; color: #f4f4f5;
+            margin-bottom: 1rem; padding-bottom: 0.5rem;
+            border-bottom: 1px solid #27272a;
+        }
+
+        /* ── KPI Grid ── */
+        .kpi-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 1rem; margin-bottom: 2rem;
+        }
+        .kpi-card {
+            background: #18181b; border: 1px solid #27272a; border-radius: 12px;
+            padding: 1.25rem; text-align: center;
+        }
+        .kpi-label { font-size: 0.75rem; color: #a1a1aa; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
+        .kpi-value { font-size: 1.5rem; font-weight: 700; color: #f4f4f5; }
+        .kpi-value.success { color: #22c55e; }
+        .kpi-value.danger { color: #ef4444; }
+        .kpi-value.info { color: #3b82f6; }
+
+        /* ── Meta Table ── */
+        .meta-grid {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 0.75rem; background: #18181b; border: 1px solid #27272a;
+            border-radius: 12px; padding: 1.25rem;
+        }
+        .meta-item { display: flex; flex-direction: column; }
+        .meta-label { font-size: 0.75rem; color: #71717a; }
+        .meta-value { font-size: 0.875rem; color: #e4e4e7; font-weight: 500; }
+
+        /* ── SVG Chart ── */
+        .chart-container {
+            background: #18181b; border: 1px solid #27272a; border-radius: 12px;
+            padding: 1.25rem; margin-bottom: 1rem;
+        }
+        .chart-title { font-size: 0.875rem; font-weight: 600; color: #a1a1aa; margin-bottom: 0.75rem; }
+        .chart-legend { display: flex; gap: 1.5rem; margin-top: 0.5rem; font-size: 0.75rem; color: #a1a1aa; }
+        .legend-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 0.35rem; vertical-align: middle; }
+
+        /* ── Data Table ── */
+        .data-table { width: 100%; border-collapse: collapse; font-size: 0.8125rem; }
+        .data-table th {
+            text-align: left; padding: 0.625rem 0.75rem;
+            background: #18181b; color: #a1a1aa; font-weight: 600;
+            border-bottom: 1px solid #27272a; font-size: 0.75rem;
+            text-transform: uppercase; letter-spacing: 0.03em;
+        }
+        .data-table td {
+            padding: 0.5rem 0.75rem; border-bottom: 1px solid #1f1f23;
+            color: #d4d4d8;
+        }
+        .data-table tr:hover td { background: rgba(39, 39, 42, 0.5); }
+
+        /* ── Percentile Table ── */
+        .percentile-grid {
+            display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.75rem;
+        }
+        .percentile-card {
+            background: #18181b; border: 1px solid #27272a; border-radius: 8px;
+            padding: 1rem; text-align: center;
+        }
+        .percentile-label { font-size: 0.75rem; color: #a1a1aa; }
+        .percentile-value { font-size: 1.25rem; font-weight: 700; margin-top: 0.25rem; }
+        .p50 { color: #22c55e; } .p75 { color: #3b82f6; } .p90 { color: #f59e0b; }
+        .p95 { color: #f97316; } .p99 { color: #ef4444; }
+
+        /* ── Footer ── */
+        .report-footer {
+            text-align: center; padding-top: 1.5rem; margin-top: 2rem;
+            border-top: 1px solid #27272a; font-size: 0.75rem; color: #52525b;
+        }
+
+        /* ── Print Styles ── */
+        @media print {
+            body { background: white; color: #1f2937; padding: 1rem; }
+            .kpi-card, .meta-grid, .chart-container, .percentile-card {
+                background: #f9fafb; border-color: #e5e7eb;
+            }
+            .kpi-value { color: #111827; }
+            .kpi-value.success { color: #16a34a; }
+            .kpi-value.danger { color: #dc2626; }
+            .kpi-value.info { color: #2563eb; }
+            .section-title { color: #111827; border-color: #e5e7eb; }
+            .data-table th { background: #f3f4f6; color: #374151; border-color: #e5e7eb; }
+            .data-table td { border-color: #f3f4f6; color: #1f2937; }
+            .report-header { border-color: #e5e7eb; }
+            .report-header h1 { color: #111827; }
+            .report-footer { border-color: #e5e7eb; color: #9ca3af; }
+        }
+
+        @media (max-width: 640px) {
+            .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+            .percentile-grid { grid-template-columns: repeat(3, 1fr); }
+            .meta-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ── Report Header ───────────────────────────────── -->
+<div class="report-header">
+    <h1>⚡ StormAPI Test Report</h1>
+    <div class="subtitle" th:text="${testName} + ' — ' + ${targetUrl}">Test Name — URL</div>
+    <span class="badge" th:classappend="${passed} ? 'badge-pass' : 'badge-fail'"
+          th:text="${passed} ? '✓ PASSED' : '✗ FAILED'">STATUS</span>
+</div>
+
+<!-- ── KPI Cards ───────────────────────────────────── -->
+<div class="kpi-grid">
+    <div class="kpi-card">
+        <div class="kpi-label">Total Requests</div>
+        <div class="kpi-value" th:text="${#numbers.formatInteger(result.totalRequests(), 1, 'COMMA')}">0</div>
+    </div>
+    <div class="kpi-card">
+        <div class="kpi-label">Success Rate</div>
+        <div class="kpi-value success" th:text="${successRate} + '%'">0%</div>
+    </div>
+    <div class="kpi-card">
+        <div class="kpi-label">Avg Response Time</div>
+        <div class="kpi-value info" th:text="${#numbers.formatDecimal(result.avgResponseTimeMs(), 1, 1)} + ' ms'">0 ms</div>
+    </div>
+    <div class="kpi-card">
+        <div class="kpi-label">P95 Latency</div>
+        <div class="kpi-value" style="color: #f97316;" th:text="${#numbers.formatDecimal(result.p95Ms(), 1, 1)} + ' ms'">0 ms</div>
+    </div>
+    <div class="kpi-card">
+        <div class="kpi-label">Throughput</div>
+        <div class="kpi-value info" th:text="${#numbers.formatDecimal(result.throughputRps(), 1, 1)} + ' req/s'">0 req/s</div>
+    </div>
+    <div class="kpi-card">
+        <div class="kpi-label">Error Rate</div>
+        <div class="kpi-value" th:classappend="${result.errorRate() > 5} ? 'danger' : 'success'"
+             th:text="${#numbers.formatDecimal(result.errorRate(), 1, 2)} + '%'">0%</div>
+    </div>
+</div>
+
+<!-- ── Latency Percentiles ─────────────────────────── -->
+<div class="section">
+    <div class="section-title">Latency Percentiles</div>
+    <div class="percentile-grid">
+        <div class="percentile-card">
+            <div class="percentile-label">P50 (Median)</div>
+            <div class="percentile-value p50" th:text="${#numbers.formatDecimal(result.p50Ms(), 1, 1)} + ' ms'">0</div>
+        </div>
+        <div class="percentile-card">
+            <div class="percentile-label">P75</div>
+            <div class="percentile-value p75" th:text="${#numbers.formatDecimal(result.p75Ms(), 1, 1)} + ' ms'">0</div>
+        </div>
+        <div class="percentile-card">
+            <div class="percentile-label">P90</div>
+            <div class="percentile-value p90" th:text="${#numbers.formatDecimal(result.p90Ms(), 1, 1)} + ' ms'">0</div>
+        </div>
+        <div class="percentile-card">
+            <div class="percentile-label">P95</div>
+            <div class="percentile-value p95" th:text="${#numbers.formatDecimal(result.p95Ms(), 1, 1)} + ' ms'">0</div>
+        </div>
+        <div class="percentile-card">
+            <div class="percentile-label">P99</div>
+            <div class="percentile-value p99" th:text="${#numbers.formatDecimal(result.p99Ms(), 1, 1)} + ' ms'">0</div>
+        </div>
+    </div>
+</div>
+
+<!-- ── Response Time Chart (SVG) ───────────────────── -->
+<div class="section" th:if="${snapshotCount > 0}">
+    <div class="section-title">Performance Timeline</div>
+
+    <div class="chart-container">
+        <div class="chart-title">Avg Response Time (ms)</div>
+        <svg viewBox="0 0 600 200" style="width:100%;height:auto;">
+            <rect width="600" height="200" fill="none"/>
+            <!-- Grid lines -->
+            <line x1="0" y1="50" x2="600" y2="50" stroke="#27272a" stroke-dasharray="4"/>
+            <line x1="0" y1="100" x2="600" y2="100" stroke="#27272a" stroke-dasharray="4"/>
+            <line x1="0" y1="150" x2="600" y2="150" stroke="#27272a" stroke-dasharray="4"/>
+            <!-- Axis labels -->
+            <text x="605" y="8" fill="#71717a" font-size="10" th:text="${maxMs} + ' ms'">max</text>
+            <text x="605" y="205" fill="#71717a" font-size="10">0 ms</text>
+            <!-- Data line -->
+            <polyline th:attr="points=${rtChartPoints}" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linejoin="round"/>
+        </svg>
+        <div class="chart-legend">
+            <span><span class="legend-dot" style="background:#3b82f6;"></span>Avg Response Time</span>
+        </div>
+    </div>
+
+    <div class="chart-container">
+        <div class="chart-title">Throughput (req/s)</div>
+        <svg viewBox="0 0 600 200" style="width:100%;height:auto;">
+            <rect width="600" height="200" fill="none"/>
+            <line x1="0" y1="50" x2="600" y2="50" stroke="#27272a" stroke-dasharray="4"/>
+            <line x1="0" y1="100" x2="600" y2="100" stroke="#27272a" stroke-dasharray="4"/>
+            <line x1="0" y1="150" x2="600" y2="150" stroke="#27272a" stroke-dasharray="4"/>
+            <text x="605" y="8" fill="#71717a" font-size="10" th:text="${maxRps} + ' rps'">max</text>
+            <text x="605" y="205" fill="#71717a" font-size="10">0 rps</text>
+            <polyline th:attr="points=${rpsChartPoints}" fill="none" stroke="#22c55e" stroke-width="2" stroke-linejoin="round"/>
+        </svg>
+        <div class="chart-legend">
+            <span><span class="legend-dot" style="background:#22c55e;"></span>Requests per Second</span>
+        </div>
+    </div>
+</div>
+
+<!-- ── Test Configuration ──────────────────────────── -->
+<div class="section">
+    <div class="section-title">Test Configuration</div>
+    <div class="meta-grid">
+        <div class="meta-item">
+            <span class="meta-label">Test Name</span>
+            <span class="meta-value" th:text="${testName}">—</span>
+        </div>
+        <div class="meta-item">
+            <span class="meta-label">Test Type</span>
+            <span class="meta-value" th:text="${testType}">—</span>
+        </div>
+        <div class="meta-item">
+            <span class="meta-label">Target URL</span>
+            <span class="meta-value" th:text="${targetUrl}">—</span>
+        </div>
+        <div class="meta-item">
+            <span class="meta-label">HTTP Method</span>
+            <span class="meta-value" th:text="${httpMethod}">—</span>
+        </div>
+        <div class="meta-item">
+            <span class="meta-label">Virtual Users</span>
+            <span class="meta-value" th:text="${virtualUsers}">—</span>
+        </div>
+        <div class="meta-item">
+            <span class="meta-label">Duration</span>
+            <span class="meta-value" th:text="${durationSeconds} + 's'">—</span>
+        </div>
+        <div class="meta-item">
+            <span class="meta-label">Started At</span>
+            <span class="meta-value" th:text="${startedAt} ?: '—'">—</span>
+        </div>
+        <div class="meta-item">
+            <span class="meta-label">Completed At</span>
+            <span class="meta-value" th:text="${completedAt} ?: '—'">—</span>
+        </div>
+    </div>
+</div>
+
+<!-- ── Additional Result Details ────────────────────── -->
+<div class="section">
+    <div class="section-title">Result Details</div>
+    <table class="data-table">
+        <thead>
+            <tr><th>Metric</th><th>Value</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>Total Requests</td><td th:text="${#numbers.formatInteger(result.totalRequests(), 1, 'COMMA')}">0</td></tr>
+            <tr><td>Successful</td><td th:text="${#numbers.formatInteger(result.successCount(), 1, 'COMMA')}">0</td></tr>
+            <tr><td>Failed</td><td th:text="${#numbers.formatInteger(result.failureCount(), 1, 'COMMA')}">0</td></tr>
+            <tr><td>Min Response Time</td><td th:text="${#numbers.formatDecimal(result.minResponseTimeMs(), 1, 2)} + ' ms'">0</td></tr>
+            <tr><td>Max Response Time</td><td th:text="${#numbers.formatDecimal(result.maxResponseTimeMs(), 1, 2)} + ' ms'">0</td></tr>
+            <tr><td>Total Data Transferred</td><td th:text="${#numbers.formatInteger(result.totalDataBytes(), 1, 'COMMA')} + ' bytes'">0</td></tr>
+            <tr><td>Duration</td><td th:text="${durationFormatted}">—</td></tr>
+            <tr th:if="${result.breakpointUsers() != null}"><td>Breakpoint Users</td><td th:text="${result.breakpointUsers()}">—</td></tr>
+            <tr th:if="${result.recoveryTimeMs() != null}"><td>Recovery Time</td><td th:text="${result.recoveryTimeMs()} + ' ms'">—</td></tr>
+            <tr th:if="${result.degradationDetected() != null}"><td>Degradation Detected</td><td th:text="${result.degradationDetected()} ? 'Yes' : 'No'">—</td></tr>
+            <tr th:if="${result.degradationSlope() != null}"><td>Degradation Slope</td><td th:text="${#numbers.formatDecimal(result.degradationSlope(), 1, 4)} + ' ms/sec'">—</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- ── Metric Snapshots Table ──────────────────────── -->
+<div class="section" th:if="${snapshotCount > 0}">
+    <div class="section-title" th:text="'Metric Snapshots (' + ${snapshotCount} + ' data points)'">Metric Snapshots</div>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Timestamp</th>
+                <th>Users</th>
+                <th>RPS</th>
+                <th>Avg (ms)</th>
+                <th>Error %</th>
+                <th>P95 (ms)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="s : ${snapshots}">
+                <td th:text="${s.timestamp}">—</td>
+                <td th:text="${s.activeUsers}">0</td>
+                <td th:text="${s.rps}">0</td>
+                <td th:text="${s.avgMs}">0</td>
+                <td th:text="${s.errorRate}">0</td>
+                <td th:text="${s.p95Ms}">0</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- ── Footer ──────────────────────────────────────── -->
+<div class="report-footer">
+    <p>Generated by <strong>⚡ StormAPI</strong> on <span th:text="${generatedAt}">date</span></p>
+    <p style="margin-top:0.25rem;">API Performance Testing Platform</p>
+</div>
+
+</body>
+</html>
