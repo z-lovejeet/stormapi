@@ -5,6 +5,7 @@ import { LoadingSpinner } from '../components/common/LoadingSpinner';
 import { EmptyState } from '../components/common/EmptyState';
 import { StatusBadge } from '../components/common/StatusBadge';
 import { TestTypeBadge } from '../components/common/TestTypeBadge';
+import { ExportDropdown } from '../components/export/ExportDropdown';
 import { ResultSummaryCards } from '../components/results/ResultSummaryCards';
 import { MetricsDetailTable } from '../components/results/MetricsDetailTable';
 import { DonutChart } from '../components/charts/DonutChart';
@@ -74,6 +75,9 @@ export function TestResultPage() {
           <h1>Test Results</h1>
           <StatusBadge status={result.status} />
           {testConfig && <TestTypeBadge type={testConfig.testType} />}
+        </div>
+        <div className={styles.headerRight}>
+          <ExportDropdown resultId={result.id} />
         </div>
       </div>
 
