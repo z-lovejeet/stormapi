@@ -103,6 +103,19 @@
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>2.8.4</version>
         </dependency>
+
+        <!-- Thymeleaf (HTML report template rendering) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
+
+        <!-- OpenHTMLtoPDF (HTML → PDF conversion) -->
+        <dependency>
+            <groupId>com.openhtmltopdf</groupId>
+            <artifactId>openhtmltopdf-pdfbox</artifactId>
+            <version>1.1.22</version>
+        </dependency>
     </dependencies>
 
     <build>
