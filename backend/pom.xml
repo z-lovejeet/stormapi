@@ -112,9 +112,9 @@
 
         <!-- OpenHTMLtoPDF (HTML → PDF conversion) -->
         <dependency>
-            <groupId>com.openhtmltopdf</groupId>
+            <groupId>io.github.openhtmltopdf</groupId>
             <artifactId>openhtmltopdf-pdfbox</artifactId>
-            <version>1.1.22</version>
+            <version>1.1.37</version>
         </dependency>
     </dependencies>
 
