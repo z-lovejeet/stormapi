@@ -108,13 +108,19 @@
 
 /* ── Table ───────────────────────────────── */
 
+.tableWrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: var(--storm-radius-lg);
+  border: 1px solid var(--storm-border-primary);
+  background: var(--storm-bg-secondary);
+}
+
 .table {
   width: 100%;
   border-collapse: collapse;
-  background: var(--storm-bg-secondary);
-  border-radius: var(--storm-radius-lg);
   overflow: hidden;
-  border: 1px solid var(--storm-border-primary);
 }
 
 .table th {
@@ -231,10 +237,16 @@
 }
 
 @media (max-width: 768px) {
+  .header { flex-direction: column; align-items: flex-start; }
   .filters { flex-direction: column; align-items: stretch; }
   .searchInput { min-width: unset; }
   .table { font-size: var(--storm-text-xs); }
   .table th, .table td { padding: 0.5rem; }
+  .compareBar { flex-direction: column; gap: 0.5rem; align-items: flex-start; }
+}
+
+@media (max-width: 480px) {
+  .comparisonOverlay { padding: 1rem; }
 }
 
 @keyframes fadeIn {
