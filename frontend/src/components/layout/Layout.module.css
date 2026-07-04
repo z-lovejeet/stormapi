@@ -1,14 +1,7 @@
 .layout {
-  display: grid;
-  grid-template-columns: var(--storm-sidebar-width) 1fr;
-  min-height: 100vh;
-}
-
-.main {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  overflow: hidden;
 }
 
 .content {
@@ -16,10 +9,19 @@
   padding: var(--storm-space-6);
   overflow-y: auto;
   overflow-x: hidden;
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
 }
 
 @media (max-width: 768px) {
-  .layout {
-    grid-template-columns: var(--storm-sidebar-collapsed) 1fr;
+  .content {
+    padding: var(--storm-space-4);
+  }
+}
+
+@media (max-width: 480px) {
+  .content {
+    padding: var(--storm-space-3);
   }
 }
