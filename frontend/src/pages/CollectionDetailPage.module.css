@@ -230,3 +230,11 @@
   composes: addBtn;
   background: var(--storm-danger);
 }
+
+@media (max-width: 768px) {
+  .header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+  .addBtn { width: 100%; justify-content: center; }
+  .formRow { grid-template-columns: 1fr; }
+  .headerRow { flex-direction: column; align-items: stretch; }
+  .removeHeaderBtn { align-self: flex-end; }
+}
