@@ -1,0 +1,259 @@
+/* ══════════════════════════════════════════════════════════
+   Navbar — Desktop horizontal + Mobile hamburger
+   ══════════════════════════════════════════════════════════ */
+
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--storm-navbar-height);
+  padding: 0 var(--storm-space-6);
+  background: var(--storm-bg-secondary-translucent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--storm-border-primary);
+}
+
+/* ── Logo ──────────────────────────────────────────────── */
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: var(--storm-space-2);
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.logoIcon {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.logoText {
+  font-size: var(--storm-text-lg);
+  font-weight: var(--storm-weight-bold);
+  background: linear-gradient(135deg, var(--storm-accent-primary), #8b5cf6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Desktop Nav Links ─────────────────────────────────── */
+
+.navLinks {
+  display: flex;
+  align-items: center;
+  gap: var(--storm-space-1);
+  margin: 0 auto;
+  padding: 0 var(--storm-space-4);
+}
+
+.navLink {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--storm-space-2);
+  padding: var(--storm-space-2) var(--storm-space-3);
+  border-radius: var(--storm-radius-md);
+  color: var(--storm-text-secondary);
+  text-decoration: none;
+  font-size: var(--storm-text-sm);
+  font-weight: var(--storm-weight-medium);
+  white-space: nowrap;
+  transition:
+    color var(--storm-duration-fast) var(--storm-ease-default),
+    background-color var(--storm-duration-fast) var(--storm-ease-default);
+}
+
+.navLink:hover {
+  color: var(--storm-text-primary);
+  background: var(--storm-bg-tertiary);
+}
+
+.navLinkActive {
+  color: var(--storm-accent-primary);
+  background: var(--storm-accent-primary-subtle);
+}
+
+.navLinkActive:hover {
+  color: var(--storm-accent-primary);
+  background: var(--storm-accent-primary-subtle);
+}
+
+.navLinkActive::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: var(--storm-space-3);
+  right: var(--storm-space-3);
+  height: 2px;
+  background: var(--storm-accent-primary);
+  border-radius: 2px 2px 0 0;
+}
+
+.navIcon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.navLabel {
+  /* label is always visible on desktop, hidden on smaller screens via media query */
+}
+
+/* ── Right Actions ─────────────────────────────────────── */
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--storm-space-2);
+  flex-shrink: 0;
+}
+
+.themeToggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--storm-radius-md);
+  border: 1px solid var(--storm-border-primary);
+  background: var(--storm-bg-tertiary);
+  color: var(--storm-text-secondary);
+  cursor: pointer;
+  transition:
+    background-color var(--storm-duration-fast) var(--storm-ease-default),
+    color var(--storm-duration-fast) var(--storm-ease-default),
+    border-color var(--storm-duration-fast) var(--storm-ease-default);
+}
+
+.themeToggle:hover {
+  background: var(--storm-accent-primary-subtle);
+  color: var(--storm-accent-primary);
+  border-color: var(--storm-accent-primary);
+}
+
+/* ── Hamburger Button ──────────────────────────────────── */
+
+.hamburger {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--storm-radius-md);
+  border: 1px solid var(--storm-border-primary);
+  background: var(--storm-bg-tertiary);
+  color: var(--storm-text-secondary);
+  cursor: pointer;
+  transition:
+    background-color var(--storm-duration-fast) var(--storm-ease-default),
+    color var(--storm-duration-fast) var(--storm-ease-default);
+}
+
+.hamburger:hover {
+  background: var(--storm-accent-primary-subtle);
+  color: var(--storm-accent-primary);
+}
+
+/* ── Mobile Menu Overlay ───────────────────────────────── */
+
+.mobileOverlay {
+  display: none;
+}
+
+.mobileMenu {
+  display: none;
+}
+
+/* ── Mobile Breakpoint ─────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .navLinks {
+    display: none;
+  }
+
+  .hamburger {
+    display: flex;
+  }
+
+  .mobileOverlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    top: var(--storm-navbar-height);
+    background: var(--storm-overlay);
+    z-index: 90;
+  }
+
+  .mobileMenu {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: var(--storm-navbar-height);
+    left: 0;
+    right: 0;
+    background: var(--storm-bg-secondary);
+    border-bottom: 1px solid var(--storm-border-primary);
+    padding: var(--storm-space-3);
+    z-index: 95;
+    box-shadow: var(--storm-shadow-lg);
+    max-height: calc(100vh - var(--storm-navbar-height));
+    overflow-y: auto;
+  }
+
+  .mobileNavLink {
+    display: flex;
+    align-items: center;
+    gap: var(--storm-space-3);
+    padding: var(--storm-space-3) var(--storm-space-4);
+    border-radius: var(--storm-radius-md);
+    color: var(--storm-text-secondary);
+    text-decoration: none;
+    font-size: var(--storm-text-base);
+    font-weight: var(--storm-weight-medium);
+    transition:
+      color var(--storm-duration-fast) var(--storm-ease-default),
+      background-color var(--storm-duration-fast) var(--storm-ease-default);
+  }
+
+  .mobileNavLink:hover {
+    color: var(--storm-text-primary);
+    background: var(--storm-bg-tertiary);
+  }
+
+  .mobileNavLinkActive {
+    color: var(--storm-accent-primary);
+    background: var(--storm-accent-primary-subtle);
+  }
+
+  .mobileNavLinkActive:hover {
+    color: var(--storm-accent-primary);
+    background: var(--storm-accent-primary-subtle);
+  }
+
+  .mobileNavIcon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+  }
+}
+
+/* ── Tablet: hide labels, show only icons ──────────────── */
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .navLabel {
+    display: none;
+  }
+
+  .navLink {
+    padding: var(--storm-space-2);
+  }
+
+  .navLinks {
+    gap: var(--storm-space-1);
+  }
+}
