@@ -19,6 +19,7 @@
   --storm-bg-secondary: #ffffff;
   --storm-bg-tertiary: #f1f3f5;
   --storm-bg-elevated: #ffffff;
+  --storm-bg-secondary-translucent: rgba(255, 255, 255, 0.85);
 
   /* Text */
   --storm-text-primary: #111827;
@@ -119,9 +120,7 @@
   --storm-ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
 
   /* Layout */
-  --storm-sidebar-width: 260px;
-  --storm-sidebar-collapsed: 64px;
-  --storm-header-height: 60px;
+  --storm-navbar-height: 64px;
 }
 
 /* ── Dark Mode Tokens ──────────────────────────────────── */
@@ -131,6 +130,7 @@
   --storm-bg-secondary: #1a1d26;
   --storm-bg-tertiary: #242731;
   --storm-bg-elevated: #1e2130;
+  --storm-bg-secondary-translucent: rgba(26, 29, 38, 0.85);
 
   /* Text */
   --storm-text-primary: #f0f0f5;
@@ -193,7 +193,6 @@ html {
 
 body {
   min-height: 100vh;
-  overflow: hidden;
 }
 
 #root {
