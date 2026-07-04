@@ -22,7 +22,7 @@ export function SettingsPage() {
         <h2 style={{ fontSize: 'var(--storm-text-lg)', marginBottom: 'var(--storm-space-4)' }}>
           Appearance
         </h2>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
           <div>
             <p style={{ fontWeight: 'var(--storm-weight-medium)' }}>Theme</p>
             <p style={{ fontSize: 'var(--storm-text-sm)', color: 'var(--storm-text-secondary)' }}>
