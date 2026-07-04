@@ -8,10 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <title>StormAPI — API Performance Testing</title>
-    <script>
-      // Polyfill Node.js 'global' for sockjs-client (Vite doesn't shim it like Webpack)
-      window.global = window;
-    </script>
+
     <script>
       const savedTheme = localStorage.getItem('theme');
       const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
