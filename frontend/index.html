@@ -10,6 +10,7 @@
     <title>StormAPI — API Performance Testing</title>
 
     <script>
+      window.global = window;
       const savedTheme = localStorage.getItem('theme');
       const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
       if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
