@@ -6,7 +6,6 @@ import { ThemeProvider } from '../../context/ThemeContext';
 import { ToastProvider } from '../../components/common/Toast';
 import { TestBuilderPage } from '../../pages/TestBuilderPage';
 import * as testApi from '../../api/testApi';
-import { TestType, HttpMethod } from '../../types/test';
 
 vi.mock('../../api/testApi');
 
