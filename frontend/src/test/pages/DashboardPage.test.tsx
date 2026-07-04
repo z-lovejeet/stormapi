@@ -8,7 +8,7 @@ import { DashboardPage } from '../../pages/DashboardPage';
 import * as dashboardApi from '../../api/dashboardApi';
 import * as testApi from '../../api/testApi';
 import type { DashboardStats } from '../../types/dashboard';
-import { TestType, TestStatus, HttpMethod } from '../../types/test';
+import { TestType, TestStatus } from '../../types/test';
 import type { TestSummaryResponse } from '../../types/test';
 
 vi.mock('../../api/dashboardApi');
