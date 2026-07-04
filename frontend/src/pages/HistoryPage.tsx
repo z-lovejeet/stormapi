@@ -121,55 +121,57 @@ export function HistoryPage() {
       )}
 
       {/* ── Table ───────────────────────────────── */}
-      <table className={styles.table}>
-        <thead>
-          <tr>
-            <th style={{ width: 40 }}></th>
-            <th onClick={() => setSort('name')}>Name <SortIcon field="name" /></th>
-            <th onClick={() => setSort('testType')}>Type <SortIcon field="testType" /></th>
-            <th onClick={() => setSort('status')}>Status <SortIcon field="status" /></th>
-            <th onClick={() => setSort('virtualUsers')}>Users <SortIcon field="virtualUsers" /></th>
-            <th onClick={() => setSort('lastAvgResponseTimeMs')}>Avg Latency <SortIcon field="lastAvgResponseTimeMs" /></th>
-            <th onClick={() => setSort('lastErrorRate')}>Error Rate <SortIcon field="lastErrorRate" /></th>
-            <th onClick={() => setSort('totalRuns')}>Runs <SortIcon field="totalRuns" /></th>
-            <th onClick={() => setSort('createdAt')}>Created <SortIcon field="createdAt" /></th>
-          </tr>
-        </thead>
-        <tbody>
-          {tests.map((t) => (
-            <tr
-              key={t.id}
-              className={styles.clickableRow}
-              onClick={() => navigate(`/tests/${t.id}/result`)}
-            >
-              <td onClick={(e) => e.stopPropagation()}>
-                <input
-                  type="checkbox"
-                  className={styles.compareCheckbox}
-                  checked={compareSelection.includes(t.id)}
-                  onChange={() => toggleCompare(t.id)}
-                  disabled={compareSelection.length >= 2 && !compareSelection.includes(t.id)}
-                />
-              </td>
-              <td style={{ fontWeight: 500 }}>{t.name}</td>
-              <td><TestTypeBadge type={t.testType} /></td>
-              <td><StatusBadge status={t.status} /></td>
-              <td>{t.virtualUsers}</td>
-              <td>{t.lastAvgResponseTimeMs != null ? formatMs(t.lastAvgResponseTimeMs) : '—'}</td>
-              <td>{t.lastErrorRate != null ? formatPercent(t.lastErrorRate) : '—'}</td>
-              <td>{t.totalRuns}</td>
-              <td>{formatDateTime(t.createdAt)}</td>
-            </tr>
-          ))}
-          {tests.length === 0 && (
+      <div className={styles.tableWrapper}>
+        <table className={styles.table}>
+          <thead>
             <tr>
-              <td colSpan={9} style={{ textAlign: 'center', padding: '3rem', color: 'var(--storm-text-tertiary)' }}>
-                No tests found matching your filters.
-              </td>
+              <th style={{ width: 40 }}></th>
+              <th onClick={() => setSort('name')}>Name <SortIcon field="name" /></th>
+              <th onClick={() => setSort('testType')}>Type <SortIcon field="testType" /></th>
+              <th onClick={() => setSort('status')}>Status <SortIcon field="status" /></th>
+              <th onClick={() => setSort('virtualUsers')}>Users <SortIcon field="virtualUsers" /></th>
+              <th onClick={() => setSort('lastAvgResponseTimeMs')}>Avg Latency <SortIcon field="lastAvgResponseTimeMs" /></th>
+              <th onClick={() => setSort('lastErrorRate')}>Error Rate <SortIcon field="lastErrorRate" /></th>
+              <th onClick={() => setSort('totalRuns')}>Runs <SortIcon field="totalRuns" /></th>
+              <th onClick={() => setSort('createdAt')}>Created <SortIcon field="createdAt" /></th>
             </tr>
-          )}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {tests.map((t) => (
+              <tr
+                key={t.id}
+                className={styles.clickableRow}
+                onClick={() => navigate(`/tests/${t.id}/result`)}
+              >
+                <td onClick={(e) => e.stopPropagation()}>
+                  <input
+                    type="checkbox"
+                    className={styles.compareCheckbox}
+                    checked={compareSelection.includes(t.id)}
+                    onChange={() => toggleCompare(t.id)}
+                    disabled={compareSelection.length >= 2 && !compareSelection.includes(t.id)}
+                  />
+                </td>
+                <td style={{ fontWeight: 500 }}>{t.name}</td>
+                <td><TestTypeBadge type={t.testType} /></td>
+                <td><StatusBadge status={t.status} /></td>
+                <td>{t.virtualUsers}</td>
+                <td>{t.lastAvgResponseTimeMs != null ? formatMs(t.lastAvgResponseTimeMs) : '—'}</td>
+                <td>{t.lastErrorRate != null ? formatPercent(t.lastErrorRate) : '—'}</td>
+                <td>{t.totalRuns}</td>
+                <td>{formatDateTime(t.createdAt)}</td>
+              </tr>
+            ))}
+            {tests.length === 0 && (
+              <tr>
+                <td colSpan={9} style={{ textAlign: 'center', padding: '3rem', color: 'var(--storm-text-tertiary)' }}>
+                  No tests found matching your filters.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
 
       {/* ── Pagination ──────────────────────────── */}
       {totalPages > 1 && (
