@@ -49,6 +49,7 @@ public class ScenarioExecutor {
     private final TemplateResolver templateResolver;
     private final AssertionEvaluator assertionEvaluator;
 
+    @org.springframework.beans.factory.annotation.Autowired
     public ScenarioExecutor(AssertionEvaluator assertionEvaluator) {
         this.variableExtractor = new VariableExtractor();
         this.templateResolver = new TemplateResolver();
