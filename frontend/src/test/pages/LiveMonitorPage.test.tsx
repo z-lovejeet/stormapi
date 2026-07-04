@@ -18,11 +18,8 @@ let wsCallbacks: {
   onEvent?: (e: TestEventMessage) => void;
 } = {};
 const mockDisconnect = vi.fn();
-let wsEnabled = true;
-
 vi.mock('../../hooks/useWebSocket', () => ({
   useWebSocket: vi.fn((opts: Record<string, unknown>) => {
-    wsEnabled = opts.enabled as boolean;
     wsCallbacks.onMetrics = opts.onMetrics as typeof wsCallbacks.onMetrics;
     wsCallbacks.onEvent = opts.onEvent as typeof wsCallbacks.onEvent;
     return {
@@ -63,26 +60,7 @@ const mockConfig = {
   updatedAt: '2026-06-27T10:00:00Z',
 };
 
-const mockMetrics: LiveMetricsMessage = {
-  testId: 42,
-  totalRequests: 1500,
-  successCount: 1470,
-  failureCount: 30,
-  avgResponseTimeMs: 85.2,
-  minResponseTimeMs: 5,
-  maxResponseTimeMs: 400,
-  p50Ms: 60,
-  p75Ms: 100,
-  p90Ms: 150,
-  p95Ms: 200,
-  p99Ms: 350,
-  throughputRps: 50.1,
-  errorRate: 2.0,
-  activeUsers: 100,
-  totalDataBytes: 5120000,
-  statusCodeDistribution: { '200': 1470, '500': 30 },
-  timestamp: '2026-06-27T10:01:00Z',
-};
+
 
 function renderPage() {
   return render(
@@ -182,7 +160,7 @@ describe('LiveMonitorPage', () => {
     });
     // Click the confirm "Stop Test" button in modal footer
     const buttons = screen.getAllByText('Stop Test');
-    const confirmButton = buttons[buttons.length - 1];
+    const confirmButton = buttons[buttons.length - 1] as HTMLElement;
     fireEvent.click(confirmButton);
     await waitFor(() => {
       expect(stopTest).toHaveBeenCalledWith(42);
