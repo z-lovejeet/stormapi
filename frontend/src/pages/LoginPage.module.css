@@ -108,3 +108,78 @@
 .backLink:hover {
   color: var(--storm-accent);
 }
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+  text-align: left;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.formGroup label {
+  font-size: var(--storm-text-xs);
+  font-weight: 500;
+  color: var(--storm-text-secondary);
+}
+
+.formGroup input {
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--storm-border-primary);
+  border-radius: var(--storm-radius-md);
+  background: var(--storm-bg-elevated);
+  color: var(--storm-text-primary);
+  font-size: var(--storm-text-sm);
+  transition: all 0.2s ease;
+}
+
+.formGroup input:focus {
+  outline: none;
+  border-color: var(--storm-accent);
+  box-shadow: 0 0 0 2px rgba(66, 153, 225, 0.2);
+}
+
+.submitBtn {
+  background: var(--storm-accent);
+  color: white;
+  border: none;
+  border-radius: var(--storm-radius-md);
+  padding: 0.875rem;
+  font-size: var(--storm-text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+  margin-top: 0.5rem;
+}
+
+.submitBtn:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.submitBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.signupPrompt {
+  margin-top: 1.5rem;
+  font-size: var(--storm-text-xs);
+  color: var(--storm-text-tertiary);
+}
+
+.signupPrompt a {
+  color: var(--storm-accent);
+  text-decoration: none;
+  font-weight: 500;
+  margin-left: 0.25rem;
+}
+
+.signupPrompt a:hover {
+  text-decoration: underline;
+}

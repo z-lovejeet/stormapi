@@ -1,16 +1,22 @@
+import React, { useState } from 'react';
 import { useSearchParams, Navigate, Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
-import { OAUTH_URLS } from '../api/authApi';
+import { OAUTH_URLS, loginLocal } from '../api/authApi';
 import styles from './LoginPage.module.css';
 
 /**
- * Login page with Google and GitHub OAuth2 login buttons.
+ * Login page with local email/password form and OAuth2 login buttons.
  * Redirects to /dashboard if already authenticated.
  */
 export function LoginPage() {
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, loading, refreshAuth } = useAuth();
   const [searchParams] = useSearchParams();
-  const error = searchParams.get('error');
+  const errorParam = searchParams.get('error');
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [localError, setLocalError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (loading) {
     return (
@@ -27,17 +33,63 @@ export function LoginPage() {
     return <Navigate to="/dashboard" replace />;
   }
 
+  const handleLocalSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLocalError('');
+    setIsSubmitting(true);
+    try {
+      await loginLocal({ email, password });
+      await refreshAuth();
+    } catch (err: any) {
+      setLocalError(err.response?.data?.message || 'Invalid email or password');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className={styles.loginPage}>
       <div className={styles.loginCard}>
         <div className={styles.logo}>⚡ StormAPI</div>
-        <p className={styles.tagline}>API Performance Testing Platform</p>
+        <p className={styles.tagline}>Welcome back</p>
 
-        {error && (
+        {(errorParam || localError) && (
           <div className={styles.errorBanner}>
-            Authentication failed. Please try again.
+            {localError || 'Authentication failed. Please try again.'}
           </div>
         )}
+
+        <form className={styles.form} onSubmit={handleLocalSubmit}>
+          <div className={styles.formGroup}>
+            <label htmlFor="email">Email</label>
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="name@example.com"
+              required
+            />
+          </div>
+          <div className={styles.formGroup}>
+            <label htmlFor="password">Password</label>
+            <input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
+              required
+            />
+          </div>
+          <button type="submit" className={styles.submitBtn} disabled={isSubmitting}>
+            {isSubmitting ? 'Signing in...' : 'Sign In'}
+          </button>
+        </form>
+
+        <div className={styles.divider}>
+          <span>or</span>
+        </div>
 
         <div className={styles.oauthButtons}>
           <a href={OAUTH_URLS.GOOGLE} className={styles.oauthBtn}>
@@ -55,6 +107,10 @@ export function LoginPage() {
             </svg>
             Continue with GitHub
           </a>
+        </div>
+
+        <div className={styles.signupPrompt}>
+          Don't have an account? <Link to="/register">Sign up</Link>
         </div>
 
         <Link to="/" className={styles.backLink}>
