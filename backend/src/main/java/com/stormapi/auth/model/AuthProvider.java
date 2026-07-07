@@ -5,5 +5,6 @@ package com.stormapi.auth.model;
  */
 public enum AuthProvider {
     GOOGLE,
-    GITHUB
+    GITHUB,
+    LOCAL
 }
