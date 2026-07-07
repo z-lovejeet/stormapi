@@ -88,6 +88,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         return switch (provider) {
             case GOOGLE -> (String) attributes.get("sub");
             case GITHUB -> String.valueOf(attributes.get("id"));
+            default -> throw new IllegalArgumentException("Unsupported OAuth2 provider: " + provider);
         };
     }
 }
