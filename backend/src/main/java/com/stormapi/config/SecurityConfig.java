@@ -4,6 +4,7 @@ import com.stormapi.auth.handler.OAuth2AuthenticationFailureHandler;
 import com.stormapi.auth.handler.OAuth2AuthenticationSuccessHandler;
 import com.stormapi.auth.jwt.JwtAuthenticationFilter;
 import com.stormapi.auth.service.CustomOAuth2UserService;
+import com.stormapi.auth.service.CustomOidcUserService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,17 +30,25 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final CustomOAuth2UserService customOAuth2UserService;
+    private final CustomOidcUserService customOidcUserService;
     private final OAuth2AuthenticationSuccessHandler oAuth2SuccessHandler;
     private final OAuth2AuthenticationFailureHandler oAuth2FailureHandler;
 
     public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter,
                           CustomOAuth2UserService customOAuth2UserService,
+                          CustomOidcUserService customOidcUserService,
                           OAuth2AuthenticationSuccessHandler oAuth2SuccessHandler,
                           OAuth2AuthenticationFailureHandler oAuth2FailureHandler) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.customOAuth2UserService = customOAuth2UserService;
+        this.customOidcUserService = customOidcUserService;
         this.oAuth2SuccessHandler = oAuth2SuccessHandler;
         this.oAuth2FailureHandler = oAuth2FailureHandler;
+    }
+
+    @Bean
+    public org.springframework.security.crypto.password.PasswordEncoder passwordEncoder() {
+        return new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder();
     }
 
     @Bean
@@ -59,8 +68,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // Public — static assets (SPA)
                         .requestMatchers("/", "/index.html", "/assets/**", "/favicon.svg").permitAll()
-                        // Public — auth status check
-                        .requestMatchers("/api/auth/status").permitAll()
+                        // Public — auth status check & local auth
+                        .requestMatchers("/api/auth/status", "/api/auth/register", "/api/auth/login").permitAll()
                         // Public — actuator health
                         .requestMatchers("/actuator/**").permitAll()
                         // Public — OAuth2 endpoints
@@ -78,7 +87,10 @@ public class SecurityConfig {
                 )
                 // OAuth2 login
                 .oauth2Login(oauth2 -> oauth2
-                        .userInfoEndpoint(info -> info.userService(customOAuth2UserService))
+                        .userInfoEndpoint(info -> info
+                                .userService(customOAuth2UserService)
+                                .oidcUserService(customOidcUserService)
+                        )
                         .successHandler(oAuth2SuccessHandler)
                         .failureHandler(oAuth2FailureHandler)
                 )
