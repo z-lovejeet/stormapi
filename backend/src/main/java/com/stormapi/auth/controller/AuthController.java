@@ -1,27 +1,92 @@
 package com.stormapi.auth.controller;
 
+import com.stormapi.auth.dto.AuthRequest;
 import com.stormapi.auth.dto.AuthStatusResponse;
+import com.stormapi.auth.dto.RegisterRequest;
 import com.stormapi.auth.dto.UserResponse;
+import com.stormapi.auth.jwt.JwtTokenProvider;
 import com.stormapi.auth.model.AppUser;
+import com.stormapi.auth.model.AuthProvider;
+import com.stormapi.auth.repository.AppUserRepository;
 import com.stormapi.common.model.ApiResponse;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Authentication endpoints:
- * - GET  /api/auth/status — public, returns current auth state
- * - GET  /api/auth/me     — protected, returns user profile
- * - POST /api/auth/logout — protected, clears JWT cookie
+ * - POST /api/auth/register — local email/password registration
+ * - POST /api/auth/login    — local email/password login
+ * - GET  /api/auth/status   — public, returns current auth state
+ * - GET  /api/auth/me       — protected, returns user profile
+ * - POST /api/auth/logout   — protected, clears JWT cookie
  */
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
+
+    private final AppUserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtTokenProvider jwtTokenProvider;
+
+    public AuthController(AppUserRepository userRepository, PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtTokenProvider = jwtTokenProvider;
+    }
+
+    @PostMapping("/register")
+    public ApiResponse<UserResponse> register(@Valid @RequestBody RegisterRequest request, HttpServletResponse response) {
+        if (userRepository.existsByEmail(request.email())) {
+            return ApiResponse.error(400, "Bad Request", "Email is already registered", "EMAIL_EXISTS", "/api/auth/register");
+        }
+
+        AppUser user = AppUser.builder()
+                .name(request.name())
+                .email(request.email())
+                .password(passwordEncoder.encode(request.password()))
+                .provider(AuthProvider.LOCAL)
+                .providerId(request.email())
+                .build();
+
+        userRepository.save(user);
+
+        String token = jwtTokenProvider.generateToken(user.getEmail(), user.getName());
+        setAuthCookie(response, token);
+
+        return ApiResponse.success(mapToUserResponse(user), "/api/auth/register");
+    }
+
+    @PostMapping("/login")
+    public ApiResponse<UserResponse> login(@Valid @RequestBody AuthRequest request, HttpServletResponse response) {
+        AppUser user = userRepository.findByEmail(request.email()).orElse(null);
+
+        if (user == null || user.getPassword() == null || !passwordEncoder.matches(request.password(), user.getPassword())) {
+            return ApiResponse.error(401, "Unauthorized", "Invalid email or password", "INVALID_CREDENTIALS", "/api/auth/login");
+        }
+
+        String token = jwtTokenProvider.generateToken(user.getEmail(), user.getName());
+        setAuthCookie(response, token);
+
+        return ApiResponse.success(mapToUserResponse(user), "/api/auth/login");
+    }
+
+    private void setAuthCookie(HttpServletResponse response, String token) {
+        Cookie cookie = new Cookie("stormapi_token", token);
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(86400); // 24 hours
+        cookie.setAttribute("SameSite", "Lax");
+        response.addCookie(cookie);
+    }
 
     @GetMapping("/status")
     public ApiResponse<AuthStatusResponse> getAuthStatus() {
@@ -65,9 +130,10 @@ public class AuthController {
         cookie.setHttpOnly(true);
         cookie.setPath("/");
         cookie.setMaxAge(0); // Delete immediately
+        cookie.setAttribute("SameSite", "Lax");
         response.addCookie(cookie);
 
-        return ApiResponse.success("/api/auth/logout");
+        return ApiResponse.success(null, "/api/auth/logout");
     }
 
     private UserResponse mapToUserResponse(AppUser user) {
