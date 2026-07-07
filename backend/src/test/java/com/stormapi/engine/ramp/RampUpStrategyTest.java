@@ -28,7 +28,7 @@ class RampUpStrategyTest {
     void setUp() {
         RequestSpec dummySpec = new RequestSpec(
                 "http://localhost:1/noop", "GET", Map.of(), null, java.time.Duration.ofMillis(100));
-        context = new ExecutionContext(dummySpec, null, result -> {});
+        context = new ExecutionContext(dummySpec, com.stormapi.engine.user.NoThinkTimeStrategy.INSTANCE, result -> {});
         context.start();
         executor = new HttpRequestExecutor(HttpClientFactory.createDefault());
         collectedThreads = Collections.synchronizedList(new ArrayList<>());
