@@ -1,0 +1,4 @@
+package com.stormapi.auth.dto;
+
+public record RegisterRequest(String name, String email, String password) {
+}
