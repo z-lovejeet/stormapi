@@ -72,7 +72,7 @@ export function LandingPage() {
           <Link to="/login" className={styles.loginBtn}>
             Log in
           </Link>
-          <Link to="/login" className={styles.getStartedBtn}>
+          <Link to="/register" className={styles.getStartedBtn}>
             Get Started
           </Link>
         </div>
@@ -94,7 +94,7 @@ export function LandingPage() {
           simulate real traffic, and identify bottlenecks — all from your browser.
         </p>
         <div className={styles.heroCtas}>
-          <Link to="/login" className={styles.ctaPrimary}>
+          <Link to="/register" className={styles.ctaPrimary}>
             Start Testing Free →
           </Link>
           <a href="#features" className={styles.ctaSecondary}>
