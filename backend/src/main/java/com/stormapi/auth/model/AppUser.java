@@ -13,9 +13,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * Application user entity — stores OAuth2-authenticated users.
+ * Application user entity — stores local and OAuth2-authenticated users.
  * Table name is "app_user" to avoid PostgreSQL reserved keyword "user".
- * No password field — authentication is OAuth-only.
  */
 @Entity
 @Table(name = "app_user")
@@ -39,8 +38,11 @@ public class AppUser extends BaseEntity {
     @Column(nullable = false, length = 20)
     private AuthProvider provider;
 
-    @Column(nullable = false)
+    @Column
     private String providerId;
+
+    @Column
+    private String password;
 
     @Column(nullable = false, length = 20)
     @Builder.Default
