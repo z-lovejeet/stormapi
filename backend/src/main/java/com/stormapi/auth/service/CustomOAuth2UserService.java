@@ -71,6 +71,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         return switch (provider) {
             case GOOGLE -> (String) attributes.get("sub");
             case GITHUB -> String.valueOf(attributes.get("id"));
+            default -> throw new IllegalArgumentException("Unsupported OAuth2 provider: " + provider);
         };
     }
 
@@ -90,6 +91,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         return switch (provider) {
             case GOOGLE -> (String) attributes.get("picture");
             case GITHUB -> (String) attributes.get("avatar_url");
+            default -> null;
         };
     }
 }
