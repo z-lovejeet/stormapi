@@ -7,7 +7,7 @@ export interface AuthUser {
   email: string;
   name: string;
   avatarUrl: string | null;
-  provider: 'GOOGLE' | 'GITHUB';
+  provider: 'GOOGLE' | 'GITHUB' | 'LOCAL';
 }
 
 export interface AuthStatus {

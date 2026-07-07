@@ -22,6 +22,16 @@ export async function logout(): Promise<void> {
   await apiClient.post('/auth/logout');
 }
 
+export async function loginLocal(data: { email: string; password: string }): Promise<AuthUser> {
+  const response = await apiClient.post<AuthUser>('/auth/login', data);
+  return response.data;
+}
+
+export async function registerLocal(data: { name: string; email: string; password: string }): Promise<AuthUser> {
+  const response = await apiClient.post<AuthUser>('/auth/register', data);
+  return response.data;
+}
+
 /** OAuth2 login redirect URLs */
 export const OAUTH_URLS = {
   GOOGLE: '/oauth2/authorization/google',
