@@ -12,9 +12,11 @@ import {
   Moon,
   Menu,
   X,
+  LogOut,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '../../hooks/useTheme';
+import { useAuth } from '../../hooks/useAuth';
 import { ROUTES } from '../../utils/constants';
 import styles from './Navbar.module.css';
 
@@ -34,6 +36,7 @@ const navItems = [
  */
 export function Navbar() {
   const { theme, toggleTheme } = useTheme();
+  const { user, isAuthenticated, logout } = useAuth();
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -98,6 +101,27 @@ export function Navbar() {
           >
             {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
           </button>
+
+          {/* User Menu */}
+          {isAuthenticated && user ? (
+            <div className={styles.userMenu}>
+              {user.avatarUrl ? (
+                <img src={user.avatarUrl} alt={user.name} className={styles.avatar} />
+              ) : (
+                <div className={styles.avatarFallback}>
+                  {user.name?.charAt(0)?.toUpperCase() || 'U'}
+                </div>
+              )}
+              <button
+                className={styles.logoutBtn}
+                onClick={logout}
+                title="Logout"
+                type="button"
+              >
+                <LogOut size={16} />
+              </button>
+            </div>
+          ) : null}
 
           {/* Hamburger (mobile only) */}
           <button

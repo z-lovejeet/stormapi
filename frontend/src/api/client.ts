@@ -9,6 +9,9 @@ export const apiClient = axios.create({
   baseURL: '/api',
   timeout: 30000,
   headers: { 'Content-Type': 'application/json' },
+  withCredentials: true,
+  xsrfCookieName: 'XSRF-TOKEN',
+  xsrfHeaderName: 'X-XSRF-TOKEN',
 });
 
 // ── Response Interceptor: unwrap ApiResponse<T> ───────────

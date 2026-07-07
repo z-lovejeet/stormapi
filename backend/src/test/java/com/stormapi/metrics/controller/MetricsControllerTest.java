@@ -1,5 +1,11 @@
 package com.stormapi.metrics.controller;
 
+import com.stormapi.auth.handler.OAuth2AuthenticationFailureHandler;
+import com.stormapi.auth.handler.OAuth2AuthenticationSuccessHandler;
+import com.stormapi.auth.jwt.JwtAuthenticationFilter;
+import com.stormapi.auth.jwt.JwtTokenProvider;
+import com.stormapi.auth.repository.AppUserRepository;
+import com.stormapi.auth.service.CustomOAuth2UserService;
 import com.stormapi.common.exception.ResourceNotFoundException;
 import com.stormapi.metrics.model.MetricSnapshot;
 import com.stormapi.metrics.model.RequestLog;
@@ -9,7 +15,9 @@ import com.stormapi.test.repository.TestResultRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -25,6 +33,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(MetricsController.class)
+@AutoConfigureMockMvc(addFilters = false)
 @DisplayName("MetricsController WebMvc Tests")
 class MetricsControllerTest {
 
@@ -39,6 +48,14 @@ class MetricsControllerTest {
 
     @MockitoBean
     private TestResultRepository testResultRepository;
+
+    // Security infrastructure mocks
+    @MockitoBean private JwtTokenProvider jwtTokenProvider;
+    @MockitoBean private AppUserRepository appUserRepository;
+    @MockitoBean private JwtAuthenticationFilter jwtAuthenticationFilter;
+    @MockitoBean private CustomOAuth2UserService customOAuth2UserService;
+    @MockitoBean private OAuth2AuthenticationSuccessHandler oAuth2SuccessHandler;
+    @MockitoBean private OAuth2AuthenticationFailureHandler oAuth2FailureHandler;
 
     @Test
     @DisplayName("GET /api/metrics/{resultId}/snapshots returns snapshot list")

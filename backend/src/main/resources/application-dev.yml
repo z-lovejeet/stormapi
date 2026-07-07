@@ -22,7 +22,27 @@ spring:
       settings:
         web-allow-others: false
 
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope: openid, profile, email
+          github:
+            client-id: ${GITHUB_CLIENT_ID}
+            client-secret: ${GITHUB_CLIENT_SECRET}
+            scope: user:email, read:user
+
 logging:
   level:
     com.stormapi: DEBUG
     org.springframework.web: DEBUG
+
+app:
+  cors:
+    allowed-origins: http://localhost:5173,http://localhost:3000
+  auth:
+    cookie-secure: false
+    redirect-uri: http://localhost:5173/dashboard

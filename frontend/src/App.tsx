@@ -1,5 +1,8 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Layout } from './components/layout/Layout';
+import { ProtectedRoute } from './components/auth/ProtectedRoute';
+import { LoginPage } from './pages/LoginPage';
+import { LandingPage } from './pages/LandingPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { TestBuilderPage } from './pages/TestBuilderPage';
 import { LiveMonitorPage } from './pages/LiveMonitorPage';
@@ -19,8 +22,16 @@ function App() {
         Skip to main content
       </a>
       <Routes>
-        <Route element={<Layout />}>
-          <Route index element={<Navigate to="/dashboard" replace />} />
+        {/* Public routes — outside Layout */}
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<LoginPage />} />
+
+        {/* Protected routes — inside Layout */}
+        <Route element={
+          <ProtectedRoute>
+            <Layout />
+          </ProtectedRoute>
+        }>
           <Route path="dashboard" element={<DashboardPage />} />
           <Route path="tests/new" element={<TestBuilderPage />} />
           <Route path="tests/:id/live" element={<LiveMonitorPage />} />
@@ -34,6 +45,9 @@ function App() {
           <Route path="settings" element={<SettingsPage />} />
           <Route path="data-driven" element={<DataDrivenPage />} />
         </Route>
+
+        {/* Fallback */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </>
   );

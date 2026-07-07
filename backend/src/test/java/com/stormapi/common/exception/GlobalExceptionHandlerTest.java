@@ -1,14 +1,21 @@
 package com.stormapi.common.exception;
 
+import com.stormapi.auth.handler.OAuth2AuthenticationFailureHandler;
+import com.stormapi.auth.handler.OAuth2AuthenticationSuccessHandler;
+import com.stormapi.auth.jwt.JwtAuthenticationFilter;
+import com.stormapi.auth.jwt.JwtTokenProvider;
+import com.stormapi.auth.repository.AppUserRepository;
+import com.stormapi.auth.service.CustomOAuth2UserService;
 import com.stormapi.common.model.ApiResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,16 +30,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Integration tests for GlobalExceptionHandler.
  * Verifies that all exception types return structured JSON with correct HTTP status codes.
  */
-@SpringBootTest(classes = {
-        com.stormapi.StormApiApplication.class,
-        GlobalExceptionHandlerTest.TestConfig.class
-})
-@AutoConfigureMockMvc
+@WebMvcTest(FakeExceptionController.class)
+@AutoConfigureMockMvc(addFilters = false)
 @ActiveProfiles("test")
 class GlobalExceptionHandlerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    // Security infrastructure mocks
+    @MockitoBean private JwtTokenProvider jwtTokenProvider;
+    @MockitoBean private AppUserRepository appUserRepository;
+    @MockitoBean private JwtAuthenticationFilter jwtAuthenticationFilter;
+    @MockitoBean private CustomOAuth2UserService customOAuth2UserService;
+    @MockitoBean private OAuth2AuthenticationSuccessHandler oAuth2SuccessHandler;
+    @MockitoBean private OAuth2AuthenticationFailureHandler oAuth2FailureHandler;
 
     @TestConfiguration
     static class TestConfig {

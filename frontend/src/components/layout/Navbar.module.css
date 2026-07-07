@@ -136,6 +136,57 @@
   border-color: var(--storm-accent-primary);
 }
 
+/* ── User Menu ─────────────────────────────────────────── */
+
+.userMenu {
+  display: flex;
+  align-items: center;
+  gap: var(--storm-space-2);
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--storm-border-primary);
+}
+
+.avatarFallback {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--storm-accent-primary);
+  color: white;
+  font-size: var(--storm-text-sm);
+  font-weight: 700;
+}
+
+.logoutBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--storm-radius-md);
+  border: 1px solid var(--storm-border-primary);
+  background: var(--storm-bg-tertiary);
+  color: var(--storm-text-secondary);
+  cursor: pointer;
+  transition:
+    background-color var(--storm-duration-fast) var(--storm-ease-default),
+    color var(--storm-duration-fast) var(--storm-ease-default);
+}
+
+.logoutBtn:hover {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--storm-danger);
+  border-color: var(--storm-danger);
+}
+
 /* ── Hamburger Button ──────────────────────────────────── */
 
 .hamburger {

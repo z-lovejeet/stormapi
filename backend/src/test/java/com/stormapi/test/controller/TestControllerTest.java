@@ -1,6 +1,12 @@
 package com.stormapi.test.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.stormapi.auth.handler.OAuth2AuthenticationFailureHandler;
+import com.stormapi.auth.handler.OAuth2AuthenticationSuccessHandler;
+import com.stormapi.auth.jwt.JwtAuthenticationFilter;
+import com.stormapi.auth.jwt.JwtTokenProvider;
+import com.stormapi.auth.repository.AppUserRepository;
+import com.stormapi.auth.service.CustomOAuth2UserService;
 import com.stormapi.test.dto.CreateTestRequest;
 import com.stormapi.test.model.HttpMethod;
 import com.stormapi.test.model.TestConfig;
@@ -13,7 +19,9 @@ import com.stormapi.test.service.TestQueryService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -31,6 +39,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(TestController.class)
+@AutoConfigureMockMvc(addFilters = false)
 @DisplayName("TestController WebMvc Tests")
 class TestControllerTest {
 
@@ -48,6 +57,14 @@ class TestControllerTest {
 
     @MockitoBean
     private TestConfigRepository testConfigRepository;
+
+    // Security infrastructure mocks
+    @MockitoBean private JwtTokenProvider jwtTokenProvider;
+    @MockitoBean private AppUserRepository appUserRepository;
+    @MockitoBean private JwtAuthenticationFilter jwtAuthenticationFilter;
+    @MockitoBean private CustomOAuth2UserService customOAuth2UserService;
+    @MockitoBean private OAuth2AuthenticationSuccessHandler oAuth2SuccessHandler;
+    @MockitoBean private OAuth2AuthenticationFailureHandler oAuth2FailureHandler;
 
     @Test
     @DisplayName("POST /api/tests creates test and returns 201")

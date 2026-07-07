@@ -6,6 +6,8 @@ export const WS_ENDPOINT = '/ws';
 
 /** Route paths */
 export const ROUTES = {
+  LANDING: '/',
+  LOGIN: '/login',
   DASHBOARD: '/dashboard',
   TEST_BUILDER: '/tests/new',
   LIVE_MONITOR: (id: number | string) => `/tests/${id}/live`,

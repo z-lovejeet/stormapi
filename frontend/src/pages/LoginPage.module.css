@@ -1,0 +1,110 @@
+.loginPage {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--storm-bg-primary);
+  padding: 2rem;
+}
+
+.loginCard {
+  background: var(--storm-bg-secondary);
+  border: 1px solid var(--storm-border-primary);
+  border-radius: var(--storm-radius-lg);
+  padding: 3rem 2.5rem;
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
+}
+
+.logo {
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, var(--storm-accent), #a855f7);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.tagline {
+  font-size: var(--storm-text-sm);
+  color: var(--storm-text-secondary);
+  margin-bottom: 2rem;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 1.5rem 0;
+  color: var(--storm-text-tertiary);
+  font-size: var(--storm-text-xs);
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--storm-border-primary);
+}
+
+.oauthButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.oauthBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.875rem 1.5rem;
+  border-radius: var(--storm-radius-md);
+  border: 1px solid var(--storm-border-primary);
+  background: var(--storm-bg-elevated);
+  color: var(--storm-text-primary);
+  font-size: var(--storm-text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  width: 100%;
+}
+
+.oauthBtn:hover {
+  border-color: var(--storm-accent);
+  background: var(--storm-bg-secondary);
+  transform: translateY(-1px);
+}
+
+.oauthBtn svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.errorBanner {
+  padding: 0.75rem 1rem;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: var(--storm-radius-md);
+  color: var(--storm-danger);
+  font-size: var(--storm-text-xs);
+  margin-bottom: 1.5rem;
+}
+
+.backLink {
+  display: inline-block;
+  margin-top: 1.5rem;
+  color: var(--storm-text-tertiary);
+  font-size: var(--storm-text-xs);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.backLink:hover {
+  color: var(--storm-accent);
+}

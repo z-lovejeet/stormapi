@@ -1,6 +1,12 @@
 package com.stormapi.collection.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.stormapi.auth.handler.OAuth2AuthenticationFailureHandler;
+import com.stormapi.auth.handler.OAuth2AuthenticationSuccessHandler;
+import com.stormapi.auth.jwt.JwtAuthenticationFilter;
+import com.stormapi.auth.jwt.JwtTokenProvider;
+import com.stormapi.auth.repository.AppUserRepository;
+import com.stormapi.auth.service.CustomOAuth2UserService;
 import com.stormapi.collection.dto.CreateCollectionRequest;
 import com.stormapi.collection.dto.CreateEndpointRequest;
 import com.stormapi.collection.dto.KeyValuePairDto;
@@ -13,7 +19,9 @@ import com.stormapi.test.model.HttpMethod;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -30,6 +38,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(CollectionController.class)
+@AutoConfigureMockMvc(addFilters = false)
 @DisplayName("CollectionController WebMvc Tests")
 class CollectionControllerTest {
 
@@ -41,6 +50,14 @@ class CollectionControllerTest {
 
     @MockitoBean
     private CollectionService collectionService;
+
+    // Security infrastructure mocks
+    @MockitoBean private JwtTokenProvider jwtTokenProvider;
+    @MockitoBean private AppUserRepository appUserRepository;
+    @MockitoBean private JwtAuthenticationFilter jwtAuthenticationFilter;
+    @MockitoBean private CustomOAuth2UserService customOAuth2UserService;
+    @MockitoBean private OAuth2AuthenticationSuccessHandler oAuth2SuccessHandler;
+    @MockitoBean private OAuth2AuthenticationFailureHandler oAuth2FailureHandler;
 
     @Test
     @DisplayName("POST /api/collections returns 201")
