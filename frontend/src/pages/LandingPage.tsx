@@ -11,6 +11,11 @@ import {
   ArrowRight,
   Activity,
   Terminal,
+  Coffee,
+  Leaf,
+  Atom,
+  Lock,
+  Cpu,
 } from 'lucide-react';
 import styles from './LandingPage.module.css';
 
@@ -108,12 +113,12 @@ const steps = [
 ];
 
 const techStack = [
-  { icon: '☕', name: 'Java 21' },
-  { icon: '🍃', name: 'Spring Boot' },
-  { icon: '⚛️', name: 'React' },
-  { icon: '📊', name: 'Recharts' },
-  { icon: '🔒', name: 'OAuth2' },
-  { icon: '🧵', name: 'Virtual Threads' },
+  { icon: Coffee, name: 'Java 21', colorClass: 'techJava' },
+  { icon: Leaf, name: 'Spring Boot', colorClass: 'techSpring' },
+  { icon: Atom, name: 'React', colorClass: 'techReact' },
+  { icon: BarChart3, name: 'Recharts', colorClass: 'techRecharts' },
+  { icon: Lock, name: 'OAuth2', colorClass: 'techAuth' },
+  { icon: Cpu, name: 'Virtual Threads', colorClass: 'techThreads' },
 ];
 
 /* ── Component ───────────────────────────────────────────── */
@@ -259,7 +264,9 @@ export function LandingPage() {
         <div className={styles.techGrid}>
           {techStack.map((t) => (
             <div key={t.name} className={styles.techItem}>
-              <span className={styles.techIcon}>{t.icon}</span>
+              <div className={`${styles.techIcon} ${styles[t.colorClass]}`}>
+                <t.icon size={28} strokeWidth={1.5} />
+              </div>
               <span className={styles.techName}>{t.name}</span>
             </div>
           ))}
