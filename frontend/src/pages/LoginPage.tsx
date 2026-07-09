@@ -20,10 +20,12 @@ export function LoginPage() {
 
   if (loading) {
     return (
-      <div className={styles.loginPage}>
-        <div className={styles.loginCard}>
-          <div className={styles.logo}>⚡ StormAPI</div>
-          <p className={styles.tagline}>Loading...</p>
+      <div className={styles.container}>
+        <div className={styles.card}>
+          <div className={styles.header}>
+            <div className={styles.logo}>⚡ StormAPI</div>
+            <p>Loading...</p>
+          </div>
         </div>
       </div>
     );
@@ -48,49 +50,21 @@ export function LoginPage() {
   };
 
   return (
-    <div className={styles.loginPage}>
-      <div className={styles.loginCard}>
-        <div className={styles.logo}>⚡ StormAPI</div>
-        <p className={styles.tagline}>Welcome back</p>
+    <div className={styles.container}>
+      <div className={styles.card}>
+        <div className={styles.header}>
+          <Link to="/" className={styles.logo}>⚡ StormAPI</Link>
+          <h1>Welcome Back</h1>
+          <p>Log in to Storm API</p>
+        </div>
 
         {(errorParam || localError) && (
-          <div className={styles.errorBanner}>
+          <div className={styles.error}>
             {localError || 'Authentication failed. Please try again.'}
           </div>
         )}
 
-        <form className={styles.form} onSubmit={handleLocalSubmit}>
-          <div className={styles.formGroup}>
-            <label htmlFor="email">Email</label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="name@example.com"
-              required
-            />
-          </div>
-          <div className={styles.formGroup}>
-            <label htmlFor="password">Password</label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              required
-            />
-          </div>
-          <button type="submit" className={styles.submitBtn} disabled={isSubmitting}>
-            {isSubmitting ? 'Signing in...' : 'Sign In'}
-          </button>
-        </form>
-
-        <div className={styles.divider}>
-          <span>or</span>
-        </div>
-
+        {/* OAuth Buttons */}
         <div className={styles.oauthButtons}>
           <a href={OAUTH_URLS.GOOGLE} className={styles.oauthBtn}>
             <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -109,8 +83,46 @@ export function LoginPage() {
           </a>
         </div>
 
-        <div className={styles.signupPrompt}>
-          Don't have an account? <Link to="/register">Sign up</Link>
+        <div className={styles.divider}>
+          <span>or log in with email</span>
+        </div>
+
+        <form className={styles.form} onSubmit={handleLocalSubmit}>
+          <div className={styles.formGroup}>
+            <label htmlFor="email">Email Address</label>
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="name@example.com"
+              required
+            />
+          </div>
+
+          <div className={styles.formGroup}>
+            <label htmlFor="password">Password</label>
+            <input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
+              required
+            />
+          </div>
+
+          <button
+            type="submit"
+            className={styles.submitButton}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? 'Signing in...' : 'Sign In'}
+          </button>
+        </form>
+
+        <div className={styles.footer}>
+          <p>Don't have an account? <Link to="/register">Sign up here</Link></p>
         </div>
 
         <Link to="/" className={styles.backLink}>
