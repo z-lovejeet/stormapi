@@ -1,5 +1,6 @@
 import { memo, useMemo } from 'react';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
+import { createChartTooltip, CHART_CURSOR } from './ChartTooltip';
 import styles from './StatusCodeChart.module.css';
 
 interface StatusCodeChartProps {
@@ -67,14 +68,18 @@ export const StatusCodeChart = memo(function StatusCodeChart({
               ))}
             </Pie>
             <Tooltip
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              formatter={(value: any, name: any) => [Number(value).toLocaleString(), `HTTP ${name}`]}
-              contentStyle={{
-                background: 'var(--storm-bg-elevated)',
-                border: '1px solid var(--storm-border-primary)',
-                borderRadius: 'var(--storm-radius-md)',
-                fontSize: 'var(--storm-text-xs)',
-              }}
+              cursor={CHART_CURSOR}
+              content={createChartTooltip({
+                labelKey: 'name',
+                formatLabel: (v) => `HTTP ${v}`,
+                formatEntries: (payload, name) => {
+                  if (name === 'value') {
+                    const color = (payload.fill as string) || '#6b7280';
+                    return { label: 'Count', value: Number(payload.value).toLocaleString(), color };
+                  }
+                  return null;
+                },
+              })}
             />
           </PieChart>
         </ResponsiveContainer>
