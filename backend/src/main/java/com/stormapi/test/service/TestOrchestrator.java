@@ -15,6 +15,7 @@ import com.stormapi.engine.metrics.MetricsCollector;
 import com.stormapi.engine.user.ThinkTimeStrategy;
 import com.stormapi.metrics.model.MetricSnapshot;
 import com.stormapi.metrics.repository.MetricSnapshotRepository;
+import com.stormapi.metrics.service.RequestLogPersister;
 import com.stormapi.test.model.TestConfig;
 import com.stormapi.test.model.TestResult;
 import com.stormapi.test.model.TestStatus;
@@ -72,6 +73,7 @@ public class TestOrchestrator {
     private final MetricSnapshotRepository metricSnapshotRepository;
     private final LiveMetricsBroadcaster liveMetricsBroadcaster;
     private final RequestLogBroadcaster requestLogBroadcaster;
+    private final RequestLogPersister requestLogPersister;
     private final TestEventPublisher testEventPublisher;
 
     private final ConcurrentHashMap<Long, RunningTestHandle> runningTests = new ConcurrentHashMap<>();
@@ -82,12 +84,14 @@ public class TestOrchestrator {
                             MetricSnapshotRepository metricSnapshotRepository,
                             LiveMetricsBroadcaster liveMetricsBroadcaster,
                             RequestLogBroadcaster requestLogBroadcaster,
+                            RequestLogPersister requestLogPersister,
                             TestEventPublisher testEventPublisher) {
         this.testConfigRepository = testConfigRepository;
         this.testResultRepository = testResultRepository;
         this.metricSnapshotRepository = metricSnapshotRepository;
         this.liveMetricsBroadcaster = liveMetricsBroadcaster;
         this.requestLogBroadcaster = requestLogBroadcaster;
+        this.requestLogPersister = requestLogPersister;
         this.testEventPublisher = testEventPublisher;
     }
 
@@ -210,10 +214,13 @@ public class TestOrchestrator {
                 return ctx != null ? ctx.getActiveUsers() : 0;
             });
 
-            // Composite consumer: feeds both MetricsCollector and RequestLogBroadcaster
+            // Composite consumer: feeds MetricsCollector, RequestLogBroadcaster, and RequestLogPersister
             final MetricsCollector mc = metricsCollector;
             requestLogBroadcaster.startCapturing(configId);
+            requestLogPersister.startCapturing(configId);
             Consumer<RequestResult> logConsumer = requestLogBroadcaster.createConsumer(
+                    configId, spec.url(), spec.method());
+            Consumer<RequestResult> persistConsumer = requestLogPersister.createConsumer(
                     configId, spec.url(), spec.method());
             Consumer<RequestResult> compositeConsumer = result -> {
                 mc.recordResult(result);
@@ -221,6 +228,11 @@ public class TestOrchestrator {
                     logConsumer.accept(result);
                 } catch (Exception ex) {
                     // Never let log capture failures affect metrics
+                }
+                try {
+                    persistConsumer.accept(result);
+                } catch (Exception ex) {
+                    // Never let persistence capture failures affect metrics
                 }
             };
 
@@ -337,6 +349,14 @@ public class TestOrchestrator {
                 persistResults(resultId, configId, metricsCollector, snapshotBuffer, finalStatus, analysisResult);
             } catch (Exception e) {
                 log.error("Failed to persist results for test {}: {}", configId, e.getMessage(), e);
+            }
+
+            // 12b. Persist request logs to database (enables status code + histogram charts)
+            try {
+                TestResult testResultForLogs = testResultRepository.findById(resultId).orElse(null);
+                requestLogPersister.stopAndPersist(configId, testResultForLogs);
+            } catch (Exception e) {
+                log.error("Failed to persist request logs for test {}: {}", configId, e.getMessage(), e);
             }
 
             // 13. Cleanup

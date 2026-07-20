@@ -63,13 +63,14 @@ public class SecurityConfig {
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                         .csrfTokenRequestHandler(csrfHandler)
                         .ignoringRequestMatchers("/ws/**")  // WebSocket uses own lifecycle
+                        .ignoringRequestMatchers("/api/auth/logout")  // Logout only clears a cookie
                 )
                 // Authorization rules
                 .authorizeHttpRequests(auth -> auth
                         // Public — static assets (SPA)
                         .requestMatchers("/", "/index.html", "/assets/**", "/favicon.svg").permitAll()
                         // Public — auth status check & local auth
-                        .requestMatchers("/api/auth/status", "/api/auth/register", "/api/auth/login").permitAll()
+                        .requestMatchers("/api/auth/status", "/api/auth/register", "/api/auth/login", "/api/auth/logout").permitAll()
                         // Public — actuator health
                         .requestMatchers("/actuator/**").permitAll()
                         // Public — OAuth2 endpoints
