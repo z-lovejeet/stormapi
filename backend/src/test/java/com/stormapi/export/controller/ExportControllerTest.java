@@ -8,7 +8,7 @@ import com.stormapi.auth.repository.AppUserRepository;
 import com.stormapi.auth.service.CustomOAuth2UserService;
 import com.stormapi.export.service.ExportService;
 import com.stormapi.export.service.HtmlReportService;
-import com.stormapi.export.service.PdfReportService;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,8 +38,6 @@ class ExportControllerTest {
     @MockitoBean
     private HtmlReportService htmlReportService;
 
-    @MockitoBean
-    private PdfReportService pdfReportService;
 
     // Security infrastructure mocks
     @MockitoBean private JwtTokenProvider jwtTokenProvider;

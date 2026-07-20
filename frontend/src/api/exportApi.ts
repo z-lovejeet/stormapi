@@ -45,10 +45,3 @@ export async function downloadHtml(resultId: number, filename?: string): Promise
   });
   triggerDownload(data as Blob, filename || `stormapi-report-${resultId}.html`);
 }
-
-export async function downloadPdf(resultId: number, filename?: string): Promise<void> {
-  const { data } = await exportClient.get(`/export/${resultId}/pdf`, {
-    responseType: 'blob',
-  });
-  triggerDownload(data as Blob, filename || `stormapi-report-${resultId}.pdf`);
-}

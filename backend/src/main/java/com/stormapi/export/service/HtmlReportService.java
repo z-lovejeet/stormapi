@@ -72,23 +72,6 @@ public class HtmlReportService {
     }
 
     /**
-     * Renders the HTML report template to a String (used by PdfReportService).
-     */
-    public String renderHtmlString(Long resultId) {
-        TestResult result = testResultRepository.findById(resultId)
-                .orElseThrow(() -> new ResourceNotFoundException("TestResult", resultId));
-
-        TestResultResponse resultDto = TestMapper.toResultResponse(result);
-        TestConfig config = result.getTestConfig();
-
-        List<MetricSnapshot> snapshots = metricSnapshotRepository
-                .findByTestResultIdOrderByTimestampAsc(resultId);
-
-        Context ctx = buildContext(resultDto, config, snapshots);
-        return templateEngine.process("report-template", ctx);
-    }
-
-    /**
      * Builds the Thymeleaf context with all template variables.
      */
     private Context buildContext(TestResultResponse resultDto, TestConfig config,

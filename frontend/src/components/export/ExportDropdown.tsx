@@ -1,13 +1,13 @@
 import { useState, useCallback } from 'react';
-import { Download, FileJson, FileSpreadsheet, FileText, FileDown } from 'lucide-react';
-import { downloadJson, downloadCsv, downloadHtml, downloadPdf } from '../../api/exportApi';
+import { Download, FileJson, FileSpreadsheet, FileText } from 'lucide-react';
+import { downloadJson, downloadCsv, downloadHtml } from '../../api/exportApi';
 import styles from './ExportDropdown.module.css';
 
 interface ExportDropdownProps {
   resultId: number;
 }
 
-type ExportFormat = 'json' | 'csv' | 'html' | 'pdf';
+type ExportFormat = 'json' | 'csv' | 'html';
 
 export const ExportDropdown: React.FC<ExportDropdownProps> = ({ resultId }) => {
   const [open, setOpen] = useState(false);
@@ -26,9 +26,7 @@ export const ExportDropdown: React.FC<ExportDropdownProps> = ({ resultId }) => {
         case 'html':
           await downloadHtml(resultId);
           break;
-        case 'pdf':
-          await downloadPdf(resultId);
-          break;
+
       }
     } catch (err) {
       console.error(`Export ${format} failed:`, err);
@@ -85,18 +83,7 @@ export const ExportDropdown: React.FC<ExportDropdownProps> = ({ resultId }) => {
                 HTML Report
                 <span className={styles.menuItemDesc}>Self-contained visual report</span>
               </span>
-            </button>
-            <button
-              className={styles.menuItem}
-              onClick={() => handleDownload('pdf')}
-              disabled={downloading !== null}
-            >
-              <FileDown size={18} />
-              <span className={styles.menuItemLabel}>
-                PDF Report
-                <span className={styles.menuItemDesc}>Professional shareable report</span>
-              </span>
-            </button>
+
           </div>
         </>
       )}
