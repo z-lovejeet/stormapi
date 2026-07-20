@@ -10,6 +10,7 @@ import {
   Cell,
   LabelList,
 } from 'recharts';
+import { createChartTooltip, CHART_CURSOR } from './ChartTooltip';
 import styles from './PercentileBarChart.module.css';
 
 interface PercentileBarChartProps {
@@ -78,14 +79,17 @@ export const PercentileBarChart = memo(function PercentileBarChart(
               tickFormatter={(v: number) => `${v}ms`}
             />
             <Tooltip
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              formatter={(value: any) => [`${Number(value)}ms`, 'Latency']}
-              contentStyle={{
-                background: 'var(--storm-bg-elevated)',
-                border: '1px solid var(--storm-border-primary)',
-                borderRadius: 'var(--storm-radius-md)',
-                fontSize: 'var(--storm-text-xs)',
-              }}
+              cursor={CHART_CURSOR}
+              content={createChartTooltip({
+                labelKey: 'name',
+                formatEntries: (payload, name) => {
+                  if (name === 'value') {
+                    const color = (payload.fill as string) || '#3b82f6';
+                    return { label: 'Latency', value: `${Number(payload.value)}ms`, color };
+                  }
+                  return null;
+                },
+              })}
             />
             <Bar dataKey="value" radius={[4, 4, 0, 0]} isAnimationActive={false}>
               {data.map((entry) => (
