@@ -1,8 +1,18 @@
-import { apiClient } from './client';
+import axios from 'axios';
 
 /**
  * Export API module — blob downloads for JSON, CSV, HTML, and PDF.
+ * Uses a dedicated axios instance (no response-envelope interceptor)
+ * so binary blob responses are not corrupted by JSON unwrapping.
  */
+
+const exportClient = axios.create({
+  baseURL: '/api',
+  timeout: 60000,
+  withCredentials: true,
+  xsrfCookieName: 'XSRF-TOKEN',
+  xsrfHeaderName: 'X-XSRF-TOKEN',
+});
 
 function triggerDownload(blob: Blob, filename: string) {
   const url = URL.createObjectURL(blob);
@@ -16,28 +26,28 @@ function triggerDownload(blob: Blob, filename: string) {
 }
 
 export async function downloadJson(resultId: number, filename?: string): Promise<void> {
-  const { data } = await apiClient.get(`/export/${resultId}/json`, {
+  const { data } = await exportClient.get(`/export/${resultId}/json`, {
     responseType: 'blob',
   });
-  triggerDownload(data as Blob, filename || `result-${resultId}.json`);
+  triggerDownload(data as Blob, filename || `stormapi-result-${resultId}.json`);
 }
 
 export async function downloadCsv(resultId: number, filename?: string): Promise<void> {
-  const { data } = await apiClient.get(`/export/${resultId}/csv`, {
+  const { data } = await exportClient.get(`/export/${resultId}/csv`, {
     responseType: 'blob',
   });
-  triggerDownload(data as Blob, filename || `result-${resultId}.csv`);
+  triggerDownload(data as Blob, filename || `stormapi-metrics-${resultId}.csv`);
 }
 
 export async function downloadHtml(resultId: number, filename?: string): Promise<void> {
-  const { data } = await apiClient.get(`/export/${resultId}/html`, {
+  const { data } = await exportClient.get(`/export/${resultId}/html`, {
     responseType: 'blob',
   });
   triggerDownload(data as Blob, filename || `stormapi-report-${resultId}.html`);
 }
 
 export async function downloadPdf(resultId: number, filename?: string): Promise<void> {
-  const { data } = await apiClient.get(`/export/${resultId}/pdf`, {
+  const { data } = await exportClient.get(`/export/${resultId}/pdf`, {
     responseType: 'blob',
   });
   triggerDownload(data as Blob, filename || `stormapi-report-${resultId}.pdf`);
