@@ -9,6 +9,7 @@ import {
   CartesianGrid,
 } from 'recharts';
 import { formatMs, formatRps } from '../../utils/formatters';
+import { createChartTooltip, CHART_CURSOR } from './ChartTooltip';
 import styles from './ScalabilityCurve.module.css';
 
 interface DataPoint {
@@ -76,17 +77,16 @@ export const ScalabilityCurve = memo(function ScalabilityCurve({
               tickFormatter={(v) => formatMs(v)}
             />
             <Tooltip
-              contentStyle={{
-                background: 'var(--storm-bg-elevated)',
-                border: '1px solid var(--storm-border-primary)',
-                borderRadius: 'var(--storm-radius-md)',
-                fontSize: 'var(--storm-text-xs)',
-              }}
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              formatter={(value: any, name: any) => {
-                if (name === 'requestsPerSecond') return [formatRps(Number(value)), 'Throughput'];
-                return [formatMs(Number(value)), 'Latency'];
-              }}
+              cursor={CHART_CURSOR}
+              content={createChartTooltip({
+                labelKey: 'activeUsers',
+                formatLabel: (v) => `${v} users`,
+                formatEntries: (payload, name) => {
+                  if (name === 'requestsPerSecond') return { label: 'Throughput', value: formatRps(Number(payload.requestsPerSecond)), color: '#22c55e' };
+                  if (name === 'avgResponseTimeMs') return { label: 'Latency', value: formatMs(Number(payload.avgResponseTimeMs)), color: '#3b82f6' };
+                  return null;
+                },
+              })}
             />
             <Line
               yAxisId="left"
