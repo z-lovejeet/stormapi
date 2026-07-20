@@ -8,6 +8,7 @@ import {
   ResponsiveContainer,
   CartesianGrid,
 } from 'recharts';
+import { createChartTooltip, CHART_CURSOR } from './ChartTooltip';
 import styles from './TimelineChart.module.css';
 
 interface Snapshot {
@@ -112,23 +113,25 @@ export const TimelineChart = memo(function TimelineChart({
               }
             />
             <Tooltip
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              labelFormatter={(label: any) => {
-                try {
-                  return new Date(String(label)).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-                } catch { return String(label); }
-              }}
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              formatter={(value: any) => [
-                config!.unit ? `${Number(value)}${config!.unit}` : Number(value),
-                config!.label,
-              ]}
-              contentStyle={{
-                background: 'var(--storm-bg-elevated)',
-                border: '1px solid var(--storm-border-primary)',
-                borderRadius: 'var(--storm-radius-md)',
-                fontSize: 'var(--storm-text-xs)',
-              }}
+              cursor={CHART_CURSOR}
+              content={createChartTooltip({
+                labelKey: 'timestamp',
+                formatLabel: (label) => {
+                  try {
+                    return new Date(String(label)).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                  } catch { return String(label); }
+                },
+                formatEntries: (payload, name) => {
+                  if (name === selectedMetric) {
+                    return {
+                      label: config!.label,
+                      value: config!.unit ? `${Number(payload[name])}${config!.unit}` : String(Number(payload[name])),
+                      color: config!.color,
+                    };
+                  }
+                  return null;
+                },
+              })}
             />
             <Area
               type="monotone"
