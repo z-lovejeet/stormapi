@@ -9,6 +9,7 @@ import {
   CartesianGrid,
   Cell,
 } from 'recharts';
+import { createChartTooltip, CHART_CURSOR } from './ChartTooltip';
 import styles from './ResponseTimeHistogram.module.css';
 
 const BUCKET_COLORS = ['#22c55e', '#84cc16', '#f59e0b', '#f97316', '#ef4444', '#dc2626'];
@@ -61,14 +62,19 @@ export const ResponseTimeHistogram = memo(function ResponseTimeHistogram({
               axisLine={false}
             />
             <Tooltip
-              contentStyle={{
-                background: 'var(--storm-bg-elevated)',
-                border: '1px solid var(--storm-border-primary)',
-                borderRadius: 'var(--storm-radius-md)',
-                fontSize: 'var(--storm-text-xs)',
-              }}
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              formatter={(value: any) => [`${Number(value)} requests`, 'Count']}
+              cursor={CHART_CURSOR}
+              content={createChartTooltip({
+                labelKey: 'range',
+                formatEntries: (payload, name) => {
+                  if (name === 'count') {
+                    // Match the bucket color dynamically based on the index or fallback
+                    // A simple way is to use a fixed color or extract it, but Recharts provides it in payload.fill
+                    const color = (payload.fill as string) || '#22c55e';
+                    return { label: 'Count', value: `${Number(payload.count)} requests`, color };
+                  }
+                  return null;
+                },
+              })}
             />
             <Bar dataKey="count" radius={[4, 4, 0, 0]} isAnimationActive={false}>
               {data.map((_, i) => (
