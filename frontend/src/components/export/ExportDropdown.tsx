@@ -83,7 +83,7 @@ export const ExportDropdown: React.FC<ExportDropdownProps> = ({ resultId }) => {
                 HTML Report
                 <span className={styles.menuItemDesc}>Self-contained visual report</span>
               </span>
-
+            </button>
           </div>
         </>
       )}
