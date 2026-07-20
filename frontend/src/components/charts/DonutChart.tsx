@@ -1,5 +1,6 @@
 import { memo } from 'react';
-import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
+import { createChartTooltip, CHART_CURSOR } from './ChartTooltip';
 import styles from './DonutChart.module.css';
 
 interface DonutChartProps {
@@ -56,6 +57,19 @@ export const DonutChart = memo(function DonutChart({
                 <Cell key={entry.name} fill={entry.color} />
               ))}
             </Pie>
+            <Tooltip
+              cursor={CHART_CURSOR}
+              content={createChartTooltip({
+                labelKey: 'name',
+                formatEntries: (payload, name) => {
+                  if (name === 'value') {
+                    const color = (payload.payload as any).color || SUCCESS_COLOR;
+                    return { label: 'Requests', value: Number(payload.value).toLocaleString(), color };
+                  }
+                  return null;
+                },
+              })}
+            />
           </PieChart>
         </ResponsiveContainer>
         <div className={styles.centerLabel}>
