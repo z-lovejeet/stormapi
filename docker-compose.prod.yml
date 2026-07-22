@@ -14,7 +14,8 @@ services:
     container_name: stormapi-db-prod
     restart: unless-stopped
     env_file:
-      - .env
+      - path: .env
+        required: false
     volumes:
       - stormapi-pgdata:/var/lib/postgresql/data
     healthcheck:
@@ -36,7 +37,8 @@ services:
     container_name: stormapi-backend-prod
     restart: unless-stopped
     env_file:
-      - .env
+      - path: .env
+        required: false
     ports:
       - "127.0.0.1:8080:8080"
     depends_on:
