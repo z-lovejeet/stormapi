@@ -1,0 +1,58 @@
+# Production Docker Compose for StormAPI
+#
+# Database Backup Commands:
+#   docker exec -t stormapi-db-prod pg_dump -U stormapi stormapi > backup_$(date +%Y%m%d_%H%M%S).sql
+#   docker exec -t stormapi-db-prod pg_dump -U stormapi -F c stormapi > backup_$(date +%Y%m%d_%H%M%S).dump
+#
+# Database Restore Commands:
+#   cat backup.sql | docker exec -i stormapi-db-prod psql -U stormapi -d stormapi
+#   docker exec -i stormapi-db-prod pg_restore -U stormapi -d stormapi --clean < backup.dump
+
+services:
+  db:
+    image: postgres:17-alpine
+    container_name: stormapi-db-prod
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - stormapi-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U stormapi"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    shm_size: 256m
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 2G
+    networks:
+      - stormapi-net
+
+  backend:
+    image: ghcr.io/z-lovejeet/stormapi-backend:latest
+    container_name: stormapi-backend-prod
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "127.0.0.1:8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: '2.5'
+          memory: 3G
+    networks:
+      - stormapi-net
+
+networks:
+  stormapi-net:
+    driver: bridge
+
+volumes:
+  stormapi-pgdata:
