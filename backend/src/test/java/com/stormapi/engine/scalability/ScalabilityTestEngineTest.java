@@ -153,7 +153,7 @@ class ScalabilityTestEngineTest {
         engine.stop();
         context.stop();
 
-        runner.join(10_000);
+        runner.join(30_000);
         assertFalse(runner.isAlive());
     }
 

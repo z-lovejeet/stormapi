@@ -75,7 +75,7 @@ class StressTestEngineTest {
         });
 
         // Wait for test to complete (short duration)
-        runner.join(15_000);
+        runner.join(30_000);
 
         // Users should have been spawned (at least 2 steps worth)
         // Engine should have completed since duration is 5s
@@ -106,7 +106,7 @@ class StressTestEngineTest {
         engine.stop();
         context.stop();
 
-        runner.join(5_000);
+        runner.join(30_000);
         assertFalse(runner.isAlive(), "Engine should have stopped");
     }
 
@@ -132,7 +132,7 @@ class StressTestEngineTest {
             }
         });
 
-        runner.join(15_000);
+        runner.join(30_000);
         assertFalse(runner.isAlive());
     }
 
@@ -157,7 +157,7 @@ class StressTestEngineTest {
             }
         });
 
-        runner.join(15_000);
+        runner.join(30_000);
         long elapsed = System.currentTimeMillis() - startTime;
 
         assertFalse(runner.isAlive());

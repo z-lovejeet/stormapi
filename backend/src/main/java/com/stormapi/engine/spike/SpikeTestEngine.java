@@ -49,7 +49,7 @@ public class SpikeTestEngine extends AbstractTestEngine {
         int totalDuration = config.getDurationSeconds();
 
         // Phase timing
-        int warmupSeconds = Math.max(5, Math.min(30, totalDuration / 4));
+        int warmupSeconds = Math.max(1, Math.min(30, totalDuration / 4));
         int spikeDuration = totalDuration / 3;
         int recoveryDuration = totalDuration - warmupSeconds - spikeDuration;
 

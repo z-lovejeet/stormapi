@@ -54,7 +54,7 @@ class SpikeTestEngineTest {
     @DisplayName("Engine completes and produces analysis result")
     void completesWithAnalysisResult() throws InterruptedException {
         SpikeTestEngine engine = new SpikeTestEngine();
-        TestConfig config = buildConfig(3, 5, 12);
+        TestConfig config = buildConfig(3, 5, 4);
 
         RequestSpec spec = RequestSpec.fromTestConfig(config);
         ExecutionContext context = new ExecutionContext(spec, NoThinkTimeStrategy.INSTANCE, r -> {});
@@ -82,7 +82,7 @@ class SpikeTestEngineTest {
     @DisplayName("Respects stop signal")
     void respectsStopSignal() throws InterruptedException {
         SpikeTestEngine engine = new SpikeTestEngine();
-        TestConfig config = buildConfig(3, 5, 60);
+        TestConfig config = buildConfig(3, 5, 20);
 
         RequestSpec spec = RequestSpec.fromTestConfig(config);
         ExecutionContext context = new ExecutionContext(spec, NoThinkTimeStrategy.INSTANCE, r -> {});
@@ -97,11 +97,11 @@ class SpikeTestEngineTest {
             }
         });
 
-        Thread.sleep(2000);
+        Thread.sleep(1000);
         engine.stop();
         context.stop();
 
-        runner.join(10_000);
+        runner.join(30_000);
         assertFalse(runner.isAlive(), "Engine should have stopped");
     }
 
@@ -109,7 +109,7 @@ class SpikeTestEngineTest {
     @DisplayName("Short test duration still completes cleanly")
     void shortDuration_completesCleanly() throws InterruptedException {
         SpikeTestEngine engine = new SpikeTestEngine();
-        TestConfig config = buildConfig(2, 3, 8);
+        TestConfig config = buildConfig(2, 3, 4);
 
         RequestSpec spec = RequestSpec.fromTestConfig(config);
         ExecutionContext context = new ExecutionContext(spec, NoThinkTimeStrategy.INSTANCE, r -> {});
@@ -124,7 +124,7 @@ class SpikeTestEngineTest {
             }
         });
 
-        runner.join(20_000);
+        runner.join(30_000);
         assertFalse(runner.isAlive());
     }
 

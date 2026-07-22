@@ -55,9 +55,10 @@ public class SoakTestEngine extends AbstractTestEngine {
         int sustainSeconds = Math.max(0, config.getDurationSeconds() - config.getRampUpSeconds());
         List<DataPoint> samples = new ArrayList<>();
 
+        int sampleInterval = Math.max(1, Math.min(SAMPLE_INTERVAL_SECONDS, sustainSeconds / 3));
         int elapsed = 0;
         while (!stopped && elapsed < sustainSeconds) {
-            int sleepTime = Math.min(SAMPLE_INTERVAL_SECONDS, sustainSeconds - elapsed);
+            int sleepTime = Math.min(sampleInterval, sustainSeconds - elapsed);
             sleepInterruptibly(sleepTime * 1000L);
             elapsed += sleepTime;
 

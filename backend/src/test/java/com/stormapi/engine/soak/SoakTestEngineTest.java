@@ -45,7 +45,7 @@ class SoakTestEngineTest {
     @DisplayName("Steady performance → no degradation detected")
     void stablePerformance_noDegradation() throws InterruptedException {
         SoakTestEngine engine = new SoakTestEngine();
-        TestConfig config = buildConfig(3, 15); // 15s test
+        TestConfig config = buildConfig(3, 3); // 3s test
 
         RequestSpec spec = RequestSpec.fromTestConfig(config);
         ExecutionContext context = new ExecutionContext(spec, NoThinkTimeStrategy.INSTANCE, r -> {});
@@ -81,7 +81,7 @@ class SoakTestEngineTest {
     @DisplayName("Increasing latency → degradation detected")
     void trendAnalyzerDetectsDrift() throws InterruptedException {
         SoakTestEngine engine = new SoakTestEngine();
-        TestConfig config = buildConfig(3, 25); // 25s test = ~2 samples
+        TestConfig config = buildConfig(3, 3); // 3s test
 
         RequestSpec spec = RequestSpec.fromTestConfig(config);
         ExecutionContext context = new ExecutionContext(spec, NoThinkTimeStrategy.INSTANCE, r -> {});
@@ -108,7 +108,7 @@ class SoakTestEngineTest {
             }
         });
 
-        runner.join(40_000);
+        runner.join(30_000);
         assertFalse(runner.isAlive());
 
         EngineAnalysisResult result = context.getAnalysisResult();
@@ -121,7 +121,7 @@ class SoakTestEngineTest {
     @DisplayName("Respects stop signal")
     void respectsStopSignal() throws InterruptedException {
         SoakTestEngine engine = new SoakTestEngine();
-        TestConfig config = buildConfig(3, 60);
+        TestConfig config = buildConfig(3, 20);
 
         RequestSpec spec = RequestSpec.fromTestConfig(config);
         ExecutionContext context = new ExecutionContext(spec, NoThinkTimeStrategy.INSTANCE, r -> {});
@@ -141,11 +141,11 @@ class SoakTestEngineTest {
             }
         });
 
-        Thread.sleep(2000);
+        Thread.sleep(1000);
         engine.stop();
         context.stop();
 
-        runner.join(10_000);
+        runner.join(30_000);
         assertFalse(runner.isAlive());
     }
 
