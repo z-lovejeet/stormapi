@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { API_BASE } from '../utils/constants';
 
 /**
  * Export API module — blob downloads for JSON, CSV, HTML, and PDF.
@@ -7,7 +8,7 @@ import axios from 'axios';
  */
 
 const exportClient = axios.create({
-  baseURL: '/api',
+  baseURL: API_BASE,
   timeout: 60000,
   withCredentials: true,
   xsrfCookieName: 'XSRF-TOKEN',

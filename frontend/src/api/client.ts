@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { API_BASE } from '../utils/constants';
 import type { ApiResponse, ApiError } from '../types/api';
 
 /**
@@ -6,7 +7,7 @@ import type { ApiResponse, ApiError } from '../types/api';
  * Response interceptor unwraps ApiResponse<T> envelope.
  */
 export const apiClient = axios.create({
-  baseURL: '/api',
+  baseURL: API_BASE,
   timeout: 30000,
   headers: { 'Content-Type': 'application/json' },
   withCredentials: true,

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { Client, IMessage, StompSubscription } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
+import { WS_ENDPOINT } from '../utils/constants';
 import type {
   LiveMetricsMessage,
   RequestLogMessage,
@@ -86,7 +87,7 @@ export function useWebSocket(options: UseWebSocketOptions): UseWebSocketReturn {
     updateConnectionState('CONNECTING');
 
     const client = new Client({
-      webSocketFactory: () => new SockJS('/ws'),
+      webSocketFactory: () => new SockJS(WS_ENDPOINT),
       reconnectDelay: 2000,
       heartbeatIncoming: 10000,
       heartbeatOutgoing: 10000,

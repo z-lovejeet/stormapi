@@ -1,8 +1,8 @@
 /** API base path — Vite proxy forwards to Spring Boot */
-export const API_BASE = '/api';
+export const API_BASE = `${import.meta.env.VITE_API_URL || ''}/api`;
 
 /** WebSocket endpoint */
-export const WS_ENDPOINT = '/ws';
+export const WS_ENDPOINT = `${import.meta.env.VITE_API_URL || ''}/ws`;
 
 /** Route paths */
 export const ROUTES = {
