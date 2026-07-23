@@ -34,7 +34,7 @@ class StressTestEngineTest {
                 .stepDurationSeconds(stepDuration)
                 .durationSeconds(duration)
                 .rampUpSeconds(0)
-                .timeoutMs(5000)
+                .timeoutMs(200)   // Short timeout: no real server, requests must fail fast on CI
                 .thinkTimeMs(0)
                 .build();
     }
