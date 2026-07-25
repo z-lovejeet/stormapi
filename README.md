@@ -10,7 +10,7 @@
 <h1 align="center">⚡ StormAPI</h1>
 
 <p align="center">
-  <strong>A full-stack performance testing platform for HTTP APIs.</strong><br/>
+  <strong>A high-performance full-stack load testing platform for HTTP APIs.</strong><br/>
   Configure, execute, monitor, and analyze load tests — all from a single dashboard.
 </p>
 
