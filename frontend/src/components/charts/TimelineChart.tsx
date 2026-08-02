@@ -108,9 +108,10 @@ export const TimelineChart = memo(function TimelineChart({
               tick={{ fontSize: 10, fill: 'var(--storm-text-tertiary)' }}
               tickLine={false}
               axisLine={false}
-              tickFormatter={(v: number) =>
-                config!.unit ? `${v}${config!.unit}` : String(v)
-              }
+              tickFormatter={(v: number) => {
+                const rounded = Number.isFinite(v) ? parseFloat(v.toFixed(2)) : v;
+                return config!.unit ? `${rounded}${config!.unit}` : String(rounded);
+              }}
             />
             <Tooltip
               cursor={CHART_CURSOR}
@@ -123,9 +124,11 @@ export const TimelineChart = memo(function TimelineChart({
                 },
                 formatEntries: (payload, name) => {
                   if (name === selectedMetric) {
+                    const raw = Number(payload[name]);
+                    const rounded = Number.isFinite(raw) ? parseFloat(raw.toFixed(2)) : raw;
                     return {
                       label: config!.label,
-                      value: config!.unit ? `${Number(payload[name])}${config!.unit}` : String(Number(payload[name])),
+                      value: config!.unit ? `${rounded}${config!.unit}` : String(rounded),
                       color: config!.color,
                     };
                   }

@@ -64,7 +64,6 @@
   background: var(--storm-glass-bg-hover);
   color: var(--storm-text-primary);
   border-color: var(--storm-glass-border-hover);
-  transform: translateY(-1px);
 }
 
 .meta {

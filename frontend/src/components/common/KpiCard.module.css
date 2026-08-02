@@ -59,14 +59,16 @@
 }
 
 .value {
-  font-size: var(--storm-text-3xl);
-  font-weight: var(--storm-weight-bold);
-  font-family: var(--storm-font-mono);
+  font-size: 2rem;
+  font-weight: 800;
+  font-family: 'Inter', var(--storm-font-sans);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
   background: var(--storm-gradient-text);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  line-height: var(--storm-leading-tight);
+  line-height: 1.1;
 }
 
 .trend {
