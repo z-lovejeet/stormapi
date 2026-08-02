@@ -18,7 +18,8 @@ interface ResultSummaryCardsProps {
 export const ResultSummaryCards = memo(function ResultSummaryCards({
   result,
 }: ResultSummaryCardsProps) {
-  const passed = result.errorRate < 5;
+  const errorRate = Number(result.errorRate) || 0;
+  const passed = errorRate < 5;
 
   return (
     <div>
