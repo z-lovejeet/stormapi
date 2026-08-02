@@ -1,20 +1,25 @@
 .container {
-  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--storm-space-6);
+  max-width: 1280px;
 }
 
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 1.5rem;
   gap: 1rem;
   flex-wrap: wrap;
 }
 
 .title {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--storm-text-primary);
+  font-size: var(--storm-text-2xl);
+  font-weight: var(--storm-weight-bold);
+  background: var(--storm-gradient-text);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   margin: 0;
 }
 
@@ -25,44 +30,49 @@
 }
 
 .searchInput {
-  padding: 0.5rem 0.875rem;
-  border-radius: var(--storm-radius-md);
-  border: 1px solid var(--storm-border-primary);
-  background: var(--storm-bg-secondary);
+  padding: 0.6rem 0.85rem;
+  border-radius: var(--storm-radius-lg);
+  border: 1px solid var(--storm-glass-border);
+  background: var(--storm-glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   color: var(--storm-text-primary);
   font-size: var(--storm-text-xs);
-  width: 220px;
-  transition: border-color 0.15s;
+  width: 240px;
+  transition: all 0.25s ease;
+  outline: none;
 }
 
 .searchInput:focus {
-  outline: none;
-  border-color: var(--storm-accent);
+  border-color: var(--storm-accent-primary);
+  box-shadow: var(--storm-glow-primary);
 }
 
 .createBtn {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  border-radius: var(--storm-radius-md);
-  background: var(--storm-accent);
+  padding: 0.6rem 1.15rem;
+  border-radius: var(--storm-radius-lg);
+  background: var(--storm-gradient-accent);
   color: white;
   border: none;
   font-size: var(--storm-text-xs);
   font-weight: 600;
   cursor: pointer;
-  transition: opacity 0.15s;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
 }
 
 .createBtn:hover {
-  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.45);
 }
 
 .grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
+  gap: 1.25rem;
 }
 
 @media (max-width: 1024px) {
@@ -93,38 +103,34 @@
 .modalOverlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  animation: fadeIn 0.15s ease;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
 }
 
 .modal {
-  background: var(--storm-bg-primary);
-  border: 1px solid var(--storm-border-primary);
-  border-radius: var(--storm-radius-lg);
-  padding: 1.5rem;
+  background: var(--storm-glass-bg-strong);
+  backdrop-filter: blur(32px) saturate(200%);
+  -webkit-backdrop-filter: blur(32px) saturate(200%);
+  border: 1px solid var(--storm-glass-border);
+  border-radius: var(--storm-radius-xl);
+  padding: 1.75rem;
   width: 440px;
   max-width: 90vw;
-  animation: slideUp 0.2s ease;
-}
-
-@keyframes slideUp {
-  from { transform: translateY(10px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.3);
 }
 
 .modalTitle {
-  font-size: var(--storm-text-sm);
+  font-size: var(--storm-text-base);
   font-weight: 600;
-  color: var(--storm-text-primary);
+  background: var(--storm-gradient-text);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   margin: 0 0 1.25rem;
 }
 
@@ -142,24 +148,26 @@
 
 .formInput {
   width: 100%;
-  padding: 0.5rem 0.75rem;
-  border-radius: var(--storm-radius-md);
-  border: 1px solid var(--storm-border-primary);
-  background: var(--storm-bg-secondary);
+  padding: 0.6rem 0.85rem;
+  border-radius: var(--storm-radius-lg);
+  border: 1px solid var(--storm-glass-border);
+  background: var(--storm-glass-bg);
   color: var(--storm-text-primary);
   font-size: var(--storm-text-xs);
   box-sizing: border-box;
+  outline: none;
+  transition: all 0.2s ease;
 }
 
 .formInput:focus {
-  outline: none;
-  border-color: var(--storm-accent);
+  border-color: var(--storm-accent-primary);
+  box-shadow: var(--storm-glow-primary);
 }
 
 .formTextarea {
-  composes: formInput;
-  min-height: 80px;
+  min-height: 90px;
   resize: vertical;
+  font-family: var(--storm-font-sans);
 }
 
 .modalActions {
@@ -170,23 +178,35 @@
 }
 
 .cancelBtn {
-  padding: 0.5rem 1rem;
-  border-radius: var(--storm-radius-md);
-  border: 1px solid var(--storm-border-primary);
-  background: transparent;
+  padding: 0.6rem 1rem;
+  border-radius: var(--storm-radius-lg);
+  border: 1px solid var(--storm-glass-border);
+  background: var(--storm-glass-bg);
   color: var(--storm-text-secondary);
   font-size: var(--storm-text-xs);
   cursor: pointer;
-  transition: all 0.15s;
+  transition: all 0.2s ease;
 }
 
 .cancelBtn:hover {
-  background: var(--storm-bg-secondary);
+  background: var(--storm-glass-bg-hover);
   color: var(--storm-text-primary);
 }
 
 .saveBtn {
-  composes: createBtn;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.15rem;
+  border-radius: var(--storm-radius-lg);
+  background: var(--storm-gradient-accent);
+  color: white;
+  border: none;
+  font-size: var(--storm-text-xs);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
 }
 
 /* ── Confirm Dialog ─────────────────────────────────────── */
@@ -199,18 +219,29 @@
 }
 
 .confirmDanger {
-  composes: createBtn;
-  background: var(--storm-danger);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.15rem;
+  border-radius: var(--storm-radius-lg);
+  background: linear-gradient(135deg, #dc2626, #ef4444);
+  color: white;
+  border: none;
+  font-size: var(--storm-text-xs);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
 }
 
 /* ── Error ──────────────────────────────────────────────── */
 
 .errorBanner {
   padding: 0.75rem 1rem;
-  border-radius: var(--storm-radius-md);
-  background: rgba(239, 68, 68, 0.1);
-  color: var(--storm-danger);
+  border-radius: var(--storm-radius-lg);
+  background: var(--storm-error-subtle);
+  color: var(--storm-error);
   font-size: var(--storm-text-xs);
   margin-bottom: 1rem;
-  border: 1px solid rgba(239, 68, 68, 0.2);
+  border: 1px solid var(--storm-error);
 }

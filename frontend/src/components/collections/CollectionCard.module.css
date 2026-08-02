@@ -1,17 +1,22 @@
 .card {
-  background: var(--storm-bg-secondary);
-  border: 1px solid var(--storm-border-primary);
-  border-radius: var(--storm-radius-lg);
+  background: var(--storm-glass-bg);
+  backdrop-filter: blur(var(--storm-glass-blur)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--storm-glass-blur)) saturate(180%);
+  border: 1px solid var(--storm-glass-border);
+  border-radius: var(--storm-radius-xl);
   padding: 1.5rem;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
+  overflow: hidden;
+  box-shadow: var(--storm-glass-shadow);
 }
 
 .card:hover {
-  border-color: var(--storm-accent);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  background: var(--storm-glass-bg-hover);
+  border-color: var(--storm-glass-border-hover);
+  transform: translateY(-3px);
+  box-shadow: var(--storm-glass-shadow-hover);
 }
 
 .header {
@@ -52,10 +57,11 @@
   gap: 0.375rem;
   padding: 0.25rem 0.625rem;
   border-radius: var(--storm-radius-md);
-  background: rgba(99, 102, 241, 0.1);
-  color: var(--storm-accent);
+  background: var(--storm-accent-primary-subtle);
+  color: var(--storm-accent-primary);
   font-size: var(--storm-text-xs);
   font-weight: 500;
+  box-shadow: var(--storm-glow-primary);
 }
 
 .date {
@@ -75,18 +81,18 @@
   border-radius: var(--storm-radius-md);
   color: var(--storm-text-tertiary);
   cursor: pointer;
-  transition: all 0.15s;
+  transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .actionBtn:hover {
-  background: var(--storm-bg-elevated);
+  background: var(--storm-glass-bg);
   color: var(--storm-text-primary);
 }
 
 .actionBtnDanger:hover {
-  color: var(--storm-danger);
-  background: rgba(239, 68, 68, 0.1);
+  color: var(--storm-error);
+  background: var(--storm-error-subtle);
 }

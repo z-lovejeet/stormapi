@@ -1,20 +1,24 @@
 .page {
-  padding: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--storm-space-6);
+  max-width: 1280px;
 }
 
 .pageTitle {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--storm-text-primary);
-  margin-bottom: 0.5rem;
+  font-size: var(--storm-text-2xl);
+  font-weight: var(--storm-weight-bold);
+  background: var(--storm-gradient-text);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0 0 0.25rem;
 }
 
 .pageSubtitle {
   font-size: var(--storm-text-sm);
   color: var(--storm-text-secondary);
-  margin-bottom: 2rem;
+  margin: 0;
 }
 
 .sections {
@@ -27,10 +31,13 @@
   display: flex;
   align-items: center;
   gap: 1rem;
-  padding: 1rem 1.5rem;
-  background: var(--storm-bg-secondary);
-  border: 1px solid var(--storm-border-primary);
-  border-radius: var(--storm-radius-lg);
+  padding: 1.25rem 1.5rem;
+  background: var(--storm-glass-bg);
+  backdrop-filter: blur(var(--storm-glass-blur)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--storm-glass-blur)) saturate(180%);
+  border: 1px solid var(--storm-glass-border);
+  border-radius: var(--storm-radius-xl);
+  box-shadow: var(--storm-glass-shadow);
 }
 
 .scenarioLabel {
@@ -42,17 +49,19 @@
 
 .select {
   flex: 1;
-  padding: 0.5rem 0.75rem;
-  border: 1px solid var(--storm-border-primary);
-  border-radius: var(--storm-radius-md);
-  background: var(--storm-bg-primary);
+  padding: 0.6rem 0.85rem;
+  border: 1px solid var(--storm-glass-border);
+  border-radius: var(--storm-radius-lg);
+  background: var(--storm-glass-bg);
   color: var(--storm-text-primary);
   font-size: var(--storm-text-sm);
+  outline: none;
+  transition: all 0.25s ease;
 }
 
 .select:focus {
-  outline: none;
-  border-color: var(--storm-accent);
+  border-color: var(--storm-accent-primary);
+  box-shadow: var(--storm-glow-primary);
 }
 
 .actions {
@@ -62,22 +71,24 @@
 }
 
 .executeBtn {
-  padding: 0.6rem 2rem;
+  padding: 0.75rem 2.25rem;
   border: none;
-  border-radius: var(--storm-radius-md);
-  background: var(--storm-accent);
+  border-radius: var(--storm-radius-lg);
+  background: var(--storm-gradient-accent);
   color: white;
   font-weight: 600;
   font-size: var(--storm-text-sm);
   cursor: pointer;
-  transition: opacity 0.2s;
+  transition: all 0.25s ease;
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
 }
 
-.executeBtn:hover {
-  opacity: 0.85;
+.executeBtn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.45);
 }
 
 .executeBtn:disabled {
@@ -88,10 +99,13 @@
 /* ── Results ──────────────────────────────────── */
 
 .resultsContainer {
-  border: 1px solid var(--storm-border-primary);
-  border-radius: var(--storm-radius-lg);
-  background: var(--storm-bg-secondary);
+  border: 1px solid var(--storm-glass-border);
+  border-radius: var(--storm-radius-xl);
+  background: var(--storm-glass-bg);
+  backdrop-filter: blur(var(--storm-glass-blur)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--storm-glass-blur)) saturate(180%);
   overflow: hidden;
+  box-shadow: var(--storm-glass-shadow);
 }
 
 .resultsHeader {
@@ -99,7 +113,8 @@
   align-items: center;
   justify-content: space-between;
   padding: 1rem 1.5rem;
-  border-bottom: 1px solid var(--storm-border-primary);
+  border-bottom: 1px solid var(--storm-glass-border);
+  background: var(--storm-glass-bg);
 }
 
 .resultsTitle {
@@ -124,11 +139,11 @@
 }
 
 .summaryPass {
-  color: #22c55e;
+  color: var(--storm-success);
 }
 
 .summaryFail {
-  color: #ef4444;
+  color: var(--storm-error);
 }
 
 .rowList {
@@ -137,16 +152,16 @@
 
 .rowItem {
   padding: 0.75rem 1.5rem;
-  border-bottom: 1px solid var(--storm-border-primary);
+  border-bottom: 1px solid var(--storm-glass-border);
   display: flex;
   align-items: center;
   gap: 1rem;
   cursor: pointer;
-  transition: background 0.15s;
+  transition: background 0.2s ease;
 }
 
 .rowItem:hover {
-  background: var(--storm-bg-elevated);
+  background: var(--storm-glass-bg-hover);
 }
 
 .rowItem:last-child {
@@ -154,7 +169,7 @@
 }
 
 .rowIndex {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--storm-font-mono);
   font-size: var(--storm-text-xs);
   color: var(--storm-text-tertiary);
   min-width: 40px;
@@ -171,13 +186,15 @@
 }
 
 .rowBadgePass {
-  background: rgba(34, 197, 94, 0.1);
-  color: #22c55e;
+  background: var(--storm-success-subtle);
+  color: var(--storm-success);
+  box-shadow: var(--storm-glow-success);
 }
 
 .rowBadgeFail {
-  background: rgba(239, 68, 68, 0.1);
-  color: #ef4444;
+  background: var(--storm-error-subtle);
+  color: var(--storm-error);
+  box-shadow: var(--storm-glow-error);
 }
 
 .rowData {
@@ -192,7 +209,7 @@
 .rowDuration {
   font-size: var(--storm-text-xs);
   color: var(--storm-text-tertiary);
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--storm-font-mono);
 }
 
 .spinner {
@@ -205,7 +222,6 @@
 }
 
 @media (max-width: 768px) {
-  .page { padding: 1rem; }
   .scenarioSelect { flex-direction: column; align-items: stretch; }
   .resultsHeader { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
   .resultsSummary { flex-wrap: wrap; gap: 0.75rem; }

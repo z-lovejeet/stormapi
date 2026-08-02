@@ -1,8 +1,18 @@
 .container {
-  background: var(--storm-bg-secondary);
-  border-radius: var(--storm-radius-lg);
+  background: var(--storm-glass-bg);
+  backdrop-filter: blur(var(--storm-glass-blur)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--storm-glass-blur)) saturate(180%);
+  border: 1px solid var(--storm-glass-border);
+  border-radius: var(--storm-radius-xl);
   padding: 1.5rem;
-  border: 1px solid var(--storm-border-primary);
+  box-shadow: var(--storm-glass-shadow);
+  transition: all 0.3s ease;
+}
+
+.container:hover {
+  background: var(--storm-glass-bg-hover);
+  border-color: var(--storm-glass-border-hover);
+  box-shadow: var(--storm-glass-shadow-hover);
 }
 
 .header {
@@ -25,7 +35,6 @@
   justify-content: center;
   gap: 1.5rem;
   margin-top: 0.75rem;
-  flex-wrap: wrap;
 }
 
 .legendItem {
@@ -40,6 +49,25 @@
   width: 10px;
   height: 10px;
   border-radius: 50%;
+}
+
+.centerLabel {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.centerValue {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--storm-text-primary);
+}
+
+.centerSubtitle {
+  font-size: var(--storm-text-xs);
+  color: var(--storm-text-tertiary);
 }
 
 .emptyState {

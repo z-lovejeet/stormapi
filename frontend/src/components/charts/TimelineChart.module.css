@@ -1,14 +1,24 @@
 .container {
-  background: var(--storm-bg-secondary);
-  border-radius: var(--storm-radius-lg);
+  background: var(--storm-glass-bg);
+  backdrop-filter: blur(var(--storm-glass-blur)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--storm-glass-blur)) saturate(180%);
+  border: 1px solid var(--storm-glass-border);
+  border-radius: var(--storm-radius-xl);
   padding: 1.5rem;
-  border: 1px solid var(--storm-border-primary);
+  box-shadow: var(--storm-glass-shadow);
+  transition: all 0.3s ease;
+}
+
+.container:hover {
+  background: var(--storm-glass-bg-hover);
+  border-color: var(--storm-glass-border-hover);
+  box-shadow: var(--storm-glass-shadow-hover);
 }
 
 .header {
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
   margin-bottom: 0.75rem;
   flex-wrap: wrap;
   gap: 0.5rem;
@@ -30,22 +40,23 @@
   padding: 0.25rem 0.75rem;
   border-radius: var(--storm-radius-md);
   background: transparent;
-  border: 1px solid var(--storm-border-primary);
+  border: 1px solid var(--storm-glass-border);
   cursor: pointer;
   font-size: var(--storm-text-xs);
   color: var(--storm-text-secondary);
-  transition: all 0.2s;
+  transition: all 0.2s ease;
 }
 
 .metricTab:hover {
-  border-color: var(--storm-border-secondary);
   color: var(--storm-text-primary);
+  background: var(--storm-glass-bg);
 }
 
 .metricTabActive {
-  background: var(--storm-accent);
-  color: white;
-  border-color: var(--storm-accent);
+  background: var(--storm-accent-primary-subtle);
+  color: var(--storm-accent-primary);
+  border-color: var(--storm-accent-primary);
+  font-weight: 600;
 }
 
 .chartWrapper {
