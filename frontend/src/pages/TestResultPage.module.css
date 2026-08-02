@@ -18,6 +18,8 @@
   border-radius: var(--storm-radius-xl);
   padding: var(--storm-space-5) var(--storm-space-6);
   box-shadow: var(--storm-glass-shadow);
+  position: relative;
+  z-index: 10;
 }
 
 .headerLeft {
