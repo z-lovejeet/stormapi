@@ -1,20 +1,24 @@
 /* ══════════════════════════════════════════════════════════
-   Navbar — Desktop horizontal + Mobile hamburger
+   Navbar — Glassmorphism Desktop horizontal + Mobile hamburger
    ══════════════════════════════════════════════════════════ */
 
 .navbar {
-  position: sticky;
+  position: fixed;
   top: 0;
-  z-index: 100;
+  left: 0;
+  right: 0;
+  z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: space-between;
   height: var(--storm-navbar-height);
   padding: 0 var(--storm-space-6);
-  background: var(--storm-bg-secondary-translucent);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--storm-border-primary);
+  background: var(--storm-navbar-glass-bg);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border-bottom: 1px solid var(--storm-navbar-glass-border);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
 }
 
 /* ── Logo ──────────────────────────────────────────────── */
@@ -30,15 +34,17 @@
 .logoIcon {
   font-size: 1.5rem;
   line-height: 1;
+  filter: drop-shadow(0 0 8px rgba(79, 143, 247, 0.5));
 }
 
 .logoText {
   font-size: var(--storm-text-lg);
   font-weight: var(--storm-weight-bold);
-  background: linear-gradient(135deg, var(--storm-accent-primary), #8b5cf6);
+  background: var(--storm-gradient-text);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  letter-spacing: -0.02em;
 }
 
 /* ── Desktop Nav Links ─────────────────────────────────── */
@@ -63,19 +69,21 @@
   font-size: var(--storm-text-sm);
   font-weight: var(--storm-weight-medium);
   white-space: nowrap;
-  transition:
-    color var(--storm-duration-fast) var(--storm-ease-default),
-    background-color var(--storm-duration-fast) var(--storm-ease-default);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .navLink:hover {
   color: var(--storm-text-primary);
-  background: var(--storm-bg-tertiary);
+  background: var(--storm-glass-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: var(--storm-shadow-sm);
 }
 
 .navLinkActive {
   color: var(--storm-accent-primary);
   background: var(--storm-accent-primary-subtle);
+  box-shadow: 0 2px 10px rgba(59, 130, 246, 0.15);
 }
 
 .navLinkActive:hover {
@@ -90,8 +98,9 @@
   left: var(--storm-space-3);
   right: var(--storm-space-3);
   height: 2px;
-  background: var(--storm-accent-primary);
+  background: var(--storm-gradient-accent);
   border-radius: 2px 2px 0 0;
+  box-shadow: 0 0 8px var(--storm-accent-primary);
 }
 
 .navIcon {
@@ -101,7 +110,7 @@
 }
 
 .navLabel {
-  /* label is always visible on desktop, hidden on smaller screens via media query */
+  /* label visible on desktop */
 }
 
 /* ── Right Actions ─────────────────────────────────────── */
@@ -119,21 +128,21 @@
   justify-content: center;
   width: 36px;
   height: 36px;
-  border-radius: var(--storm-radius-md);
-  border: 1px solid var(--storm-border-primary);
-  background: var(--storm-bg-tertiary);
+  border-radius: var(--storm-radius-full);
+  border: 1px solid var(--storm-glass-border);
+  background: var(--storm-glass-bg);
   color: var(--storm-text-secondary);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   cursor: pointer;
-  transition:
-    background-color var(--storm-duration-fast) var(--storm-ease-default),
-    color var(--storm-duration-fast) var(--storm-ease-default),
-    border-color var(--storm-duration-fast) var(--storm-ease-default);
+  transition: all 0.25s ease;
 }
 
 .themeToggle:hover {
-  background: var(--storm-accent-primary-subtle);
+  background: var(--storm-glass-bg-hover);
   color: var(--storm-accent-primary);
-  border-color: var(--storm-accent-primary);
+  border-color: var(--storm-glass-border-hover);
+  box-shadow: var(--storm-glow-primary);
 }
 
 /* ── User Menu ─────────────────────────────────────────── */
@@ -149,7 +158,8 @@
   height: 32px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid var(--storm-border-primary);
+  border: 2px solid var(--storm-glass-border);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .avatarFallback {
@@ -159,10 +169,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--storm-accent-primary);
+  background: var(--storm-gradient-accent);
   color: white;
   font-size: var(--storm-text-sm);
   font-weight: 700;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
 }
 
 .logoutBtn {
@@ -172,19 +183,18 @@
   width: 32px;
   height: 32px;
   border-radius: var(--storm-radius-md);
-  border: 1px solid var(--storm-border-primary);
-  background: var(--storm-bg-tertiary);
+  border: 1px solid var(--storm-glass-border);
+  background: var(--storm-glass-bg);
   color: var(--storm-text-secondary);
   cursor: pointer;
-  transition:
-    background-color var(--storm-duration-fast) var(--storm-ease-default),
-    color var(--storm-duration-fast) var(--storm-ease-default);
+  transition: all 0.25s ease;
 }
 
 .logoutBtn:hover {
-  background: rgba(239, 68, 68, 0.1);
-  color: var(--storm-danger);
-  border-color: var(--storm-danger);
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--storm-error);
+  border-color: rgba(239, 68, 68, 0.3);
+  box-shadow: var(--storm-glow-error);
 }
 
 /* ── Hamburger Button ──────────────────────────────────── */
@@ -196,18 +206,17 @@
   width: 36px;
   height: 36px;
   border-radius: var(--storm-radius-md);
-  border: 1px solid var(--storm-border-primary);
-  background: var(--storm-bg-tertiary);
+  border: 1px solid var(--storm-glass-border);
+  background: var(--storm-glass-bg);
   color: var(--storm-text-secondary);
   cursor: pointer;
-  transition:
-    background-color var(--storm-duration-fast) var(--storm-ease-default),
-    color var(--storm-duration-fast) var(--storm-ease-default);
+  transition: all 0.25s ease;
 }
 
 .hamburger:hover {
-  background: var(--storm-accent-primary-subtle);
+  background: var(--storm-glass-bg-hover);
   color: var(--storm-accent-primary);
+  border-color: var(--storm-glass-border-hover);
 }
 
 /* ── Mobile Menu Overlay ───────────────────────────────── */
@@ -236,7 +245,9 @@
     position: fixed;
     inset: 0;
     top: var(--storm-navbar-height);
-    background: var(--storm-overlay);
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     z-index: 90;
   }
 
@@ -247,11 +258,13 @@
     top: var(--storm-navbar-height);
     left: 0;
     right: 0;
-    background: var(--storm-bg-secondary);
-    border-bottom: 1px solid var(--storm-border-primary);
+    background: var(--storm-glass-bg-strong);
+    backdrop-filter: blur(24px) saturate(200%);
+    -webkit-backdrop-filter: blur(24px) saturate(200%);
+    border-bottom: 1px solid var(--storm-glass-border);
     padding: var(--storm-space-3);
     z-index: 95;
-    box-shadow: var(--storm-shadow-lg);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
     max-height: calc(100vh - var(--storm-navbar-height));
     overflow-y: auto;
   }
@@ -266,14 +279,12 @@
     text-decoration: none;
     font-size: var(--storm-text-base);
     font-weight: var(--storm-weight-medium);
-    transition:
-      color var(--storm-duration-fast) var(--storm-ease-default),
-      background-color var(--storm-duration-fast) var(--storm-ease-default);
+    transition: all 0.25s ease;
   }
 
   .mobileNavLink:hover {
     color: var(--storm-text-primary);
-    background: var(--storm-bg-tertiary);
+    background: var(--storm-glass-bg);
   }
 
   .mobileNavLinkActive {

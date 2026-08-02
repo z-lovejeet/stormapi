@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { NavLink, Link, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard,
@@ -18,6 +18,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '../../hooks/useTheme';
 import { useAuth } from '../../hooks/useAuth';
 import { ROUTES } from '../../utils/constants';
+import { gsap, useGSAP } from '../../utils/gsap';
 import styles from './Navbar.module.css';
 
 const navItems = [
@@ -39,6 +40,17 @@ export function Navbar() {
   const { user, isAuthenticated, logout } = useAuth();
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const navRef = useRef<HTMLElement>(null);
+
+  useGSAP(() => {
+    if (!navRef.current) return;
+    gsap.from(navRef.current, {
+      y: -80,
+      opacity: 0,
+      duration: 0.8,
+      ease: 'power3.out',
+    });
+  }, { scope: navRef });
 
   // Close mobile menu on route change
   useEffect(() => {
@@ -67,7 +79,7 @@ export function Navbar() {
 
   return (
     <>
-      <nav className={styles.navbar} aria-label="Main navigation">
+      <nav ref={navRef} className={styles.navbar} aria-label="Main navigation">
         {/* Logo */}
         <Link to="/dashboard" className={styles.logo}>
           <span className={styles.logoIcon}>⚡</span>

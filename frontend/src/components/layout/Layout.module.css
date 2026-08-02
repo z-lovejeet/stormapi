@@ -6,7 +6,12 @@
 
 .content {
   flex: 1;
-  padding: var(--storm-space-6);
+  padding-top: calc(var(--storm-navbar-height) + var(--storm-space-6));
+  padding-left: var(--storm-space-8);
+  padding-right: var(--storm-space-8);
+  padding-bottom: var(--storm-space-8);
+  min-height: 100vh;
+  background: transparent;
   overflow-y: auto;
   overflow-x: hidden;
   max-width: 1400px;
@@ -16,12 +21,18 @@
 
 @media (max-width: 768px) {
   .content {
-    padding: var(--storm-space-4);
+    padding-top: calc(var(--storm-navbar-height) + var(--storm-space-4));
+    padding-left: var(--storm-space-4);
+    padding-right: var(--storm-space-4);
+    padding-bottom: var(--storm-space-4);
   }
 }
 
 @media (max-width: 480px) {
   .content {
-    padding: var(--storm-space-3);
+    padding-top: calc(var(--storm-navbar-height) + var(--storm-space-3));
+    padding-left: var(--storm-space-3);
+    padding-right: var(--storm-space-3);
+    padding-bottom: var(--storm-space-3);
   }
 }
