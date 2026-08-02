@@ -63,7 +63,7 @@ export const DonutChart = memo(function DonutChart({
                 labelKey: 'name',
                 formatEntries: (payload, name) => {
                   if (name === 'value') {
-                    const color = (payload.payload as any).color || SUCCESS_COLOR;
+                    const color = (payload as any)?.payload?.color || (payload as any)?.color || SUCCESS_COLOR;
                     return { label: 'Requests', value: Number(payload.value).toLocaleString(), color };
                   }
                   return null;
