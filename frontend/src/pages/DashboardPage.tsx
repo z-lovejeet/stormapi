@@ -25,6 +25,7 @@ import { useToast } from '../components/common/Toast';
 import { formatMs, formatRps, formatNumber, formatDateTime, formatDuration } from '../utils/formatters';
 import { deleteTest, rerunTest } from '../api/testApi';
 import type { TestSummaryResponse } from '../types/test';
+import { gsap, useGSAP } from '../utils/gsap';
 import styles from './DashboardPage.module.css';
 
 const fadeUp = {
@@ -36,6 +37,16 @@ export function DashboardPage() {
   const navigate = useNavigate();
   const { stats, loading, error, refresh } = useDashboard();
   const { showToast } = useToast();
+
+  useGSAP(() => {
+    gsap.from(`.${styles.kpiGrid} > *`, {
+      y: 30,
+      opacity: 0,
+      duration: 0.6,
+      stagger: 0.1,
+      ease: 'power3.out',
+    });
+  }, [loading]);
 
   const handleRerun = async (e: React.MouseEvent, id: number, name: string) => {
     e.stopPropagation();

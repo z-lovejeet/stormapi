@@ -1,31 +1,36 @@
 import { useTheme } from '../hooks/useTheme';
 import { Button } from '../components/common/Button';
 import { Sun, Moon } from 'lucide-react';
+import { gsap, useGSAP } from '../utils/gsap';
+import styles from './SettingsPage.module.css';
 
 export function SettingsPage() {
   const { theme, toggleTheme } = useTheme();
 
+  useGSAP(() => {
+    gsap.from(`.${styles.card}`, {
+      y: 30,
+      opacity: 0,
+      duration: 0.6,
+      stagger: 0.15,
+      ease: 'power3.out',
+    });
+  });
+
   return (
-    <div>
-      <h1 style={{ fontSize: 'var(--storm-text-2xl)', marginBottom: 'var(--storm-space-6)' }}>
+    <div className={styles.page}>
+      <h1 className={styles.title}>
         Settings
       </h1>
 
-      <div
-        style={{
-          background: 'var(--storm-bg-secondary)',
-          border: '1px solid var(--storm-border-primary)',
-          borderRadius: 'var(--storm-radius-lg)',
-          padding: 'var(--storm-space-6)',
-        }}
-      >
-        <h2 style={{ fontSize: 'var(--storm-text-lg)', marginBottom: 'var(--storm-space-4)' }}>
+      <div className={styles.card}>
+        <h2 className={styles.sectionTitle}>
           Appearance
         </h2>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
+        <div className={styles.row}>
           <div>
-            <p style={{ fontWeight: 'var(--storm-weight-medium)' }}>Theme</p>
-            <p style={{ fontSize: 'var(--storm-text-sm)', color: 'var(--storm-text-secondary)' }}>
+            <p className={styles.label}>Theme</p>
+            <p className={styles.sublabel}>
               Current: {theme === 'dark' ? 'Dark' : 'Light'} mode
             </p>
           </div>
@@ -39,22 +44,14 @@ export function SettingsPage() {
         </div>
       </div>
 
-      <div
-        style={{
-          background: 'var(--storm-bg-secondary)',
-          border: '1px solid var(--storm-border-primary)',
-          borderRadius: 'var(--storm-radius-lg)',
-          padding: 'var(--storm-space-6)',
-          marginTop: 'var(--storm-space-4)',
-        }}
-      >
-        <h2 style={{ fontSize: 'var(--storm-text-lg)', marginBottom: 'var(--storm-space-4)' }}>
+      <div className={styles.card}>
+        <h2 className={styles.sectionTitle}>
           About
         </h2>
-        <p style={{ fontSize: 'var(--storm-text-sm)', color: 'var(--storm-text-secondary)' }}>
+        <p className={styles.text}>
           StormAPI v1.0.0 — API Performance Testing Platform
         </p>
-        <p style={{ fontSize: 'var(--storm-text-sm)', color: 'var(--storm-text-tertiary)', marginTop: 'var(--storm-space-1)' }}>
+        <p className={styles.subtext}>
           Built with Java 21 + Spring Boot 3.4 + React 19 + Virtual Threads
         </p>
       </div>

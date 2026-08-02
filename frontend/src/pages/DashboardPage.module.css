@@ -1,19 +1,23 @@
 .page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--storm-space-8);
   max-width: 1280px;
-  animation: fadeIn 0.3s ease;
 }
 
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: var(--storm-space-6);
 }
 
 .header h1 {
   font-size: var(--storm-text-2xl);
   font-weight: var(--storm-weight-bold);
-  color: var(--storm-text-primary);
+  background: var(--storm-gradient-text);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   margin: 0;
 }
 
@@ -22,8 +26,7 @@
 .kpiGrid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: var(--storm-space-4);
-  margin-bottom: var(--storm-space-6);
+  gap: var(--storm-space-6);
 }
 
 @media (max-width: 1024px) {
@@ -43,7 +46,6 @@
 .quickActions {
   display: flex;
   gap: var(--storm-space-3);
-  margin-bottom: var(--storm-space-8);
 }
 
 @media (max-width: 640px) {
@@ -55,14 +57,15 @@
 /* ── Section ───────────────────────────────── */
 
 .section {
-  margin-bottom: var(--storm-space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--storm-space-4);
 }
 
 .sectionHeader {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: var(--storm-space-4);
 }
 
 .sectionHeader h2 {
@@ -82,7 +85,8 @@
   background: var(--storm-error-subtle);
   border: 1px solid var(--storm-error);
   border-radius: var(--storm-radius-lg);
-  margin-bottom: var(--storm-space-6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .errorBanner p {
@@ -120,15 +124,10 @@
   min-height: 400px;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
 @media (max-width: 640px) {
   .header {
     flex-direction: column;
-    align-items: stretch;
+    align-items: flex-start;
     gap: 1rem;
   }
   .sectionHeader {

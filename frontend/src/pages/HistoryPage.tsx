@@ -7,6 +7,7 @@ import { StatusBadge } from '../components/common/StatusBadge';
 import { TestTypeBadge } from '../components/common/TestTypeBadge';
 import { ComparisonView } from '../components/results/ComparisonView';
 import { formatMs, formatPercent, formatDateTime } from '../utils/formatters';
+import { gsap, useGSAP } from '../utils/gsap';
 import styles from './HistoryPage.module.css';
 
 export function HistoryPage() {
@@ -29,6 +30,15 @@ export function HistoryPage() {
   } = useHistory();
 
   const [showComparison, setShowComparison] = useState(false);
+
+  useGSAP(() => {
+    gsap.from(`.${styles.tableWrapper}`, {
+      y: 30,
+      opacity: 0,
+      duration: 0.7,
+      ease: 'power3.out',
+    });
+  }, [loading]);
 
   const SortIcon = ({ field }: { field: string }) => {
     const isActive = sortField === field;
