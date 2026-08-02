@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useSearchParams, Navigate, Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { OAUTH_URLS, loginLocal } from '../api/authApi';
+import { gsap, useGSAP } from '../utils/gsap';
 import styles from './LoginPage.module.css';
 
 /**
@@ -18,10 +19,19 @@ export function LoginPage() {
   const [localError, setLocalError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  useGSAP(() => {
+    gsap.from('[data-gsap="auth-card"]', {
+      y: 40,
+      opacity: 0,
+      duration: 0.8,
+      ease: 'power3.out',
+    });
+  });
+
   if (loading) {
     return (
       <div className={styles.container}>
-        <div className={styles.card}>
+        <div className={styles.card} data-gsap="auth-card">
           <div className={styles.header}>
             <div className={styles.logo}>⚡ StormAPI</div>
             <p>Loading...</p>
@@ -51,7 +61,7 @@ export function LoginPage() {
 
   return (
     <div className={styles.container}>
-      <div className={styles.card}>
+      <div className={styles.card} data-gsap="auth-card">
         <div className={styles.header}>
           <Link to="/" className={styles.logo}>⚡ StormAPI</Link>
           <h1>Welcome Back</h1>

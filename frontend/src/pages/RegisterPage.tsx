@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { registerLocal, OAUTH_URLS } from '../api/authApi';
+import { gsap, useGSAP } from '../utils/gsap';
 import styles from './RegisterPage.module.css';
 
 export function RegisterPage() {
@@ -14,6 +15,15 @@ export function RegisterPage() {
   
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  useGSAP(() => {
+    gsap.from('[data-gsap="auth-card"]', {
+      y: 40,
+      opacity: 0,
+      duration: 0.8,
+      ease: 'power3.out',
+    });
+  });
 
   // If already authenticated, go to dashboard
   if (isAuthenticated) {
@@ -42,7 +52,7 @@ export function RegisterPage() {
 
   return (
     <div className={styles.container}>
-      <div className={styles.card}>
+      <div className={styles.card} data-gsap="auth-card">
         <div className={styles.header}>
           <Link to="/" className={styles.logo}>⚡ StormAPI</Link>
           <h1>Create an Account</h1>
