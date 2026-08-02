@@ -16,6 +16,7 @@ import { testBuilderSchema, STEP_FIELDS, WIZARD_STEPS } from '../schemas/testBui
 import type { TestBuilderFormData } from '../schemas/testBuilderSchema';
 import { HttpMethod, TestType } from '../types/test';
 import type { CreateTestRequest } from '../types/test';
+import { gsap, useGSAP } from '../utils/gsap';
 import styles from './TestBuilderPage.module.css';
 
 function parseTypeParam(param: string | null): TestType | undefined {
@@ -28,6 +29,15 @@ export function TestBuilderPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { showToast } = useToast();
+
+  useGSAP(() => {
+    gsap.from(`.${styles.header}`, {
+      y: -20,
+      opacity: 0,
+      duration: 0.6,
+      ease: 'power3.out',
+    });
+  });
 
   const preselectedType = parseTypeParam(searchParams.get('type'));
 

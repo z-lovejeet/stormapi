@@ -17,17 +17,20 @@
   font-family: var(--storm-font-mono);
   font-size: var(--storm-text-sm);
   color: var(--storm-text-primary);
-  background: var(--storm-bg-tertiary);
-  border: 1px solid var(--storm-border-primary);
-  border-radius: var(--storm-radius-md);
+  background: var(--storm-glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--storm-glass-border);
+  border-radius: var(--storm-radius-lg);
   resize: vertical;
   outline: none;
-  transition: border-color var(--storm-duration-fast);
+  transition: all 0.25s ease;
 }
 
 .bodyTextarea:focus {
-  border-color: var(--storm-border-focus);
-  box-shadow: var(--storm-shadow-glow);
+  border-color: var(--storm-accent-primary);
+  box-shadow: var(--storm-glow-primary);
+  background: var(--storm-glass-bg-hover);
 }
 
 @media (max-width: 640px) {

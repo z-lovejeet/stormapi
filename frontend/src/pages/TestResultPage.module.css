@@ -1,15 +1,23 @@
 .page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--storm-space-6);
   max-width: 1280px;
-  animation: fadeIn 0.3s ease;
 }
 
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: var(--storm-space-6);
   flex-wrap: wrap;
   gap: 1rem;
+  background: var(--storm-glass-bg);
+  backdrop-filter: blur(var(--storm-glass-blur)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--storm-glass-blur)) saturate(180%);
+  border: 1px solid var(--storm-glass-border);
+  border-radius: var(--storm-radius-xl);
+  padding: var(--storm-space-5) var(--storm-space-6);
+  box-shadow: var(--storm-glass-shadow);
 }
 
 .headerLeft {
@@ -27,7 +35,10 @@
 .header h1 {
   font-size: var(--storm-text-2xl);
   font-weight: var(--storm-weight-bold);
-  color: var(--storm-text-primary);
+  background: var(--storm-gradient-text);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   margin: 0;
 }
 
@@ -35,26 +46,29 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background: none;
-  border: 1px solid var(--storm-border-primary);
+  background: var(--storm-glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--storm-glass-border);
   color: var(--storm-text-secondary);
   padding: 0.5rem 1rem;
-  border-radius: var(--storm-radius-md);
+  border-radius: var(--storm-radius-lg);
   cursor: pointer;
   font-size: var(--storm-text-sm);
-  transition: all 0.2s;
+  transition: all 0.25s ease;
 }
 
 .backBtn:hover {
-  background: var(--storm-bg-secondary);
+  background: var(--storm-glass-bg-hover);
   color: var(--storm-text-primary);
+  border-color: var(--storm-glass-border-hover);
+  transform: translateY(-1px);
 }
 
 .meta {
   display: flex;
   align-items: center;
   gap: 1rem;
-  margin-bottom: var(--storm-space-4);
   font-size: var(--storm-text-sm);
   color: var(--storm-text-tertiary);
 }
@@ -68,14 +82,16 @@
 /* ── Section ──────────────────────────────── */
 
 .section {
-  margin-bottom: var(--storm-space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--storm-space-4);
 }
 
 .sectionTitle {
   font-size: var(--storm-text-lg);
   font-weight: 600;
   color: var(--storm-text-primary);
-  margin: 0 0 1rem;
+  margin: 0;
 }
 
 /* ── Chart Grid ──────────────────────────── */
@@ -83,8 +99,7 @@
 .chartGrid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: var(--storm-space-4);
-  margin-bottom: var(--storm-space-6);
+  gap: var(--storm-space-6);
 }
 
 .chartFull {
@@ -122,13 +137,8 @@
   justify-content: center;
   gap: 1rem;
   min-height: 400px;
-  color: var(--storm-danger);
+  color: var(--storm-error);
   text-align: center;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
 }
 
 @media (max-width: 768px) {

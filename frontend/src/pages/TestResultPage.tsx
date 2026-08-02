@@ -15,6 +15,7 @@ import { TimelineChart } from '../components/charts/TimelineChart';
 import { ResponseTimeHistogram } from '../components/charts/ResponseTimeHistogram';
 import { ScalabilityCurve } from '../components/charts/ScalabilityCurve';
 import { formatDuration, formatDateTime } from '../utils/formatters';
+import { gsap, useGSAP } from '../utils/gsap';
 import styles from './TestResultPage.module.css';
 
 export function TestResultPage() {
@@ -31,6 +32,16 @@ export function TestResultPage() {
     loading,
     error,
   } = useTestResult(testId);
+
+  useGSAP(() => {
+    gsap.from(`.${styles.header}, .${styles.chartGrid} > *`, {
+      y: 30,
+      opacity: 0,
+      duration: 0.6,
+      stagger: 0.1,
+      ease: 'power3.out',
+    });
+  }, [loading]);
 
   if (loading) {
     return (

@@ -1,10 +1,9 @@
 .page {
   display: flex;
   flex-direction: column;
-  gap: var(--storm-space-5);
+  gap: var(--storm-space-6);
   max-width: 1280px;
   margin: 0 auto;
-  padding: var(--storm-space-6) 0;
 }
 
 /* Header */
@@ -14,6 +13,13 @@
   justify-content: space-between;
   flex-wrap: wrap;
   gap: var(--storm-space-3);
+  background: var(--storm-glass-bg);
+  backdrop-filter: blur(var(--storm-glass-blur)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--storm-glass-blur)) saturate(180%);
+  border: 1px solid var(--storm-glass-border);
+  border-radius: var(--storm-radius-xl);
+  padding: var(--storm-space-5) var(--storm-space-6);
+  box-shadow: var(--storm-glass-shadow);
 }
 
 .headerLeft {
@@ -25,7 +31,10 @@
 .testName {
   font-size: var(--storm-text-xl);
   font-weight: var(--storm-weight-bold);
-  color: var(--storm-text-primary);
+  background: var(--storm-gradient-text);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .headerBadges {
@@ -57,7 +66,7 @@
 .chartsGrid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: var(--storm-space-4);
+  gap: var(--storm-space-6);
 }
 
 @media (max-width: 768px) {
