@@ -21,13 +21,16 @@ export function MethodBadge({ method }: MethodBadgeProps) {
     <span
       style={{
         display: 'inline-block',
-        padding: '1px 8px',
-        borderRadius: 'var(--storm-radius-sm)',
+        padding: '2px 10px',
+        borderRadius: 'var(--storm-radius-full)',
         fontSize: 'var(--storm-text-xs)',
         fontWeight: 'var(--storm-weight-bold)',
         fontFamily: 'var(--storm-font-mono)',
         color,
-        background: `color-mix(in srgb, ${color} 12%, transparent)`,
+        background: `color-mix(in srgb, ${color} 14%, transparent)`,
+        backdropFilter: 'blur(8px)',
+        WebkitBackdropFilter: 'blur(8px)',
+        border: `1px solid color-mix(in srgb, ${color} 30%, transparent)`,
         lineHeight: '1.6',
       }}
     >
