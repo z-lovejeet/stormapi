@@ -2,27 +2,46 @@
   display: flex;
   align-items: flex-start;
   gap: var(--storm-space-4);
-  padding: var(--storm-space-5);
-  background: var(--storm-bg-secondary);
-  border: 1px solid var(--storm-border-primary);
-  border-radius: var(--storm-radius-lg);
-  transition: border-color var(--storm-duration-fast) var(--storm-ease-default);
+  padding: var(--storm-space-6);
+  background: var(--storm-glass-bg);
+  backdrop-filter: blur(var(--storm-glass-blur)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--storm-glass-blur)) saturate(180%);
+  border: 1px solid var(--storm-glass-border);
+  border-radius: var(--storm-radius-xl);
+  box-shadow: var(--storm-glass-shadow);
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--storm-glass-border-hover), transparent);
 }
 
 .card:hover {
-  border-color: var(--storm-border-focus);
+  background: var(--storm-glass-bg-hover);
+  border-color: var(--storm-glass-border-hover);
+  box-shadow: var(--storm-glass-shadow-hover);
+  transform: translateY(-3px);
 }
 
 .iconWrapper {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
-  border-radius: var(--storm-radius-md);
+  width: 48px;
+  height: 48px;
+  border-radius: var(--storm-radius-lg);
   background: var(--storm-accent-primary-subtle);
   color: var(--storm-accent-primary);
   flex-shrink: 0;
+  box-shadow: var(--storm-glow-primary);
 }
 
 .content {
@@ -32,18 +51,21 @@
 
 .label {
   font-size: var(--storm-text-xs);
-  font-weight: var(--storm-weight-medium);
+  font-weight: var(--storm-weight-semibold);
   color: var(--storm-text-secondary);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
   margin-bottom: var(--storm-space-1);
 }
 
 .value {
-  font-size: var(--storm-text-2xl);
+  font-size: var(--storm-text-3xl);
   font-weight: var(--storm-weight-bold);
   font-family: var(--storm-font-mono);
-  color: var(--storm-text-primary);
+  background: var(--storm-gradient-text);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   line-height: var(--storm-leading-tight);
 }
 
@@ -64,11 +86,11 @@
   width: 80px;
   height: 28px;
   border-radius: var(--storm-radius-sm);
-  background: var(--storm-bg-tertiary);
+  background: var(--storm-glass-bg);
   animation: pulse 1.5s ease-in-out infinite;
 }
 
 @keyframes pulse {
   0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  50% { opacity: 0.4; }
 }

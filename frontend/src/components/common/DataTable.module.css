@@ -1,3 +1,13 @@
+.wrapper {
+  background: var(--storm-glass-bg);
+  backdrop-filter: blur(var(--storm-glass-blur)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--storm-glass-blur)) saturate(180%);
+  border: 1px solid var(--storm-glass-border);
+  border-radius: var(--storm-radius-xl);
+  overflow: hidden;
+  box-shadow: var(--storm-glass-shadow);
+}
+
 .table {
   width: 100%;
   border-collapse: collapse;
@@ -6,13 +16,14 @@
 
 .table th {
   text-align: left;
-  padding: var(--storm-space-3) var(--storm-space-4);
-  font-weight: var(--storm-weight-medium);
+  padding: var(--storm-space-4);
+  font-weight: var(--storm-weight-semibold);
   font-size: var(--storm-text-xs);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--storm-text-secondary);
-  border-bottom: 1px solid var(--storm-border-primary);
+  letter-spacing: 0.05em;
+  color: var(--storm-text-tertiary);
+  border-bottom: 1px solid var(--storm-glass-border);
+  background: var(--storm-glass-bg);
   white-space: nowrap;
 }
 
@@ -32,9 +43,9 @@
 }
 
 .table td {
-  padding: var(--storm-space-3) var(--storm-space-4);
+  padding: var(--storm-space-4);
   color: var(--storm-text-primary);
-  border-bottom: 1px solid var(--storm-border-secondary);
+  border-bottom: 1px solid var(--storm-glass-border);
   vertical-align: middle;
 }
 
@@ -43,18 +54,11 @@
 }
 
 .table tbody tr:hover {
-  background: var(--storm-bg-tertiary);
+  background: var(--storm-glass-bg-hover);
 }
 
 .clickableRow {
   cursor: pointer;
-}
-
-.wrapper {
-  background: var(--storm-bg-secondary);
-  border: 1px solid var(--storm-border-primary);
-  border-radius: var(--storm-radius-lg);
-  overflow: hidden;
 }
 
 .loadingRow td {

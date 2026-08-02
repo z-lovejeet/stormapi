@@ -3,8 +3,14 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: var(--storm-space-12) var(--storm-space-6);
+  padding: var(--storm-space-16) var(--storm-space-8);
   text-align: center;
+  background: var(--storm-glass-bg);
+  backdrop-filter: blur(var(--storm-glass-blur)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--storm-glass-blur)) saturate(180%);
+  border: 1px solid var(--storm-glass-border);
+  border-radius: var(--storm-radius-xl);
+  box-shadow: var(--storm-glass-shadow);
 }
 
 .iconWrapper {
@@ -13,22 +19,27 @@
   justify-content: center;
   width: 64px;
   height: 64px;
-  border-radius: var(--storm-radius-xl);
-  background: var(--storm-bg-tertiary);
-  color: var(--storm-text-tertiary);
+  border-radius: var(--storm-radius-full);
+  background: var(--storm-accent-primary-subtle);
+  color: var(--storm-accent-primary);
   margin-bottom: var(--storm-space-4);
+  box-shadow: var(--storm-glow-primary);
 }
 
 .title {
   font-size: var(--storm-text-lg);
   font-weight: var(--storm-weight-semibold);
-  color: var(--storm-text-primary);
+  background: var(--storm-gradient-text);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   margin-bottom: var(--storm-space-2);
 }
 
 .description {
   font-size: var(--storm-text-sm);
   color: var(--storm-text-secondary);
-  max-width: 320px;
+  max-width: 360px;
+  line-height: var(--storm-leading-relaxed);
   margin-bottom: var(--storm-space-6);
 }

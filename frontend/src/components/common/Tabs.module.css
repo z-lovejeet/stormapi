@@ -6,30 +6,39 @@
 
 .tabList {
   display: flex;
-  gap: 0;
-  border-bottom: 1px solid var(--storm-border-primary);
+  gap: var(--storm-space-1);
+  padding: var(--storm-space-1);
+  background: var(--storm-glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--storm-glass-border);
+  border-radius: var(--storm-radius-lg);
   position: relative;
 }
 
 .tab {
-  padding: var(--storm-space-3) var(--storm-space-4);
+  padding: var(--storm-space-2) var(--storm-space-4);
   font-family: var(--storm-font-sans);
   font-size: var(--storm-text-sm);
   font-weight: var(--storm-weight-medium);
   color: var(--storm-text-secondary);
-  background: none;
+  background: transparent;
   border: none;
+  border-radius: var(--storm-radius-md);
   cursor: pointer;
   position: relative;
-  transition: color var(--storm-duration-fast) var(--storm-ease-default);
+  transition: all 0.25s ease;
 }
 
 .tab:hover {
   color: var(--storm-text-primary);
+  background: var(--storm-glass-bg);
 }
 
 .tabActive {
   color: var(--storm-accent-primary);
+  background: var(--storm-accent-primary-subtle);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);
 }
 
 .indicator {
@@ -37,7 +46,7 @@
   bottom: -1px;
   left: 0;
   height: 2px;
-  background: var(--storm-accent-primary);
+  background: var(--storm-gradient-accent);
   border-radius: 1px;
 }
 
