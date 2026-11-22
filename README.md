@@ -396,5 +396,5 @@ This project is licensed under the **MIT License** — see the [LICENSE](LICENSE
 ---
 
 <p align="center">
-  Built by <a href="https://github.com/z-lovejeet"><strong>Lovejeet Singh</strong></a>
+  Built by <strong>Lovejeet Singh</strong></a>
 </p>
